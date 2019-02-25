@@ -8,6 +8,7 @@ import json
 
 class TUHEEGCorpusLoader(DataLoader):
     def __init__(self, path):
+        self._logger.debug('Create TUH EEG Corpus Loader')
         if path[-1] != os.path.sep:
             path = path + os.path.sep
         self._index = TUHEEGCorpusIndex(path)

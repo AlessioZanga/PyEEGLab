@@ -1,4 +1,6 @@
+import logging
 from abc import ABC, abstractmethod
+
 from sqlalchemy import Column, Integer, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -37,9 +39,11 @@ class EDFMeta(BaseTable):
 class Index(ABC):
     _db = None
     _path = None
+    _logger = logging.getLogger()
 
     def __init__(self, path):
         self._path = path
+        self._logger.debug('Create index at %s', self._path)
 
     @abstractmethod
     def loadIndex(self):

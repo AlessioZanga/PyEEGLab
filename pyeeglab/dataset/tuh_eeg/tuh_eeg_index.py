@@ -11,13 +11,17 @@ from sqlalchemy.orm import sessionmaker
 
 class TUHEEGCorpusIndex(Index):
     def __init__(self, path):
+        self._logger.debug('Create TUH EEG Corpus Index')
         super().__init__(path)
+        self._logger.debug('Redirect MNE logging interface to file')
         mne.set_log_file(os.path.join(path, 'mne.log'), overwrite=False)
+        self._logger.debug('Disable MNE runtime warnings')
         warnings.filterwarnings("ignore", category=RuntimeWarning)
         self.loadIndex()
         self.indexFiles()
 
     def getFilesFromPath(self, path):
+        self._logger.debug('Get files from path')
         files = []
         for dirpath, dirnames, filenames in os.walk(path):
             for file in filenames:
@@ -39,19 +43,21 @@ class TUHEEGCorpusIndex(Index):
         return metadata
 
     def loadIndex(self):
-        engine = create_engine(
-            'sqlite:///' + os.path.join(self.path(), 'index.db')
-        )
+        path = 'sqlite:///' + os.path.join(self.path(), 'index.db')
+        self._logger.debug('Load index at %s', path)
+        engine = create_engine(path)
         BaseTable.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self._db = Session()
 
     def indexFiles(self):
+        self._logger.debug('Index files')
         files = self.getFilesFromPath(self.path())
         for file in files:
             f = File(self.getMetadataFromFile(self.path(), file))
             stm = self.db().query(File).filter(File.id == f.id).all()
             if len(stm) == 0:
+                self._logger.debug('Add file %s at %s to index', f.id, f.path)
                 self.db().add(f)
                 if f.format == 'edf':
                     path = os.path.join(self.path(), f.path)
@@ -63,5 +69,7 @@ class TUHEEGCorpusIndex(Index):
                             'sample_frequency': r.info['sfreq'],
                             'channels': json.dumps(r.info['ch_names']),
                         })
+                        self._logger.debug('Add file %s edf metada to index', f.id)
                         self.db().add(m)
+        self._logger.debug('Index files completed')
         self.db().commit()
