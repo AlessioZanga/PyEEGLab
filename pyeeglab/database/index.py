@@ -40,8 +40,6 @@ class Index(ABC):
 
     def __init__(self, path):
         self._path = path
-        self.loadIndex()
-        self.indexFiles()
 
     @abstractmethod
     def loadIndex(self):

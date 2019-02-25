@@ -11,9 +11,11 @@ from sqlalchemy.orm import sessionmaker
 
 class TUHEEGCorpusIndex(Index):
     def __init__(self, path):
+        super().__init__(path)
         mne.set_log_file(os.path.join(path, 'mne.log'), overwrite=False)
         warnings.filterwarnings("ignore", category=RuntimeWarning)
-        super().__init__(path)
+        self.loadIndex()
+        self.indexFiles()
 
     def getFilesFromPath(self, path):
         files = []
