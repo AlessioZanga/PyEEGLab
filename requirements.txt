@@ -1,0 +1,5 @@
+numpy
+pandas
+scipy
+mne>=0.17
+sqlalchemy>=1.2
