@@ -72,9 +72,12 @@ class EDFLoader():
         return self._id
 
     def setTMax(self, tmax):
+        self._logger.debug('Crop EDFLoader %s data to %s seconds', self.getId(), tmax)
         self.reader().crop(0, tmax)
 
     def setChannels(self, channels=[]):
         channels = set(self.reader().ch_names) - set(channels)
-        self._logger.debug('Set EDFLoader %s channels to %s', self._id, repr(channels))
+        self._logger.debug(
+            'Set EDFLoader %s channels drop %s', self.getId(), '|'.join(channels)
+        )
         self.reader().drop_channels(list(channels))
