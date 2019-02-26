@@ -34,7 +34,7 @@ class TUHEEGCorpusIndex(Index):
         metadata = {
             'id': str(uuid.uuid5(uuid.NAMESPACE_X500, file[len(path):])),
             'type': meta[1],
-            'eeg_class': meta[2],
+            'label': meta[2],
             'patient_id': meta[5],
             'session_id': meta[6],
             'format': meta[-1].split('.')[-1],
