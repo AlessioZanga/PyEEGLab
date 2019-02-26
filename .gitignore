@@ -1,5 +1,8 @@
 archive
+build
 data
+dist
 export
 pyeeglab/**/__pycache__
+**.egg-info
 demo.py
