@@ -14,4 +14,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url='https://github.com/AlessioZanga/PyEEGLab',
     packages=setuptools.find_packages(),
+    install_requires=[
+        'numpy',
+        'pandas',
+        'scipy',
+        'mne>=0.17',
+        'sqlalchemy>=1.2',
+    ],
 )
