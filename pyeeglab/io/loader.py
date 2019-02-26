@@ -34,6 +34,10 @@ class DataLoader(ABC):
     def getChannelSet(self):
         pass
 
+    @abstractmethod
+    def getLowestFrequency(self):
+        pass
+
 
 class EDFLoader():
     _id = None

@@ -28,7 +28,7 @@ class EDFMeta(BaseTable):
     id = Column(Text, ForeignKey('file.id'), primary_key=True)
     file_duration = Column(Integer, nullable=False)
     signal_count = Column(Integer, nullable=False)
-    sample_frequency = Column(Integer, nullable=False, index=True)
+    frequency = Column(Integer, nullable=False, index=True)
     channels = Column(Text, nullable=False, index=True)
 
     def __init__(self, dictionary):

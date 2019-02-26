@@ -66,7 +66,7 @@ class TUHEEGCorpusIndex(Index):
                             'id': f.id,
                             'file_duration': r.n_times/r.info['sfreq'],
                             'signal_count': r.info['nchan'],
-                            'sample_frequency': r.info['sfreq'],
+                            'frequency': r.info['sfreq'],
                             'channels': json.dumps(r.info['ch_names']),
                         })
                         self._logger.debug('Add file %s edf metada to index', f.id)

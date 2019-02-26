@@ -4,6 +4,7 @@ from .tuh_eeg_index import TUHEEGCorpusIndex
 
 import os
 import json
+from sqlalchemy import func
 
 
 class TUHEEGCorpusLoader(DataLoader):
@@ -35,7 +36,7 @@ class TUHEEGCorpusLoader(DataLoader):
         ).filter(
             EDFMeta.id == File.id
         ).filter(
-            EDFMeta.sample_frequency == frequency
+            EDFMeta.frequency == frequency
         ).all()
         edfs = [
             EDFLoader(file.id, os.path.join(self.index().path(), file.path))
