@@ -1,4 +1,5 @@
 archive
 data
+export
 pyeeglab/**/__pycache__
 demo.py
