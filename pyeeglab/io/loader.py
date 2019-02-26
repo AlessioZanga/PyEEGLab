@@ -81,3 +81,11 @@ class EDFLoader():
             'Set EDFLoader %s channels drop %s', self.getId(), '|'.join(channels)
         )
         self.reader().drop_channels(list(channels))
+
+    def exportCSV(self, path=None):
+        if path is None:
+            suffix = '.edf'
+            if self.path().endswith(suffix):
+                path = self.path()[:-len(suffix)] + '.csv'
+        self._logger.debug('Export EDFLoader %s to CSV scaling EEG by 1E6', self.getId())
+        self.reader().to_data_frame().to_csv(path)
