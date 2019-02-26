@@ -55,3 +55,9 @@ class TUHEEGCorpusLoader(DataLoader):
             channels_set = channels_set.intersection(edf_meta)
         channels_set = list(channels_set)
         return channels_set
+
+    def getLowestFrequency(self):
+        edf_metas = self.index().db().query(func.min(EDFMeta.frequency)).all()
+        if edf_metas is None:
+            return 0
+        return edf_metas[0][0]
