@@ -42,16 +42,21 @@ class DataLoader(ABC):
 class EDFLoader():
     _id = None
     _path = None
+    _label = None
     _reader = None
     _logger = logging.getLogger()
 
-    def __init__(self, id, path):
+    def __init__(self, id, path, label):
         self._id = id
         self._path = path
+        self._label = label
         self._logger.debug('Create EDFLoader %s', self._id)
 
     def path(self):
         return self._path
+
+    def getLabel(self):
+        return self._label
 
     def open(self):
         if self._reader is None:

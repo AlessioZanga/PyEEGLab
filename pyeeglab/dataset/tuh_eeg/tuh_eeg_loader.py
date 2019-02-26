@@ -25,8 +25,8 @@ class TUHEEGCorpusLoader(DataLoader):
             File.format == 'edf'
         ).all()
         edfs = [
-            EDFLoader(file.id, os.path.join(self.index().path(), file.path))
-            for file in edfs
+            EDFLoader(f.id, os.path.join(self.index().path(), f.path), f.label)
+            for f in edfs
         ]
         return edfs
 
@@ -39,8 +39,8 @@ class TUHEEGCorpusLoader(DataLoader):
             EDFMeta.frequency == frequency
         ).all()
         edfs = [
-            EDFLoader(file.id, os.path.join(self.index().path(), file.path))
-            for file in edfs
+            EDFLoader(f.id, os.path.join(self.index().path(), f.path), f.label)
+            for f in edfs
         ]
         return edfs
 
