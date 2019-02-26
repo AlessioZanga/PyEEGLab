@@ -71,6 +71,9 @@ class EDFLoader():
     def getId(self):
         return self._id
 
+    def setTMax(self, tmax):
+        self.reader().crop(0, tmax)
+
     def setChannels(self, channels=[]):
         channels = set(self.reader().ch_names) - set(channels)
         self._logger.debug('Set EDFLoader %s channels to %s', self._id, repr(channels))
