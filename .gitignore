@@ -1,3 +1,4 @@
 archive
 data
 pyeeglab/**/__pycache__
+demo.py
