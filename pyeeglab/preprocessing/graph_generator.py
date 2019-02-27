@@ -23,21 +23,29 @@ class GraphGenerator():
         frame = spearmanr(frame)
         return frame
 
-    def spearmanToGraphs(self, spear):
+    def quartileFromData(self, data, q):
         pass
 
-    def dataframeToGraphs(self, data):
+    def spearmansToCorrelations(self, data, c):
+        pass
+
+    def correlationToGraph(self, corr):
+        pass
+
+    def dataframeToGraphs(self, data, c):
         data = self.dataToFrames(data)
         data = [self.frameToSpearman(frame) for frame in data]
-        data = [self.spearmanToGraphs(spear) for spear in data]
+        data = self.spearmansToCorrelations(data, c)
+        data = [self.correlationToGraph(corr) for corr in data]
         return data
 
-    def dataframesToGraphs(self, data):
+    def dataframesToGraphs(self, data, c):
         self._logger.debug('Load EDF set to generate graphs')
         self._logger.debug('Create process pool')
         pool = Pool(len(os.sched_getaffinity(0)))
         self._logger.debug('Start process pool')
-        data = pool.map(self.dataToGraphs, data)
+        data = zip(data, [c] * len(data))
+        data = pool.map(self.dataframeToGraphs, data)
         pool.close()
         pool.join()
         self._logger.debug('End process pool')
