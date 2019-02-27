@@ -40,9 +40,6 @@ class DataLoader(ABC):
 
 
 class EDFLoader():
-    _id = None
-    _path = None
-    _label = None
     _reader = None
     _logger = logging.getLogger()
 

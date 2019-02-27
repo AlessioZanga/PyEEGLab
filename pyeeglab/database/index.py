@@ -38,7 +38,6 @@ class EDFMeta(BaseTable):
 
 class Index(ABC):
     _db = None
-    _path = None
     _logger = logging.getLogger()
 
     def __init__(self, path):

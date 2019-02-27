@@ -5,9 +5,6 @@ from multiprocessing import Pool
 
 
 class DataNormalizer():
-    _tmax = None
-    _channels = None
-    _frequency = None
     _logger = logging.getLogger()
 
     def __init__(self, tmax, chs, freq):
