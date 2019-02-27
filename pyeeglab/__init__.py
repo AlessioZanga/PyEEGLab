@@ -3,7 +3,7 @@ import logging
 from .dataset import TUHEEGCorpusLoader
 from .database import File, EDFMeta
 from .io import EDFLoader
-from .preprocessing import DataNormalizer
+from .preprocessing import DataNormalizer, GraphGenerator
 
 logging.basicConfig(
     level=logging.DEBUG,
