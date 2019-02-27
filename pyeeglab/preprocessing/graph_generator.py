@@ -15,7 +15,7 @@ class GraphGenerator():
         self._frames = fps
 
     def dataToFrames(self, data):
-        step = round(self._frequency/self._fremes)
+        step = round(self._frequency/self._frames)
         data = [data[t:t+step] for t in range(0, len(data), step)]
         return data
 
