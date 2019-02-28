@@ -2,6 +2,7 @@ import os
 import logging
 import numpy as np
 import pandas as pd
+import networkx as nx
 from scipy.stats import spearmanr
 from multiprocessing import Pool
 
@@ -64,7 +65,13 @@ class GraphGenerator():
         return data
 
     def adjacencyToGraph(self, adj):
-        pass
+        nodes = adj.index.to_list()
+        adj = adj[adj > 0].stack().index.to_list()
+        adj = list(filter(lambda x: x[0] != x[1], adj))
+        G = nx.Graph()
+        G.add_nodes_from(nodes)
+        G.add_edges_from(adj)
+        return G
 
     def dataframeToGraphs(self, data, c, p1, p2):
         index = data.columns
