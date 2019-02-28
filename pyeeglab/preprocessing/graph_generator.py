@@ -25,8 +25,8 @@ class GraphGenerator():
         frame = spearmanr(frame)
         return frame.correlation
 
-    def filterCorrelation(self, corr, upper, lower):
-        if corr > upper or corr < lower:
+    def filterCorrelation(self, corr, upper, lower, approx=0.01):
+        if corr >= upper*(1-approx) or corr <= lower*(1-approx):
             return 1
         return 0
 
