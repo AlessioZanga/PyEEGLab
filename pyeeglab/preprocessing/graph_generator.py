@@ -42,7 +42,7 @@ class GraphGenerator():
         ]
         q = [
             [
-                [np.percentile(q[i][j], p1), np.percentile(q[i][j], p2)]
+                (np.percentile(q[i][j], p1), np.percentile(q[i][j], p2))
                 for j in range(len(q[i]))
             ]
             for i in range(len(q))
