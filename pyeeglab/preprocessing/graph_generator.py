@@ -73,21 +73,28 @@ class GraphGenerator():
         G.add_edges_from(adj)
         return G
 
-    def dataframeToGraphs(self, data, c, p1, p2):
+    def dataframeToGraphs(self, data, c, p1, p2, adj_only=False):
         index = data.columns
         data = self.dataToFrames(data)
         data = [self.frameToCorrelation(frame) for frame in data]
         data = self.correlationsToAdjacencies(data, c, p1, p2)
         data = [pd.DataFrame(d, index=index, columns=index) for d in data]
-        data = [self.adjacencyToGraph(adj) for adj in data]
+        if not adj_only:
+            data = [self.adjacencyToGraph(adj) for adj in data]
         return data
 
-    def dataframesToGraphs(self, data, c, p1, p2):
+    def dataframesToGraphs(self, data, c, p1, p2, adj_only=False):
         self._logger.debug('Load EDF set to generate graphs')
         self._logger.debug('Create process pool')
         pool = Pool(len(os.sched_getaffinity(0)))
         self._logger.debug('Start process pool')
-        data = list(zip(data, [c]*len(data), [p1]*len(data), [p2]*len(data)))
+        data = list(zip(
+            data,
+            [c] * len(data),
+            [p1] * len(data),
+            [p2] * len(data),
+            [adj_only] * len(data)
+        ))
         data = pool.starmap(self.dataframeToGraphs, data)
         pool.close()
         pool.join()
