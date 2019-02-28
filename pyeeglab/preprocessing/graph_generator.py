@@ -1,6 +1,7 @@
 import os
 import logging
 import numpy as np
+import pandas as pd
 from scipy.stats import spearmanr
 from multiprocessing import Pool
 
@@ -66,10 +67,12 @@ class GraphGenerator():
         pass
 
     def dataframeToGraphs(self, data, c, p1, p2):
+        index = data.columns
         data = self.dataToFrames(data)
         data = [self.frameToCorrelation(frame) for frame in data]
         data = self.correlationsToAdjacencies(data, c, p1, p2)
-        data = [self.correlationToGraph(corr) for corr in data]
+        data = [pd.DataFrame(d, index=index, columns=index) for d in data]
+        data = [self.adjacencyToGraph(adj) for adj in data]
         return data
 
     def dataframesToGraphs(self, data, c, p1, p2):
