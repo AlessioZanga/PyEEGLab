@@ -18,6 +18,8 @@ setuptools.setup(
         'numpy',
         'pandas',
         'scipy',
+        'matplotlib',
+        'networkx>=2.2',
         'mne>=0.17',
         'sqlalchemy>=1.2',
     ],
