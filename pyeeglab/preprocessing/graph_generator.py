@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 import networkx as nx
+from itertools import combinations
 from scipy.stats import spearmanr
 from multiprocessing import Pool
 
@@ -64,6 +65,10 @@ class GraphGenerator():
         ]
         return data
 
+    def matrixToList(self, adj, comb):
+        adj = [adj[y][x] > 0 for (x, y) in comb]
+        return adj
+
     def adjacencyToGraph(self, adj):
         nodes = adj.index.to_list()
         adj = adj[adj > 0].stack().index.to_list()
@@ -79,7 +84,14 @@ class GraphGenerator():
         data = [self.frameToCorrelation(frame) for frame in data]
         data = self.correlationsToAdjacencies(data, c, p1, p2)
         data = [pd.DataFrame(d, index=index, columns=index) for d in data]
-        if not adj_only:
+        if adj_only:
+            comb = list(combinations(index, 2))
+            data = [self.matrixToList(adj, comb) for adj in data]
+            data = {
+                'list': [str(x) + '-' + str(y) for (x, y) in comb],
+                'data': data,
+            }
+        else:
             data = [self.adjacencyToGraph(adj) for adj in data]
         return data
 
