@@ -2,7 +2,7 @@ import logging
 from importlib.util import find_spec
 
 
-class DataNormalizer():
+class Normalizer():
     _logger = logging.getLogger()
 
     def __init__(self, tmax, chs, freq):

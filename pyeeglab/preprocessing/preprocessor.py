@@ -1,27 +1,34 @@
-from .normalizer import DataNormalizer
+from .normalizer import Normalizer
 from .graph_generator import GraphGenerator
 
 import os
 import uuid
 import pickle
+import logging
 from multiprocessing import Pool
 
 
 class Preprocessor():
+    _logger = logging.getLogger()
 
-    def __init__(self, tmax, channels, frequency, frames):
-        self._t = tmax
-        self._ch = channels
-        self._f = frequency
-        self._n = frames
+    def __init__(self, tmax, chs, freq, frame):
+        self._logger.debug('Create data preprocessor')
+        self._logger.debug('Set data preprocessor time to %s seconds', tmax)
+        self._tmax = tmax
+        self._logger.debug('Set data preprocessor channels to %s', '|'.join(chs))
+        self._channels = chs
+        self._logger.debug('Set data preprocessor frequency to %s Hz', freq)
+        self._frequency = freq
+        self._logger.debug('Set data preprocessor frames to %s', frame)
+        self._frames = frame
 
     def getSign(self, count, type, c=0, p1=0, p2=0):
         return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}.pkl'.format(
             count,
-            self._t,
-            str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self._ch))),
-            self._f,
-            self._n,
+            self._tmax,
+            str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self._channels))),
+            self._frequency,
+            self._frames,
             c,
             p1,
             p2,
@@ -31,7 +38,7 @@ class Preprocessor():
     def loadData(self, export, sign):
         path = os.path.join(export, sign)
         if os.path.isfile(path):
-            # print('Loading data {}'.format(path))
+            self._logger.debug('Load data from %s', path)
             with open(path, 'rb') as file:
                 data = pickle.load(file)
             return data
@@ -39,18 +46,20 @@ class Preprocessor():
 
     def saveData(self, export, sign, data):
         path = os.path.join(export, sign)
+        self._logger.debug('Save data to %s', path)
         with open(path, 'wb') as file:
             pickle.dump(data, file)
 
     def _getFrames(self, data):
-        normalizer = DataNormalizer(self._t, self._ch, self._f)
+        normalizer = Normalizer(self._tmax, self._channels, self._frequency)
         data = normalizer.normalize(data)
-        data = data.reader().to_data_frame()[:self._t * self._f]
-        grapher = GraphGenerator(self._f, self._n)
+        data = data.reader().to_data_frame()[:self._tmax * self._frequency]
+        grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataToFrames(data)
 
     def getFrames(self, data, labels, export=None):
         sign = self.getSign(len(data), 'frames')
+        self._logger.debug('Get frames %s', sign)
         if export is not None:
             load = self.loadData(export, sign)
             if load is not None:
@@ -68,14 +77,15 @@ class Preprocessor():
         return data
 
     def _getAdjs(self, data, c, p1, p2):
-        normalizer = DataNormalizer(self._t, self._ch, self._f)
+        normalizer = Normalizer(self._tmax, self._channels, self._frequency)
         data = normalizer.normalize(data)
-        data = data.reader().to_data_frame()[:self._t * self._f]
-        grapher = GraphGenerator(self._f, self._n)
+        data = data.reader().to_data_frame()[:self._tmax * self._frequency]
+        grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataframeToGraphs(data, c, p1, p2, True)
 
     def getAdjs(self, data, labels, c, p1, p2, export=None):
         sign = self.getSign(len(data), 'adjs', c, p1, p2)
+        self._logger.debug('Get adjs %s', sign)
         if export is not None:
             load = self.loadData(export, sign)
             if load is not None:
@@ -99,14 +109,15 @@ class Preprocessor():
         return data
 
     def _getGraphs(self, data, c, p1, p2):
-        normalizer = DataNormalizer(self._t, self._ch, self._f)
+        normalizer = Normalizer(self._tmax, self._channels, self._frequency)
         data = normalizer.normalize(data)
-        data = data.reader().to_data_frame()[:self._t * self._f]
-        grapher = GraphGenerator(self._f, self._n)
+        data = data.reader().to_data_frame()[:self._tmax * self._frequency]
+        grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataframeToGraphs(data, c, p1, p2)
 
     def getGraphs(self, data, labels, c, p1, p2, export=None):
         sign = self.getSign(len(data), 'graphs', c, p1, p2)
+        self._logger.debug('Get graphs %s', sign)
         if export is not None:
             load = self.loadData(export, sign)
             if load is not None:
