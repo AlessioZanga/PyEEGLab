@@ -14,29 +14,9 @@ class TUHEEGCorpusLoader(DataLoader):
             path = path + os.path.sep
         self._index = TUHEEGCorpusIndex(path)
 
-    def getTrainSet(self):
-        raise NotImplementedError
-
-    def getTestSet(self):
-        raise NotImplementedError
-
-    def getEDFSet(self):
+    def getDataset(self):
         edfs = self.index().db().query(File).filter(
             File.format == 'edf'
-        ).all()
-        edfs = [
-            EDFLoader(f.id, os.path.join(self.index().path(), f.path), f.label)
-            for f in edfs
-        ]
-        return edfs
-
-    def getEDFSetByFrequency(self, frequency=250):
-        edfs = self.index().db().query(File).filter(
-            File.format == 'edf'
-        ).filter(
-            EDFMeta.id == File.id
-        ).filter(
-            EDFMeta.frequency == frequency
         ).all()
         edfs = [
             EDFLoader(f.id, os.path.join(self.index().path(), f.path), f.label)
