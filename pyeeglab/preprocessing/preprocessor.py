@@ -15,8 +15,8 @@ class Preprocessor():
         self._f = frequency
         self._n = frames
 
-    def getSign(self, count, type, c=0, p1=0, p2=0, adj=False):
-        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}.pkl'.format(
+    def getSign(self, count, type, c=0, p1=0, p2=0):
+        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}.pkl'.format(
             count,
             self._t,
             str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self._ch))),
@@ -25,7 +25,6 @@ class Preprocessor():
             c,
             p1,
             p2,
-            adj,
             type
         )
 
@@ -76,7 +75,7 @@ class Preprocessor():
         return grapher.dataframeToGraphs(data, c, p1, p2, True)
 
     def getAdjs(self, data, labels, c, p1, p2, export=None):
-        sign = self.getSign(len(data), 'adjs')
+        sign = self.getSign(len(data), 'adjs', c, p1, p2)
         if export is not None:
             load = self.loadData(export, sign)
             if load is not None:
@@ -107,7 +106,7 @@ class Preprocessor():
         return grapher.dataframeToGraphs(data, c, p1, p2)
 
     def getGraphs(self, data, labels, c, p1, p2, export=None):
-        sign = self.getSign(len(data), 'graphs')
+        sign = self.getSign(len(data), 'graphs', c, p1, p2)
         if export is not None:
             load = self.loadData(export, sign)
             if load is not None:
