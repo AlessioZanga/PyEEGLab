@@ -1,23 +1,20 @@
-from ...database.index import BaseTable, File, EDFMeta, Index
+from ...database.index import File, EDFMeta, Index
 
 import os
 import uuid
 import json
 import warnings
 import mne
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 
 class TUHEEGCorpusIndex(Index):
     def __init__(self, path):
         self._logger.debug('Create TUH EEG Corpus Index')
-        super().__init__(path)
+        super().__init__('sqlite:///' + os.path.join(path, 'index.db'), path)
         self._logger.debug('Redirect MNE logging interface to file')
         mne.set_log_file(os.path.join(path, 'mne.log'), overwrite=False)
         self._logger.debug('Disable MNE runtime warnings')
         warnings.filterwarnings("ignore", category=RuntimeWarning)
-        self.loadIndex()
         self.indexFiles()
 
     def getFilesFromPath(self, path):
@@ -41,14 +38,6 @@ class TUHEEGCorpusIndex(Index):
             'path': file[len(path):],
         }
         return metadata
-
-    def loadIndex(self):
-        path = 'sqlite:///' + os.path.join(self.path(), 'index.db')
-        self._logger.debug('Load index at %s', path)
-        engine = create_engine(path)
-        BaseTable.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        self._db = Session()
 
     def indexFiles(self):
         self._logger.debug('Index files')

@@ -2,6 +2,8 @@ import logging
 from abc import ABC, abstractmethod
 
 from sqlalchemy import Column, Integer, Text, ForeignKey
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -37,16 +39,16 @@ class EDFMeta(BaseTable):
 
 
 class Index(ABC):
-    _db = None
     _logger = logging.getLogger()
 
-    def __init__(self, path):
+    def __init__(self, db, path):
+        self._logger.debug('Create index at %s', db)
+        self._logger.debug('Load index at %s', db)
+        engine = create_engine(db)
+        BaseTable.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        self._db = Session()
         self._path = path
-        self._logger.debug('Create index at %s', self._path)
-
-    @abstractmethod
-    def loadIndex(self):
-        pass
 
     @abstractmethod
     def indexFiles(self):
