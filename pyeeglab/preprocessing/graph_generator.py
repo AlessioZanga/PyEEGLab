@@ -87,10 +87,6 @@ class GraphGenerator():
         if adj_only:
             comb = list(combinations(index, 2))
             data = [self.matrixToList(adj, comb) for adj in data]
-            data = {
-                'list': [str(x) + '-' + str(y) for (x, y) in comb],
-                'data': data,
-            }
         else:
             data = [self.adjacencyToGraph(adj) for adj in data]
         return data
