@@ -1,11 +1,9 @@
-import os
 import logging
 import numpy as np
 import pandas as pd
 import networkx as nx
 from itertools import combinations
 from scipy.stats import spearmanr
-from multiprocessing import Pool
 
 
 class GraphGenerator():
@@ -89,22 +87,4 @@ class GraphGenerator():
             data = [self.matrixToList(adj, comb) for adj in data]
         else:
             data = [self.adjacencyToGraph(adj) for adj in data]
-        return data
-
-    def dataframesToGraphs(self, data, c, p1, p2, adj_only=False):
-        self._logger.debug('Load dataset to generate graphs')
-        self._logger.debug('Create process pool')
-        pool = Pool(len(os.sched_getaffinity(0)))
-        self._logger.debug('Start process pool')
-        data = list(zip(
-            data,
-            [c] * len(data),
-            [p1] * len(data),
-            [p2] * len(data),
-            [adj_only] * len(data)
-        ))
-        data = pool.starmap(self.dataframeToGraphs, data)
-        pool.close()
-        pool.join()
-        self._logger.debug('End process pool')
         return data

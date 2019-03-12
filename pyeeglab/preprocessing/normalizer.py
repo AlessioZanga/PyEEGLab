@@ -1,7 +1,5 @@
-import os
 import logging
 from importlib.util import find_spec
-from multiprocessing import Pool
 
 
 class DataNormalizer():
@@ -41,15 +39,4 @@ class DataNormalizer():
                 self._logger.debug('Load CUDA Cores for processing %s', data.id())
                 n_jobs = 'cuda'
             data.reader().resample(self.getFrequency(), n_jobs=n_jobs)
-        return data
-
-    def normalizes(self, data):
-        self._logger.debug('Load dataset for normalizing')
-        self._logger.debug('Create process pool')
-        pool = Pool(len(os.sched_getaffinity(0)))
-        self._logger.debug('Start process pool')
-        data = pool.map(self.normalize, data)
-        pool.close()
-        pool.join()
-        self._logger.debug('End process pool')
         return data
