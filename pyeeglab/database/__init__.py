@@ -1,1 +1,1 @@
-from .index import File, EDFMeta
+from .index import File, Metadata

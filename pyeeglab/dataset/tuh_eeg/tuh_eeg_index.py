@@ -1,4 +1,4 @@
-from ...database.index import File, EDFMeta, Index
+from ...database.index import File, Metadata, Index
 
 import os
 import uuid
@@ -51,10 +51,10 @@ class TUHEEGCorpusIndex(Index):
                 if f.format == 'edf':
                     path = os.path.join(self.path(), f.path)
                     with mne.io.read_raw_edf(path) as r:
-                        m = EDFMeta({
+                        m = Metadata({
                             'id': f.id,
                             'file_duration': r.n_times/r.info['sfreq'],
-                            'signal_count': r.info['nchan'],
+                            'channels_count': r.info['nchan'],
                             'frequency': r.info['sfreq'],
                             'channels': json.dumps(r.info['ch_names']),
                         })

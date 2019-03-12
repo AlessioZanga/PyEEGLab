@@ -1,4 +1,4 @@
-from ...database.index import File, EDFMeta
+from ...database.index import File, Metadata
 from ...io.loader import DataLoader
 from ...io.raw import RawEDF
 from .tuh_eeg_index import TUHEEGCorpusIndex
@@ -26,7 +26,7 @@ class TUHEEGCorpusLoader(DataLoader):
         return edfs
 
     def getChannelSet(self):
-        edf_metas = self.index().db().query(EDFMeta).group_by(EDFMeta.channels).all()
+        edf_metas = self.index().db().query(Metadata).group_by(Metadata.channels).all()
         edf_metas = [
             set(json.loads(edf_meta.channels))
             for edf_meta in edf_metas
@@ -38,7 +38,7 @@ class TUHEEGCorpusLoader(DataLoader):
         return channels_set
 
     def getLowestFrequency(self):
-        edf_metas = self.index().db().query(func.min(EDFMeta.frequency)).all()
+        edf_metas = self.index().db().query(func.min(Metadata.frequency)).all()
         if edf_metas is None:
             return 0
         return edf_metas[0][0]

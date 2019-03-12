@@ -25,11 +25,11 @@ class File(BaseTable):
             setattr(self, k, v)
 
 
-class EDFMeta(BaseTable):
-    __tablename__ = 'edf_metadata'
+class Metadata(BaseTable):
+    __tablename__ = 'metadata'
     id = Column(Text, ForeignKey('file.id'), primary_key=True)
     file_duration = Column(Integer, nullable=False)
-    signal_count = Column(Integer, nullable=False)
+    channels_count = Column(Integer, nullable=False)
     frequency = Column(Integer, nullable=False, index=True)
     channels = Column(Text, nullable=False, index=True)
 

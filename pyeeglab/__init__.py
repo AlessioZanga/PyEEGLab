@@ -1,7 +1,7 @@
 import logging
 
 from .dataset import TUHEEGCorpusLoader
-from .database import File, EDFMeta
+from .database import File, Metadata
 from .io import RawEDF
 from .preprocessing import DataNormalizer, GraphGenerator, Preprocessor
 
