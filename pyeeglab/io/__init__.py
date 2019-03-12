@@ -1,1 +1,2 @@
-from .loader import EDFLoader
+from .loader import DataLoader
+from .raw import RawEDF

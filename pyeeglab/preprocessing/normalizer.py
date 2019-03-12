@@ -28,17 +28,17 @@ class DataNormalizer():
     def EDFNormalize(self, edf):
         edf.open()
         edf.setTMax(self.getTMax())
-        self._logger.debug('Load EDF %s data for processing', edf.getId())
+        self._logger.debug('Load EDF %s data for processing', edf.id())
         edf.reader().load_data()
         edf.setChannels(self.getChannels())
         freq = edf.reader().info['sfreq']
         if freq > self.getFrequency():
             self._logger.debug(
-                'Downsample EDF %s from %s to %s', edf.getId(), freq, self.getFrequency()
+                'Downsample EDF %s from %s to %s', edf.id(), freq, self.getFrequency()
             )
             n_jobs = 1
             if find_spec('cupy') is not None:
-                self._logger.debug('Load CUDA Cores for processing %s', edf.getId())
+                self._logger.debug('Load CUDA Cores for processing %s', edf.id())
                 n_jobs = 'cuda'
             edf.reader().resample(self.getFrequency(), n_jobs=n_jobs)
         return edf

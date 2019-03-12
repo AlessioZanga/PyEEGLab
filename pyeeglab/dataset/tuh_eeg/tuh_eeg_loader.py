@@ -1,5 +1,6 @@
 from ...database.index import File, EDFMeta
-from ...io.loader import DataLoader, EDFLoader
+from ...io.loader import DataLoader
+from ...io.raw import RawEDF
 from .tuh_eeg_index import TUHEEGCorpusIndex
 
 import os
@@ -19,7 +20,7 @@ class TUHEEGCorpusLoader(DataLoader):
             File.format == 'edf'
         ).all()
         edfs = [
-            EDFLoader(f.id, os.path.join(self.index().path(), f.path), f.label)
+            RawEDF(f.id, os.path.join(self.index().path(), f.path), f.label)
             for f in edfs
         ]
         return edfs

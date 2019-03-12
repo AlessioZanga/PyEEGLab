@@ -2,7 +2,7 @@ import logging
 
 from .dataset import TUHEEGCorpusLoader
 from .database import File, EDFMeta
-from .io import EDFLoader
+from .io import RawEDF
 from .preprocessing import DataNormalizer, GraphGenerator, Preprocessor
 
 logging.basicConfig(
