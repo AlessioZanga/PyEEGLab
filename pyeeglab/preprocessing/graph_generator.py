@@ -92,7 +92,7 @@ class GraphGenerator():
         return data
 
     def dataframesToGraphs(self, data, c, p1, p2, adj_only=False):
-        self._logger.debug('Load EDF set to generate graphs')
+        self._logger.debug('Load dataset to generate graphs')
         self._logger.debug('Create process pool')
         pool = Pool(len(os.sched_getaffinity(0)))
         self._logger.debug('Start process pool')

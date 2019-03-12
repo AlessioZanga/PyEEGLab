@@ -44,7 +44,7 @@ class Preprocessor():
 
     def _getFrames(self, data):
         normalizer = DataNormalizer(self._t, self._ch, self._f)
-        data = normalizer.EDFNormalize(data)
+        data = normalizer.normalize(data)
         data = data.reader().to_data_frame()[:self._t * self._f]
         grapher = GraphGenerator(self._f, self._n)
         return grapher.dataToFrames(data)
@@ -69,7 +69,7 @@ class Preprocessor():
 
     def _getAdjs(self, data, c, p1, p2):
         normalizer = DataNormalizer(self._t, self._ch, self._f)
-        data = normalizer.EDFNormalize(data)
+        data = normalizer.normalize(data)
         data = data.reader().to_data_frame()[:self._t * self._f]
         grapher = GraphGenerator(self._f, self._n)
         return grapher.dataframeToGraphs(data, c, p1, p2, True)
@@ -100,7 +100,7 @@ class Preprocessor():
 
     def _getGraphs(self, data, c, p1, p2):
         normalizer = DataNormalizer(self._t, self._ch, self._f)
-        data = normalizer.EDFNormalize(data)
+        data = normalizer.normalize(data)
         data = data.reader().to_data_frame()[:self._t * self._f]
         grapher = GraphGenerator(self._f, self._n)
         return grapher.dataframeToGraphs(data, c, p1, p2)

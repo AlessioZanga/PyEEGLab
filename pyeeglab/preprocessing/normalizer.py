@@ -25,31 +25,31 @@ class DataNormalizer():
     def getFrequency(self):
         return self._frequency
 
-    def EDFNormalize(self, edf):
-        edf.open()
-        edf.setTMax(self.getTMax())
-        self._logger.debug('Load EDF %s data for processing', edf.id())
-        edf.reader().load_data()
-        edf.setChannels(self.getChannels())
-        freq = edf.reader().info['sfreq']
+    def normalize(self, data):
+        data.open()
+        data.setTMax(self.getTMax())
+        self._logger.debug('Load %s data for processing', data.id())
+        data.reader().load_data()
+        data.setChannels(self.getChannels())
+        freq = data.reader().info['sfreq']
         if freq > self.getFrequency():
             self._logger.debug(
-                'Downsample EDF %s from %s to %s', edf.id(), freq, self.getFrequency()
+                'Downsample %s from %s to %s', data.id(), freq, self.getFrequency()
             )
             n_jobs = 1
             if find_spec('cupy') is not None:
-                self._logger.debug('Load CUDA Cores for processing %s', edf.id())
+                self._logger.debug('Load CUDA Cores for processing %s', data.id())
                 n_jobs = 'cuda'
-            edf.reader().resample(self.getFrequency(), n_jobs=n_jobs)
-        return edf
+            data.reader().resample(self.getFrequency(), n_jobs=n_jobs)
+        return data
 
-    def EDFSNormalize(self, edfs):
-        self._logger.debug('Load EDF set for normalizing')
+    def normalizes(self, data):
+        self._logger.debug('Load dataset for normalizing')
         self._logger.debug('Create process pool')
         pool = Pool(len(os.sched_getaffinity(0)))
         self._logger.debug('Start process pool')
-        edfs = pool.map(self.EDFNormalize, edfs)
+        data = pool.map(self.normalize, data)
         pool.close()
         pool.join()
         self._logger.debug('End process pool')
-        return edfs
+        return data
