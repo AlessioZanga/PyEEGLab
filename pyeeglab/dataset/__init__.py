@@ -1,1 +1,1 @@
-from .tuh_eeg import TUHEEGCorpusLoader
+from .tuh_eeg import TUHEEGCorpusLoader, TUHEEGCorpusDataset
