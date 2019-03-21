@@ -10,7 +10,7 @@ class TUHEEGCorpusDataset(Dataset):
     def __init__(self, path):
         self._loader = TUHEEGCorpusLoader(path)
 
-    def load(self, tmax, channels, frames, c, p1, p2, export=None):
+    def loadAdjs(self, tmax, channels, frames, c, p1, p2, export=None):
         self._dataset = self._loader.getDataset()
         self._labels = [data.label() for data in self._dataset]
         channels = list(set(self._loader.getChannelSet()) - set(channels))
