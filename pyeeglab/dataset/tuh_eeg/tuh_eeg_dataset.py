@@ -63,3 +63,6 @@ class TUHEEGCorpusDataset(Dataset):
         labels = np.array(labels).astype('float32').reshape((-1, 1))
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
+
+    def load(self, tmax, channels, frames, c, p1, p2, export=None):
+        return self.loadAdjs(tmax, channels, frames, c, p1, p2, export)
