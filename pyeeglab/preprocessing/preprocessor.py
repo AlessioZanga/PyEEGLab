@@ -50,14 +50,14 @@ class Preprocessor():
         with open(path, 'wb') as file:
             pickle.dump(data, file)
 
-    def normalize(self, tmax, channels, frequency, data):
-        normalizer = Normalizer(tmax, channels, frequency)
+    def normalize(self, data):
+        normalizer = Normalizer(self._tmax, self._channels, self._frequency)
         data = normalizer.normalize(data)
-        data = data.reader().to_data_frame()[:tmax * frequency]
+        data = data.reader().to_data_frame()[:self._tmax * self._frequency]
         return data
 
     def _getFrames(self, data):
-        data = self.normalize(self._tmax, self._channels, self._frequency, data)
+        data = self.normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataToFrames(data)
 
@@ -81,7 +81,7 @@ class Preprocessor():
         return data
 
     def _getAdjs(self, data, c, p1, p2):
-        data = self.normalize(self._tmax, self._channels, self._frequency, data)
+        data = self.normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataframeToGraphs(data, c, p1, p2, True)
 
@@ -111,7 +111,7 @@ class Preprocessor():
         return data
 
     def _getGraphs(self, data, c, p1, p2):
-        data = self.normalize(self._tmax, self._channels, self._frequency, data)
+        data = self.normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataframeToGraphs(data, c, p1, p2)
 
