@@ -5,6 +5,7 @@ import os
 import uuid
 import pickle
 import logging
+import numpy as np
 from multiprocessing import Pool
 
 
@@ -67,6 +68,7 @@ class Preprocessor():
         data = pool.map(self._normalize, data)
         pool.close()
         pool.join()
+        data = np.array([d.values for d in data]).astype('float32')
         data = {
             'labels': labels,
             'data': data
