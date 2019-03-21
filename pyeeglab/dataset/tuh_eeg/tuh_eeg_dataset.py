@@ -24,7 +24,7 @@ class TUHEEGCorpusDataset(Dataset):
         )
         labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
         labels = np.array(labels).astype('float32').reshape((-1, 1))
-        dataset = np.array(dataset['data']).astype('float32')
+        dataset = dataset['data']
         return dataset, labels
 
     def loadFrames(self, tmax, channels, frames, export=None):

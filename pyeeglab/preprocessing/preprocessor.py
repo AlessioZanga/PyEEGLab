@@ -50,14 +50,33 @@ class Preprocessor():
         with open(path, 'wb') as file:
             pickle.dump(data, file)
 
-    def normalize(self, data):
+    def _normalize(self, data):
         normalizer = Normalizer(self._tmax, self._channels, self._frequency)
         data = normalizer.normalize(data)
         data = data.reader().to_data_frame()[:self._tmax * self._frequency]
         return data
 
+    def normalize(self, data, labels, export=None):
+        sign = self.getSign(len(data), 'norm')
+        self._logger.debug('Get data %s', sign)
+        if export is not None:
+            load = self.loadData(export, sign)
+            if load is not None:
+                return load
+        pool = Pool(len(os.sched_getaffinity(0)))
+        data = pool.map(self._normalize, data)
+        pool.close()
+        pool.join()
+        data = {
+            'labels': labels,
+            'data': data
+        }
+        if export is not None:
+            self.saveData(export, sign, data)
+        return data
+
     def _getFrames(self, data):
-        data = self.normalize(data)
+        data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataToFrames(data)
 
@@ -81,7 +100,7 @@ class Preprocessor():
         return data
 
     def _getAdjs(self, data, c, p1, p2):
-        data = self.normalize(data)
+        data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataframeToGraphs(data, c, p1, p2, True)
 
@@ -111,7 +130,7 @@ class Preprocessor():
         return data
 
     def _getGraphs(self, data, c, p1, p2):
-        data = self.normalize(data)
+        data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
         return grapher.dataframeToGraphs(data, c, p1, p2)
 
