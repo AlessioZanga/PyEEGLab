@@ -82,7 +82,8 @@ class TUHEEGCorpusDataset(Dataset):
             export
         )
         labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
-        labels = np.array(labels).astype('float32').reshape((-1, 1))
+        labels = np.array(labels).astype('int32')
+        dataset['data'] = [d[0] for d in dataset['data']]
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
