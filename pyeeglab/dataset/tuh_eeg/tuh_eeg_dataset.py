@@ -15,7 +15,7 @@ class TUHEEGCorpusDataset(Dataset):
         self._labels = [data.label() for data in self._dataset]
         channels = list(set(self._loader.getChannelSet()) - set(channels))
         channels = sorted(channels)
-        frequency = self._loader.getLowestFrequency()
+        frequency = round(self._loader.getLowestFrequency()/frames)
         self._preprocessor = Preprocessor(tmax, channels, frequency, frames)
         dataset = self._preprocessor.normalize(
             self._dataset,
