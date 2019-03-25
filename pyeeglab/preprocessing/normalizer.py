@@ -1,4 +1,5 @@
 import logging
+from importlib.util import find_spec
 
 
 class Normalizer():
@@ -33,5 +34,9 @@ class Normalizer():
             self._logger.debug(
                 'Downsample %s from %s to %s', data.id(), freq, self.getFrequency()
             )
-            data.reader().resample(self.getFrequency())
+            n_jobs = 1
+            if find_spec('cupy') is not None:
+                self._logger.debug('Load CUDA Cores for processing %s', data.id())
+                n_jobs = 'cuda'
+            data.reader().resample(self.getFrequency(), n_jobs=n_jobs)
         return data
