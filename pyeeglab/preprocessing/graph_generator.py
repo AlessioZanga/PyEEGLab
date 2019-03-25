@@ -29,8 +29,8 @@ class GraphGenerator():
 
     def filterCorrelation(self, corr, upper, lower, approx=0.01):
         if corr >= upper*(1-approx) or corr <= lower*(1-approx):
-            return 1
-        return 0
+            return True
+        return False
 
     def correlationsToAdjacencies(self, data, c, p1, p2):
         samples = list(range(len(data)))
@@ -67,7 +67,7 @@ class GraphGenerator():
         return data
 
     def matrixToList(self, adj, comb):
-        adj = [adj[y][x] > 0 for (x, y) in comb]
+        adj = [adj[y][x] for (x, y) in comb]
         return adj
 
     def adjacencyToGraph(self, adj):
