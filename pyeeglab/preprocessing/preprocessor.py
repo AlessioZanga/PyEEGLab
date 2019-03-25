@@ -131,6 +131,30 @@ class Preprocessor():
             self.saveData(export, sign, data)
         return data
 
+    def _getWeightedAdjs(self, data):
+        data = self._normalize(data)
+        grapher = GraphGenerator(self._frequency, self._frames)
+        return grapher.dataframeToGraphs(data, 0, 0, 0, True, True)
+
+    def getWeightedAdjs(self, data, labels, export=None):
+        sign = self.getSign(len(data), 'weightedadjs')
+        self._logger.debug('Get adjs %s', sign)
+        if export is not None:
+            load = self.loadData(export, sign)
+            if load is not None:
+                return load
+        pool = Pool(len(os.sched_getaffinity(0)))
+        data = pool.map(self._getWeightedAdjs, data)
+        pool.close()
+        pool.join()
+        data = {
+            'labels': labels,
+            'data': data
+        }
+        if export is not None:
+            self.saveData(export, sign, data)
+        return data
+
     def _getGraphs(self, data, c, p1, p2):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)

@@ -33,11 +33,12 @@ class GraphGenerator():
         return 0
 
     def correlationsToAdjacencies(self, data, c, p1, p2):
+        samples = list(range(len(data)))
         rows = list(range(data[0].shape[0]))
         columns = list(range(data[0].shape[1]))
         q = [
             [
-                [data[k][i][j] for k in range(len(data))]
+                [data[k][i][j] for k in samples]
                 for j in columns
             ]
             for i in rows
@@ -61,7 +62,7 @@ class GraphGenerator():
                 ]
                 for i in rows
             ]
-            for k in range(len(data))
+            for k in samples
         ]
         return data
 
@@ -78,11 +79,12 @@ class GraphGenerator():
         G.add_edges_from(adj)
         return G
 
-    def dataframeToGraphs(self, data, c, p1, p2, adj_only=False):
+    def dataframeToGraphs(self, data, c, p1, p2, adj_only=False, weighted=False):
         index = data.columns
         data = self.dataToFrames(data)
         data = [self.frameToCorrelation(frame) for frame in data]
-        data = self.correlationsToAdjacencies(data, c, p1, p2)
+        if not weighted:
+            data = self.correlationsToAdjacencies(data, c, p1, p2)
         data = [pd.DataFrame(d, index=index, columns=index) for d in data]
         if adj_only:
             comb = list(combinations(index, 2))
