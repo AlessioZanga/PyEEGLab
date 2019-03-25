@@ -18,6 +18,8 @@ class GraphGenerator():
 
     def dataToFrames(self, data):
         step = round(self._frequency/self._frames)
+        if self._frames < 1:
+            step = len(data)
         data = [data[t:t+step] for t in range(0, len(data), step)]
         return data
 
