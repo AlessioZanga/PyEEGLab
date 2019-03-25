@@ -81,5 +81,22 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
+    def loadWeightedAdjsNoFrames(self, tmax, channels, export=None):
+        self._dataset = self._loader.getDataset()
+        self._labels = [data.label() for data in self._dataset]
+        channels = list(set(self._loader.getChannelSet()) - set(channels))
+        channels = sorted(channels)
+        frequency = self._loader.getLowestFrequency()
+        self._preprocessor = Preprocessor(tmax, channels, frequency, 0)
+        dataset = self._preprocessor.getWeightedAdjs(
+            self._dataset,
+            self._labels,
+            export
+        )
+        labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
+        labels = np.array(labels).astype('float32').reshape((-1, 1))
+        dataset = np.array(dataset['data']).astype('float32')
+        return dataset, labels
+
     def load(self, tmax, channels, frames, c, p1, p2, export=None):
         return self.loadAdjs(tmax, channels, frames, c, p1, p2, export)
