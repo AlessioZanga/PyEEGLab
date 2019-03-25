@@ -10,13 +10,17 @@ class TUHEEGCorpusDataset(Dataset):
     def __init__(self, path):
         self._loader = TUHEEGCorpusLoader(path)
 
-    def loadData(self, tmax, channels, frames, export=None):
+    def _initialize(self, channels):
         self._dataset = self._loader.getDataset()
         self._labels = [data.label() for data in self._dataset]
-        channels = list(set(self._loader.getChannelSet()) - set(channels))
-        channels = sorted(channels)
-        frequency = round(self._loader.getLowestFrequency()/frames)
-        self._preprocessor = Preprocessor(tmax, channels, frequency, frames)
+        self._chs = list(set(self._loader.getChannelSet()) - set(channels))
+        self._chs = sorted(self._chs)
+        self._freq = self._loader.getLowestFrequency()
+
+    def loadData(self, tmax, channels, frames, export=None):
+        self._initialize(channels)
+        self._freq = round(self._loader.getLowestFrequency()/frames)
+        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.normalize(
             self._dataset,
             self._labels,
@@ -28,12 +32,8 @@ class TUHEEGCorpusDataset(Dataset):
         return dataset, labels
 
     def loadFrames(self, tmax, channels, frames, export=None):
-        self._dataset = self._loader.getDataset()
-        self._labels = [data.label() for data in self._dataset]
-        channels = list(set(self._loader.getChannelSet()) - set(channels))
-        channels = sorted(channels)
-        frequency = self._loader.getLowestFrequency()
-        self._preprocessor = Preprocessor(tmax, channels, frequency, frames)
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.getFrames(
             self._dataset,
             self._labels,
@@ -45,12 +45,8 @@ class TUHEEGCorpusDataset(Dataset):
         return dataset, labels
 
     def loadAdjs(self, tmax, channels, frames, c, p1, p2, export=None):
-        self._dataset = self._loader.getDataset()
-        self._labels = [data.label() for data in self._dataset]
-        channels = list(set(self._loader.getChannelSet()) - set(channels))
-        channels = sorted(channels)
-        frequency = self._loader.getLowestFrequency()
-        self._preprocessor = Preprocessor(tmax, channels, frequency, frames)
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.getAdjs(
             self._dataset,
             self._labels,
@@ -65,12 +61,8 @@ class TUHEEGCorpusDataset(Dataset):
         return dataset, labels
 
     def loadWeightedAdjs(self, tmax, channels, frames, export=None):
-        self._dataset = self._loader.getDataset()
-        self._labels = [data.label() for data in self._dataset]
-        channels = list(set(self._loader.getChannelSet()) - set(channels))
-        channels = sorted(channels)
-        frequency = self._loader.getLowestFrequency()
-        self._preprocessor = Preprocessor(tmax, channels, frequency, frames)
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.getWeightedAdjs(
             self._dataset,
             self._labels,
@@ -82,12 +74,8 @@ class TUHEEGCorpusDataset(Dataset):
         return dataset, labels
 
     def loadWeightedAdjsNoFrames(self, tmax, channels, export=None):
-        self._dataset = self._loader.getDataset()
-        self._labels = [data.label() for data in self._dataset]
-        channels = list(set(self._loader.getChannelSet()) - set(channels))
-        channels = sorted(channels)
-        frequency = self._loader.getLowestFrequency()
-        self._preprocessor = Preprocessor(tmax, channels, frequency, 0)
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, 0)
         dataset = self._preprocessor.getWeightedAdjs(
             self._dataset,
             self._labels,
