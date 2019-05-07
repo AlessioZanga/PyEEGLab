@@ -12,8 +12,10 @@ from multiprocessing import Pool
 class Preprocessor():
     _logger = logging.getLogger()
 
-    def __init__(self, tmax, chs, freq, frame):
+    def __init__(self, shift, tmax, chs, freq, frame):
         self._logger.debug('Create data preprocessor')
+        self._logger.debug('Set data preprocessor shift time to %s seconds', shift)
+        self._shift = shift
         self._logger.debug('Set data preprocessor time to %s seconds', tmax)
         self._tmax = tmax
         self._logger.debug('Set data preprocessor channels to %s', '|'.join(chs))
@@ -24,8 +26,9 @@ class Preprocessor():
         self._frames = frame
 
     def getSign(self, count, type, c=0, p1=0, p2=0):
-        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}.pkl'.format(
+        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}.pkl'.format(
             count,
+            self._shift,
             self._tmax,
             str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self._channels))),
             self._frequency,
@@ -52,7 +55,7 @@ class Preprocessor():
             pickle.dump(data, file)
 
     def _normalize(self, data):
-        normalizer = Normalizer(self._tmax, self._channels, self._frequency)
+        normalizer = Normalizer(self._shift, self._tmax, self._channels, self._frequency)
         data = normalizer.normalize(data)
         data = data.reader().to_data_frame()[:self._tmax * self._frequency]
         return data

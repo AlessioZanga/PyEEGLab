@@ -35,7 +35,7 @@ class Raw(ABC):
         pass
 
     @abstractmethod
-    def setTMax(self, tmax):
+    def setTMax(self, tmax, shift):
         pass
 
     @abstractmethod
@@ -47,7 +47,7 @@ class RawEDF(Raw):
 
     def __init__(self, id, path, label):
         super().__init__(id, path, label)
-        self._logger.debug('Create RawEDF %s', self._id)
+        # self._logger.debug('Create RawEDF %s', self._id)
 
     def open(self):
         if self._reader is None:
@@ -64,9 +64,9 @@ class RawEDF(Raw):
     def reader(self):
         return self.open()
 
-    def setTMax(self, tmax):
+    def setTMax(self, tmax, shift):
         self._logger.debug('Crop RawEDF %s data to %s seconds', self.id(), tmax)
-        self.reader().crop(0, tmax)
+        self.reader().crop(shift, shift+tmax)
 
     def setChannels(self, channels):
         channels = set(self.reader().ch_names) - set(channels)

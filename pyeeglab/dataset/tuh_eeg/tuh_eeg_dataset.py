@@ -17,10 +17,10 @@ class TUHEEGCorpusDataset(Dataset):
         self._chs = sorted(self._chs)
         self._freq = self._loader.getLowestFrequency()
 
-    def loadData(self, tmax, channels, frames, export=None):
+    def loadData(self, shift, tmax, channels, frames, export=None):
         self._initialize(channels)
         self._freq = round(self._loader.getLowestFrequency()/frames)
-        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.normalize(
             self._dataset,
             self._labels,
@@ -31,9 +31,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = dataset['data']
         return dataset, labels
 
-    def loadFrames(self, tmax, channels, frames, export=None):
+    def loadFrames(self, shift, tmax, channels, frames, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.getFrames(
             self._dataset,
             self._labels,
@@ -44,9 +44,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadAdjs(self, tmax, channels, frames, c, p1, p2, export=None):
+    def loadAdjs(self, shift, tmax, channels, frames, c, p1, p2, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.getAdjs(
             self._dataset,
             self._labels,
@@ -60,9 +60,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadAdjsNoFrames(self, tmax, channels, c, p1, p2, export=None):
+    def loadAdjsNoFrames(self, shift, tmax, channels, c, p1, p2, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, 0)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, 0)
         dataset = self._preprocessor.getAdjs(
             self._dataset,
             self._labels,
@@ -77,9 +77,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadWeightedAdjs(self, tmax, channels, frames, export=None):
+    def loadWeightedAdjs(self, shift, tmax, channels, frames, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, frames)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.getWeightedAdjs(
             self._dataset,
             self._labels,
@@ -90,9 +90,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadWeightedAdjsNoFrames(self, tmax, channels, export=None):
+    def loadWeightedAdjsNoFrames(self, shift, tmax, channels, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(tmax, self._chs, self._freq, 0)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, 0)
         dataset = self._preprocessor.getWeightedAdjs(
             self._dataset,
             self._labels,
@@ -104,5 +104,21 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def load(self, tmax, channels, frames, c, p1, p2, export=None):
-        return self.loadAdjs(tmax, channels, frames, c, p1, p2, export)
+    def loadGraphsNoFrames(self, shift, tmax, channels, c, p1, p2, export=None):
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, 0)
+        dataset = self._preprocessor.getGraphs(
+            self._dataset,
+            self._labels,
+            c,
+            p1,
+            p2,
+            export
+        )
+        labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
+        labels = np.array(labels).astype('int32')
+        dataset = [d[0] for d in dataset['data']]
+        return dataset, labels
+
+    def load(self, shift, tmax, channels, frames, c, p1, p2, export=None):
+        return self.loadAdjs(shift, tmax, channels, frames, c, p1, p2, export)

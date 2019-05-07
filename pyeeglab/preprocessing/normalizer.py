@@ -5,14 +5,19 @@ from importlib.util import find_spec
 class Normalizer():
     _logger = logging.getLogger()
 
-    def __init__(self, tmax, chs, freq):
+    def __init__(self, shift, tmax, chs, freq):
         self._logger.debug('Create data normalizer')
+        self._logger.debug('Set data normalizer shift time to %s seconds', shift)
+        self._shift = shift
         self._logger.debug('Set data normalizer time to %s seconds', tmax)
         self._tmax = tmax
         self._logger.debug('Set data normalizer channels to %s', '|'.join(chs))
         self._channels = chs
         self._logger.debug('Set data normalizer frequency to %s Hz', freq)
         self._frequency = freq
+
+    def getShift(self):
+        return self._shift
 
     def getTMax(self):
         return self._tmax
@@ -25,7 +30,7 @@ class Normalizer():
 
     def normalize(self, data):
         data.open()
-        data.setTMax(self.getTMax())
+        data.setTMax(self.getTMax(), self.getShift())
         self._logger.debug('Load %s data for processing', data.id())
         data.reader().load_data()
         data.setChannels(self.getChannels())
