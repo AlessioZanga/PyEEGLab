@@ -18,6 +18,7 @@ setuptools.setup(
         'numpy',
         'pandas',
         'scipy',
+        'nltk',
         'matplotlib',
         'networkx>=2.2',
         'mne>=0.17',
