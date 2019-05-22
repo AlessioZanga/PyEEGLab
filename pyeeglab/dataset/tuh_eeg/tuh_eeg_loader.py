@@ -25,6 +25,16 @@ class TUHEEGCorpusLoader(DataLoader):
         ]
         return edfs
 
+    def getDatasetText(self):
+        txts = self.index().db().query(File).filter(
+            File.format == 'txt'
+        ).all()
+        txts = {
+            f.id: (os.path.join(self.index().path(), f.path), f.label)
+            for f in txts
+        }
+        return txts
+
     def getChannelSet(self):
         edf_metas = self.index().db().query(Metadata).group_by(Metadata.channels).all()
         edf_metas = [

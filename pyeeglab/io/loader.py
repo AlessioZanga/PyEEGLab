@@ -17,6 +17,10 @@ class DataLoader(ABC):
         pass
 
     @abstractmethod
+    def getDatasetText(self):
+        pass
+
+    @abstractmethod
     def getChannelSet(self):
         pass
 
