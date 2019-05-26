@@ -19,7 +19,6 @@ class TUHEEGCorpusDataset(Dataset):
 
     def loadData(self, shift, tmax, channels, frames, export=None):
         self._initialize(channels)
-        self._freq = round(self._loader.getLowestFrequency()/frames)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, frames)
         dataset = self._preprocessor.normalize(
             self._dataset,
