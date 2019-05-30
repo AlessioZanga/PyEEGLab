@@ -12,7 +12,7 @@ from multiprocessing import Pool
 class Preprocessor():
     _logger = logging.getLogger()
 
-    def __init__(self, shift, tmax, chs, freq, frame):
+    def __init__(self, shift, tmax, chs, freq, l_freq, h_freq, frame):
         self._logger.debug('Create data preprocessor')
         self._logger.debug('Set data preprocessor shift time to %s seconds', shift)
         self._shift = shift
@@ -22,6 +22,9 @@ class Preprocessor():
         self._channels = chs
         self._logger.debug('Set data preprocessor frequency to %s Hz', freq)
         self._frequency = freq
+        self._logger.debug('Set data normalizer band to %s/%s Hz ', l_freq, h_freq)
+        self._low_frequency = l_freq
+        self._high_frequency = h_freq
         self._logger.debug('Set data preprocessor frames to %s', frame)
         self._frames = frame
 
@@ -32,6 +35,8 @@ class Preprocessor():
             self._tmax,
             str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self._channels))),
             self._frequency,
+            self._low_frequency,
+            self._high_frequency,
             self._frames,
             c,
             p1,
@@ -55,7 +60,7 @@ class Preprocessor():
             pickle.dump(data, file)
 
     def _normalize(self, data):
-        normalizer = Normalizer(self._shift, self._tmax, self._channels, self._frequency)
+        normalizer = Normalizer(self._shift, self._tmax, self._channels, self._frequency, self._low_frequency, self._high_frequency)
         data = normalizer.normalize(data)
         data = data.reader().to_data_frame()[:self._tmax * self._frequency]
         return data

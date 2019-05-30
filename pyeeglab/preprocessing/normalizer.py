@@ -5,7 +5,7 @@ from importlib.util import find_spec
 class Normalizer():
     _logger = logging.getLogger()
 
-    def __init__(self, shift, tmax, chs, freq):
+    def __init__(self, shift, tmax, chs, freq, l_freq, h_freq):
         self._logger.debug('Create data normalizer')
         self._logger.debug('Set data normalizer shift time to %s seconds', shift)
         self._shift = shift
@@ -15,6 +15,9 @@ class Normalizer():
         self._channels = chs
         self._logger.debug('Set data normalizer frequency to %s Hz', freq)
         self._frequency = freq
+        self._logger.debug('Set data normalizer band to %s/%s Hz ', l_freq, h_freq)
+        self._low_frequency = l_freq
+        self._high_frequency = h_freq
 
     def getShift(self):
         return self._shift
@@ -43,5 +46,6 @@ class Normalizer():
             if find_spec('cupy') is not None:
                 self._logger.debug('Load CUDA Cores for processing %s', data.id())
                 n_jobs = 'cuda'
+            data.reader().filter(self._low_frequency, self._high_frequency, n_jobs=n_jobs)
             data.reader().resample(self.getFrequency(), n_jobs=n_jobs)
         return data
