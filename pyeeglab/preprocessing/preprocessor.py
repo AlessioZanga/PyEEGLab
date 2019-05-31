@@ -29,7 +29,7 @@ class Preprocessor():
         self._frames = frame
 
     def getSign(self, count, type, c=0, p1=0, p2=0):
-        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}.pkl'.format(
+        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}.pkl'.format(
             count,
             self._shift,
             self._tmax,
