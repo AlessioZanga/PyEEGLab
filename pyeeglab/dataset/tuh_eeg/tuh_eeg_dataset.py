@@ -17,7 +17,7 @@ class TUHEEGCorpusDataset(Dataset):
         self._chs = sorted(self._chs)
         self._freq = self._loader.getLowestFrequency()
 
-    def loadData(self, shift, tmax, channels, frames, export=None):
+    def loadData(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
         dataset = self._preprocessor.normalize(
@@ -30,7 +30,7 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = dataset['data']
         return dataset, labels
 
-    def loadFrames(self, shift, tmax, channels, frames, export=None):
+    def loadFrames(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
         dataset = self._preprocessor.getFrames(
@@ -43,7 +43,7 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadAdjs(self, shift, tmax, channels, frames, c, p1, p2, export=None):
+    def loadAdjs(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
         dataset = self._preprocessor.getAdjs(
@@ -59,9 +59,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadAdjsNoFrames(self, shift, tmax, channels, c, p1, p2, export=None):
+    def loadAdjsNoFrames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, 0)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
         dataset = self._preprocessor.getAdjs(
             self._dataset,
             self._labels,
@@ -76,7 +76,7 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadWeightedAdjs(self, shift, tmax, channels, frames, export=None):
+    def loadWeightedAdjs(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
         dataset = self._preprocessor.getWeightedAdjs(
@@ -89,9 +89,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadWeightedAdjsNoFrames(self, shift, tmax, channels, export=None):
+    def loadWeightedAdjsNoFrames(self, shift, tmax, channels, l_freq, h_freq, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, 0)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
         dataset = self._preprocessor.getWeightedAdjs(
             self._dataset,
             self._labels,
@@ -103,9 +103,9 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadGraphsNoFrames(self, shift, tmax, channels, c, p1, p2, export=None):
+    def loadGraphsNoFrames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
         self._initialize(channels)
-        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, 0)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
         dataset = self._preprocessor.getGraphs(
             self._dataset,
             self._labels,
@@ -119,5 +119,5 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = [d[0] for d in dataset['data']]
         return dataset, labels
 
-    def load(self, shift, tmax, channels, frames, c, p1, p2, export=None):
-        return self.loadAdjs(shift, tmax, channels, frames, c, p1, p2, export)
+    def load(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export=None):
+        return self.loadAdjs(shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export)
