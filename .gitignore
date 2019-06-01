@@ -5,4 +5,5 @@ dist
 export
 pyeeglab/**/__pycache__
 **.egg-info
+.idea
 demo.py
