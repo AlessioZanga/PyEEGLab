@@ -13,17 +13,17 @@ class DataLoader(ABC):
         return self._index
 
     @abstractmethod
-    def getDataset(self):
+    def get_dataset(self):
         pass
 
     @abstractmethod
-    def getDatasetText(self):
+    def get_dataset_text(self):
         pass
 
     @abstractmethod
-    def getChannelSet(self):
+    def get_channelset(self):
         pass
 
     @abstractmethod
-    def getLowestFrequency(self):
+    def get_lowest_frequency(self):
         pass

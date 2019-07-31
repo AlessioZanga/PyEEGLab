@@ -1,9 +1,9 @@
 import logging
+from itertools import combinations
+from scipy.stats import spearmanr
 import numpy as np
 import pandas as pd
 import networkx as nx
-from itertools import combinations
-from scipy.stats import spearmanr
 
 
 class GraphGenerator():
@@ -16,23 +16,23 @@ class GraphGenerator():
         self._logger.debug('Set graph generator frame per seconds to %s', fps)
         self._frames = fps
 
-    def dataToFrames(self, data):
+    def data_to_frames(self, data):
         step = len(data)
         if self._frames >= 1:
             step = round(step/self._frames)
         data = [data[t:t+step] for t in range(0, len(data), step)]
         return data
 
-    def frameToCorrelation(self, frame):
+    def frame_to_correlation(self, frame):
         frame = spearmanr(frame)
         return frame.correlation
 
-    def filterCorrelation(self, corr, upper, lower, approx=0.01):
+    def filter_correlation(self, corr, upper, lower, approx=0.01):
         if corr >= upper*(1-approx) or corr <= lower*(1-approx):
             return True
         return False
 
-    def correlationsToAdjacencies(self, data, c, p1, p2):
+    def correlations_to_adjacencies(self, data, c, p1, p2):
         samples = list(range(len(data)))
         rows = list(range(data[0].shape[0]))
         columns = list(range(data[0].shape[1]))
@@ -53,7 +53,7 @@ class GraphGenerator():
         data = [
             [
                 [
-                    self.filterCorrelation(
+                    self.filter_correlation(
                         data[k][i][j],
                         max(c, q[i][j][1]),
                         min(-c, q[i][j][0])
@@ -66,29 +66,29 @@ class GraphGenerator():
         ]
         return data
 
-    def matrixToList(self, adj, comb):
+    def matrix_to_list(self, adj, comb):
         adj = [adj[y][x] for (x, y) in comb]
         return adj
 
-    def adjacencyToGraph(self, adj):
+    def adjacency_to_graph(self, adj):
         nodes = adj.index.to_list()
         adj = adj[adj > 0].stack().index.to_list()
         adj = list(filter(lambda x: x[0] != x[1], adj))
-        G = nx.Graph()
-        G.add_nodes_from(nodes)
-        G.add_edges_from(adj)
-        return G
+        g = nx.Graph()
+        g.add_nodes_from(nodes)
+        g.add_edges_from(adj)
+        return g
 
-    def dataframeToGraphs(self, data, c, p1, p2, adj_only=False, weighted=False):
+    def dataframe_to_graphs(self, data, c, p1, p2, adj_only=False, weighted=False):
         index = data.columns
-        data = self.dataToFrames(data)
-        data = [self.frameToCorrelation(frame) for frame in data]
+        data = self.data_to_frames(data)
+        data = [self.frame_to_correlation(frame) for frame in data]
         if not weighted:
-            data = self.correlationsToAdjacencies(data, c, p1, p2)
+            data = self.correlations_to_adjacencies(data, c, p1, p2)
         data = [pd.DataFrame(d, index=index, columns=index) for d in data]
         if adj_only:
             comb = list(combinations(index, 2))
-            data = [self.matrixToList(adj, comb) for adj in data]
+            data = [self.matrix_to_list(adj, comb) for adj in data]
         else:
-            data = [self.adjacencyToGraph(adj) for adj in data]
+            data = [self.adjacency_to_graph(adj) for adj in data]
         return data

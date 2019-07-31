@@ -13,10 +13,10 @@ class TextMiner():
                 text = text.replace('\n', ' ').strip()
                 self._dataset[key] = (text, value[1])
 
-    def getDataset(self):
+    def get_dataset(self):
         return self._dataset
 
-    def getDatasetAbnormal(self):
+    def get_dataset_abnormal(self):
         data = {
             key: value
             for key, value in self._dataset.items()
@@ -24,11 +24,11 @@ class TextMiner():
         }
         return data
 
-    def getNormalizedDataset(self):
+    def get_normalized_dataset(self):
         data = self.normalize()
         return data
 
-    def getNormalizedAbnormalDataset(self):
+    def get_normalized_abnormal_dataset(self):
         data = self.normalize()
         data = {
             key: value

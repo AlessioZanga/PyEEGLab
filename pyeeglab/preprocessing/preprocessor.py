@@ -1,12 +1,12 @@
-from .normalizer import Normalizer
-from .graph_generator import GraphGenerator
-
 import os
 import uuid
 import pickle
 import logging
-import numpy as np
 from multiprocessing import Pool
+import numpy as np
+
+from .normalizer import Normalizer
+from .graph_generator import GraphGenerator
 
 
 class Preprocessor():
@@ -28,7 +28,7 @@ class Preprocessor():
         self._logger.debug('Set data preprocessor frames to %s', frame)
         self._frames = frame
 
-    def getSign(self, count, type, c=0, p1=0, p2=0):
+    def get_sign(self, count, type, c=0, p1=0, p2=0):
         return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}.pkl'.format(
             count,
             self._shift,
@@ -44,7 +44,7 @@ class Preprocessor():
             type
         )
 
-    def loadData(self, export, sign):
+    def load_data(self, export, sign):
         path = os.path.join(export, sign)
         if os.path.isfile(path):
             self._logger.debug('Load data from %s', path)
@@ -53,7 +53,7 @@ class Preprocessor():
             return data
         return None
 
-    def saveData(self, export, sign, data):
+    def save_data(self, export, sign, data):
         path = os.path.join(export, sign)
         self._logger.debug('Save data to %s', path)
         with open(path, 'wb') as file:
@@ -66,10 +66,10 @@ class Preprocessor():
         return data
 
     def normalize(self, data, labels, export=None):
-        sign = self.getSign(len(data), 'norm')
+        sign = self.get_sign(len(data), 'norm')
         self._logger.debug('Get data %s', sign)
         if export is not None:
-            load = self.loadData(export, sign)
+            load = self.load_data(export, sign)
             if load is not None:
                 return load
         pool = Pool(len(os.sched_getaffinity(0)))
@@ -82,23 +82,23 @@ class Preprocessor():
             'data': data
         }
         if export is not None:
-            self.saveData(export, sign, data)
+            self.save_data(export, sign, data)
         return data
 
-    def _getFrames(self, data):
+    def _get_frames(self, data):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
-        return grapher.dataToFrames(data)
+        return grapher.data_to_frames(data)
 
-    def getFrames(self, data, labels, export=None):
-        sign = self.getSign(len(data), 'frames')
+    def get_frames(self, data, labels, export=None):
+        sign = self.get_sign(len(data), 'frames')
         self._logger.debug('Get frames %s', sign)
         if export is not None:
-            load = self.loadData(export, sign)
+            load = self.load_data(export, sign)
             if load is not None:
                 return load
         pool = Pool(len(os.sched_getaffinity(0)))
-        data = pool.map(self._getFrames, data)
+        data = pool.map(self._get_frames, data)
         pool.close()
         pool.join()
         data = {
@@ -106,19 +106,19 @@ class Preprocessor():
             'data': data
         }
         if export is not None:
-            self.saveData(export, sign, data)
+            self.save_data(export, sign, data)
         return data
 
-    def _getAdjs(self, data, c, p1, p2):
+    def _get_adjs(self, data, c, p1, p2):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
-        return grapher.dataframeToGraphs(data, c, p1, p2, True)
+        return grapher.dataframe_to_graphs(data, c, p1, p2, True)
 
-    def getAdjs(self, data, labels, c, p1, p2, export=None):
-        sign = self.getSign(len(data), 'adjs', c, p1, p2)
+    def get_adjs(self, data, labels, c, p1, p2, export=None):
+        sign = self.get_sign(len(data), 'adjs', c, p1, p2)
         self._logger.debug('Get adjs %s', sign)
         if export is not None:
-            load = self.loadData(export, sign)
+            load = self.load_data(export, sign)
             if load is not None:
                 return load
         params = zip(
@@ -128,7 +128,7 @@ class Preprocessor():
             [p2] * len(data)
         )
         pool = Pool(len(os.sched_getaffinity(0)))
-        data = pool.starmap(self._getAdjs, params)
+        data = pool.starmap(self._get_adjs, params)
         pool.close()
         pool.join()
         data = {
@@ -136,23 +136,23 @@ class Preprocessor():
             'data': data
         }
         if export is not None:
-            self.saveData(export, sign, data)
+            self.save_data(export, sign, data)
         return data
 
-    def _getWeightedAdjs(self, data):
+    def _get_weighted_adjs(self, data):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
-        return grapher.dataframeToGraphs(data, 0, 0, 0, True, True)
+        return grapher.dataframe_to_graphs(data, 0, 0, 0, True, True)
 
-    def getWeightedAdjs(self, data, labels, export=None):
-        sign = self.getSign(len(data), 'weightedadjs')
+    def get_weighted_adjs(self, data, labels, export=None):
+        sign = self.get_sign(len(data), 'weightedadjs')
         self._logger.debug('Get adjs %s', sign)
         if export is not None:
-            load = self.loadData(export, sign)
+            load = self.load_data(export, sign)
             if load is not None:
                 return load
         pool = Pool(len(os.sched_getaffinity(0)))
-        data = pool.map(self._getWeightedAdjs, data)
+        data = pool.map(self._get_weighted_adjs, data)
         pool.close()
         pool.join()
         data = {
@@ -160,19 +160,19 @@ class Preprocessor():
             'data': data
         }
         if export is not None:
-            self.saveData(export, sign, data)
+            self.save_data(export, sign, data)
         return data
 
-    def _getGraphs(self, data, c, p1, p2):
+    def _get_graphs(self, data, c, p1, p2):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
-        return grapher.dataframeToGraphs(data, c, p1, p2)
+        return grapher.dataframe_to_graphs(data, c, p1, p2)
 
-    def getGraphs(self, data, labels, c, p1, p2, export=None):
-        sign = self.getSign(len(data), 'graphs', c, p1, p2)
+    def get_graphs(self, data, labels, c, p1, p2, export=None):
+        sign = self.get_sign(len(data), 'graphs', c, p1, p2)
         self._logger.debug('Get graphs %s', sign)
         if export is not None:
-            load = self.loadData(export, sign)
+            load = self.load_data(export, sign)
             if load is not None:
                 return load
         params = zip(
@@ -182,7 +182,7 @@ class Preprocessor():
             [p2] * len(data)
         )
         pool = Pool(len(os.sched_getaffinity(0)))
-        data = pool.starmap(self._getGraphs, params)
+        data = pool.starmap(self._get_graphs, params)
         pool.close()
         pool.join()
         data = {
@@ -190,5 +190,5 @@ class Preprocessor():
             'data': data
         }
         if export is not None:
-            self.saveData(export, sign, data)
+            self.save_data(export, sign, data)
         return data

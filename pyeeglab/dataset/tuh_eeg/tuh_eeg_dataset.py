@@ -11,13 +11,13 @@ class TUHEEGCorpusDataset(Dataset):
         self._loader = TUHEEGCorpusLoader(path)
 
     def _initialize(self, channels):
-        self._dataset = self._loader.getDataset()
+        self._dataset = self._loader.get_dataset()
         self._labels = [data.label() for data in self._dataset]
-        self._chs = list(set(self._loader.getChannelSet()) - set(channels))
+        self._chs = list(set(self._loader.get_channelset()) - set(channels))
         self._chs = sorted(self._chs)
-        self._freq = self._loader.getLowestFrequency()
+        self._freq = self._loader.get_lowest_frequency()
 
-    def loadData(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
+    def load_data(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
         dataset = self._preprocessor.normalize(
@@ -30,10 +30,10 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = dataset['data']
         return dataset, labels
 
-    def loadFrames(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
+    def load_frames(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
-        dataset = self._preprocessor.getFrames(
+        dataset = self._preprocessor.get_frames(
             self._dataset,
             self._labels,
             export
@@ -43,10 +43,10 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadAdjs(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export=None):
+    def load_adjs(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
-        dataset = self._preprocessor.getAdjs(
+        dataset = self._preprocessor.get_adjs(
             self._dataset,
             self._labels,
             c,
@@ -59,10 +59,10 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadAdjsNoFrames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
+    def load_adjs_no_frames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
-        dataset = self._preprocessor.getAdjs(
+        dataset = self._preprocessor.get_adjs(
             self._dataset,
             self._labels,
             c,
@@ -76,10 +76,10 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadWeightedAdjs(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
+    def load_weighted_adjs(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
-        dataset = self._preprocessor.getWeightedAdjs(
+        dataset = self._preprocessor.get_weighted_adjs(
             self._dataset,
             self._labels,
             export
@@ -89,10 +89,10 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadWeightedAdjsNoFrames(self, shift, tmax, channels, l_freq, h_freq, export=None):
+    def load_weighted_adjs_no_frames(self, shift, tmax, channels, l_freq, h_freq, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
-        dataset = self._preprocessor.getWeightedAdjs(
+        dataset = self._preprocessor.get_weighted_adjs(
             self._dataset,
             self._labels,
             export
@@ -103,10 +103,10 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
-    def loadGraphsNoFrames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
+    def load_graphs_no_frames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
-        dataset = self._preprocessor.getGraphs(
+        dataset = self._preprocessor.get_graphs(
             self._dataset,
             self._labels,
             c,
@@ -120,4 +120,4 @@ class TUHEEGCorpusDataset(Dataset):
         return dataset, labels
 
     def load(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export=None):
-        return self.loadAdjs(shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export)
+        return self.load_adjs(shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export)

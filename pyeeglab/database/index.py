@@ -51,7 +51,7 @@ class Index(ABC):
         self._path = path
 
     @abstractmethod
-    def indexFiles(self):
+    def index_files(self):
         pass
 
     def db(self):

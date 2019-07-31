@@ -1,11 +1,11 @@
+import os
+import json
+from sqlalchemy import func
+
 from ...database.index import File, Metadata
 from ...io.loader import DataLoader
 from ...io.raw import RawEDF
 from .tuh_eeg_index import TUHEEGCorpusIndex
-
-import os
-import json
-from sqlalchemy import func
 
 
 class TUHEEGCorpusLoader(DataLoader):
@@ -15,7 +15,7 @@ class TUHEEGCorpusLoader(DataLoader):
             path = path + os.path.sep
         self._index = TUHEEGCorpusIndex(path)
 
-    def getDataset(self):
+    def get_dataset(self):
         edfs = self.index().db().query(File).filter(
             File.format == 'edf'
         ).all()
@@ -25,7 +25,7 @@ class TUHEEGCorpusLoader(DataLoader):
         ]
         return edfs
 
-    def getDatasetText(self):
+    def get_dataset_text(self):
         txts = self.index().db().query(File).filter(
             File.format == 'txt'
         ).all()
@@ -35,7 +35,7 @@ class TUHEEGCorpusLoader(DataLoader):
         }
         return txts
 
-    def getChannelSet(self):
+    def get_channelset(self):
         edf_metas = self.index().db().query(Metadata).group_by(Metadata.channels).all()
         edf_metas = [
             set(json.loads(edf_meta.channels))
@@ -47,7 +47,7 @@ class TUHEEGCorpusLoader(DataLoader):
         channels_set = list(channels_set)
         return channels_set
 
-    def getLowestFrequency(self):
+    def get_lowest_frequency(self):
         edf_metas = self.index().db().query(func.min(Metadata.frequency)).all()
         if edf_metas is None:
             return 0

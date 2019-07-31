@@ -1,10 +1,10 @@
-from ...database.index import File, Metadata, Index
-
 import os
 import uuid
 import json
 import warnings
 import mne
+
+from ...database.index import File, Metadata, Index
 
 
 class TUHEEGCorpusIndex(Index):
@@ -15,18 +15,18 @@ class TUHEEGCorpusIndex(Index):
         mne.set_log_file(os.path.join(path, 'mne.log'), overwrite=False)
         self._logger.debug('Disable MNE runtime warnings')
         warnings.filterwarnings("ignore", category=RuntimeWarning)
-        self.indexFiles()
+        self.index_files()
 
-    def getFilesFromPath(self, path):
+    def get_files_from_path(self, path):
         self._logger.debug('Get files from path')
         files = []
-        for dirpath, dirnames, filenames in os.walk(path):
+        for dirpath, _, filenames in os.walk(path):
             for file in filenames:
                 if not file.endswith('.db') and not file.endswith('.log'):
                     files.append(os.path.join(dirpath, file))
         return files
 
-    def getMetadataFromFile(self, path, file):
+    def get_metadata_from_file(self, path, file):
         meta = file[len(path):].split(os.path.sep)
         metadata = {
             'id': str(uuid.uuid5(uuid.NAMESPACE_X500, file[len(path):])),
@@ -39,13 +39,13 @@ class TUHEEGCorpusIndex(Index):
         }
         return metadata
 
-    def indexFiles(self):
+    def index_files(self):
         self._logger.debug('Index files')
-        files = self.getFilesFromPath(self.path())
+        files = self.get_files_from_path(self.path())
         for file in files:
-            f = File(self.getMetadataFromFile(self.path(), file))
+            f = File(self.get_metadata_from_file(self.path(), file))
             stm = self.db().query(File).filter(File.id == f.id).all()
-            if len(stm) == 0:
+            if not stm:
                 self._logger.debug('Add file %s at %s to index', f.id, f.path)
                 self.db().add(f)
                 if f.format == 'edf':
