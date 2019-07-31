@@ -73,7 +73,7 @@ class GraphGenerator():
     def adjacency_to_graph(self, adj):
         nodes = adj.index.to_list()
         adj = adj[adj > 0].stack().index.to_list()
-        adj = list(filter(lambda x: x[0] != x[1], adj))
+        adj = [x for x in adj if x[0] != x[1]]
         g = nx.Graph()
         g.add_nodes_from(nodes)
         g.add_edges_from(adj)
