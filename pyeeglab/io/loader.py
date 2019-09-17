@@ -1,29 +1,26 @@
 import logging
 from abc import ABC, abstractmethod
+from typing import List
+
+from .raw import Raw
+from ..database.index import Index
 
 
 class DataLoader(ABC):
-    _index = None
     _logger = logging.getLogger()
 
-    def __init__(self):
+    def __init__(self) -> Index:
         self._logger.debug('Create data loader')
-
-    def index(self):
-        return self._index
+        self.index = None
 
     @abstractmethod
-    def get_dataset(self):
+    def get_dataset(self) -> List[Raw]:
         pass
 
     @abstractmethod
-    def get_dataset_text(self):
+    def get_channelset(self) -> List[str]:
         pass
 
     @abstractmethod
-    def get_channelset(self):
-        pass
-
-    @abstractmethod
-    def get_lowest_frequency(self):
+    def get_lowest_frequency(self) -> float:
         pass

@@ -20,7 +20,7 @@ class File(BaseTable):
     format = Column(Text, nullable=False, index=True)
     path = Column(Text, nullable=False)
 
-    def __init__(self, dictionary):
+    def __init__(self, dictionary) -> None:
         for k, v in dictionary.items():
             setattr(self, k, v)
 
@@ -33,7 +33,7 @@ class Metadata(BaseTable):
     frequency = Column(Integer, nullable=False, index=True)
     channels = Column(Text, nullable=False, index=True)
 
-    def __init__(self, dictionary):
+    def __init__(self, dictionary) -> None:
         for k, v in dictionary.items():
             setattr(self, k, v)
 
@@ -41,21 +41,15 @@ class Metadata(BaseTable):
 class Index(ABC):
     _logger = logging.getLogger()
 
-    def __init__(self, db, path):
+    def __init__(self, db: str, path: str) -> None:
         self._logger.debug('Create index at %s', db)
         self._logger.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
-        self._db = Session()
-        self._path = path
+        self.db = Session()
+        self.path = path
 
     @abstractmethod
-    def index_files(self):
+    def index(self) -> None:
         pass
-
-    def db(self):
-        return self._db
-
-    def path(self):
-        return self._path

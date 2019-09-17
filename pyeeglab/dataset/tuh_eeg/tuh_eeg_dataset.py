@@ -12,7 +12,7 @@ class TUHEEGCorpusDataset(Dataset):
 
     def _initialize(self, channels):
         self._dataset = self._loader.get_dataset()
-        self._labels = [data.label() for data in self._dataset]
+        self._labels = [data.label for data in self._dataset]
         self._chs = list(set(self._loader.get_channelset()) - set(channels))
         self._chs = sorted(self._chs)
         self._freq = self._loader.get_lowest_frequency()
