@@ -1,6 +1,6 @@
 import logging
 
-import mne
+from mne.utils import set_config
 from importlib.util import find_spec
 
 from .dataset import TUHEEGCorpusDataset, TUHEEGCorpusLoader
@@ -15,4 +15,4 @@ logging.basicConfig(
 )
 
 if find_spec('cupy') is not None:
-    mne.utils.set_config('MNE_USE_CUDA', 'true')
+    set_config('MNE_USE_CUDA', 'true')
