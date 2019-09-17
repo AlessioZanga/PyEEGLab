@@ -70,25 +70,28 @@ class GraphGenerator():
         adj = [adj[y][x] for (x, y) in comb]
         return adj
 
-    def adjacency_to_graph(self, adj):
-        nodes = adj.index.to_list()
+    def adjacency_to_graph(self, adj, nodes, node_features):
         adj = adj[adj > 0].stack().index.to_list()
         adj = [x for x in adj if x[0] != x[1]]
         g = nx.Graph()
         g.add_nodes_from(nodes)
         g.add_edges_from(adj)
+        if node_features:
+            features = {node: {'features': np.random.normal(size=8)} for node in nodes}
+            nx.set_node_attributes(g, features)
         return g
 
-    def dataframe_to_graphs(self, data, c, p1, p2, adj_only=False, weighted=False):
+    def dataframe_to_graphs(self, data, c, p1, p2, adj_only=False, weighted=False, node_features=False):
         index = data.columns
         data = self.data_to_frames(data)
         data = [self.frame_to_correlation(frame) for frame in data]
         if not weighted:
             data = self.correlations_to_adjacencies(data, c, p1, p2)
         data = [pd.DataFrame(d, index=index, columns=index) for d in data]
+        index = sorted(index)
         if adj_only:
             comb = list(combinations(index, 2))
             data = [self.matrix_to_list(adj, comb) for adj in data]
         else:
-            data = [self.adjacency_to_graph(adj) for adj in data]
+            data = [self.adjacency_to_graph(adj, index, node_features) for adj in data]
         return data

@@ -108,7 +108,7 @@ class Preprocessor():
         if export is not None:
             self.save_data(export, sign, data)
         return data
-
+    
     def _get_correlations(self, data):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
@@ -189,12 +189,12 @@ class Preprocessor():
             self.save_data(export, sign, data)
         return data
 
-    def _get_graphs(self, data, c, p1, p2):
+    def _get_graphs(self, data, c, p1, p2, node_features):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)
-        return grapher.dataframe_to_graphs(data, c, p1, p2)
+        return grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)
 
-    def get_graphs(self, data, labels, c, p1, p2, export=None):
+    def get_graphs(self, data, labels, c, p1, p2, node_features, export=None):
         sign = self.get_sign(len(data), 'graphs', c, p1, p2)
         self._logger.debug('Get graphs %s', sign)
         if export is not None:
@@ -205,7 +205,8 @@ class Preprocessor():
             data,
             [c] * len(data),
             [p1] * len(data),
-            [p2] * len(data)
+            [p2] * len(data),
+            [node_features] * len(data)
         )
         pool = Pool(len(os.sched_getaffinity(0)))
         data = pool.starmap(self._get_graphs, params)

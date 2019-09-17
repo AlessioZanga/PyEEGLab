@@ -42,7 +42,7 @@ class TUHEEGCorpusDataset(Dataset):
         labels = np.array(labels).astype('float32').reshape((-1, 1))
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
-
+    
     def load_correlations(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
@@ -115,8 +115,25 @@ class TUHEEGCorpusDataset(Dataset):
         dataset['data'] = [d[0] for d in dataset['data']]
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
+    
+    def load_graphs(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, node_features, export=None):
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
+        dataset = self._preprocessor.get_graphs(
+            self._dataset,
+            self._labels,
+            c,
+            p1,
+            p2,
+            node_features,
+            export
+        )
+        labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
+        labels = np.array(labels).astype('int32')
+        dataset = dataset['data']
+        return dataset, labels
 
-    def load_graphs_no_frames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, export=None):
+    def load_graphs_no_frames(self, shift, tmax, channels, l_freq, h_freq, c, p1, p2, node_features, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, 0)
         dataset = self._preprocessor.get_graphs(
@@ -125,6 +142,7 @@ class TUHEEGCorpusDataset(Dataset):
             c,
             p1,
             p2,
+            node_features,
             export
         )
         labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
