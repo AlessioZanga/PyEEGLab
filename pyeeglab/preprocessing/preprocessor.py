@@ -109,6 +109,32 @@ class Preprocessor():
             self.save_data(export, sign, data)
         return data
 
+    def _get_correlations(self, data):
+        data = self._normalize(data)
+        grapher = GraphGenerator(self._frequency, self._frames)
+        frames = grapher.data_to_frames(data)
+        correlations = [grapher.frame_to_correlation(frame) for frame in frames]
+        return correlations
+    
+    def get_correlations(self, data, labels, export=None):
+        sign = self.get_sign(len(data), 'correlations')
+        self._logger.debug('Get correlations %s', sign)
+        if export is not None:
+            load = self.load_data(export, sign)
+            if load is not None:
+                return load
+        pool = Pool(len(os.sched_getaffinity(0)))
+        data = pool.map(self._get_correlations, data)
+        pool.close()
+        pool.join()
+        data = {
+            'labels': labels,
+            'data': data
+        }
+        if export is not None:
+            self.save_data(export, sign, data)
+        return data
+
     def _get_adjs(self, data, c, p1, p2):
         data = self._normalize(data)
         grapher = GraphGenerator(self._frequency, self._frames)

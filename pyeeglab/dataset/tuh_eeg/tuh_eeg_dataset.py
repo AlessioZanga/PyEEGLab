@@ -43,6 +43,19 @@ class TUHEEGCorpusDataset(Dataset):
         dataset = np.array(dataset['data']).astype('float32')
         return dataset, labels
 
+    def load_correlations(self, shift, tmax, channels, l_freq, h_freq, frames, export=None):
+        self._initialize(channels)
+        self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
+        dataset = self._preprocessor.get_correlations(
+            self._dataset,
+            self._labels,
+            export
+        )
+        labels = [0 if label == 'normal' else 1 for label in dataset['labels']]
+        labels = np.array(labels).astype('float32').reshape((-1, 1))
+        dataset = np.array(dataset['data']).astype('float32')
+        return dataset, labels
+
     def load_adjs(self, shift, tmax, channels, l_freq, h_freq, frames, c, p1, p2, export=None):
         self._initialize(channels)
         self._preprocessor = Preprocessor(shift, tmax, self._chs, self._freq, l_freq, h_freq, frames)
