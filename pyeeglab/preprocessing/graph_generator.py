@@ -77,7 +77,7 @@ class GraphGenerator():
         g.add_nodes_from(nodes)
         g.add_edges_from(adj)
         if node_features:
-            features = {node: {'features': np.random.normal(size=8).to_list()} for node in nodes}
+            features = {node: {'features': np.random.normal(size=8)} for node in nodes}
             nx.set_node_attributes(g, features)
         return g
 
