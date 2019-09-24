@@ -9,10 +9,7 @@ from .io import RawEDF
 from .preprocessing import GraphGenerator, Preprocessor
 from .text import TextMiner
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(message)s'
-)
+logging.getLogger().setLevel(logging.DEBUG)
 
 if find_spec('cupy') is not None:
     set_config('MNE_USE_CUDA', 'true')

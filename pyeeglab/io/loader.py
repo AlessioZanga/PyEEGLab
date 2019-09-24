@@ -7,10 +7,9 @@ from ..database.index import Index
 
 
 class DataLoader(ABC):
-    _logger = logging.getLogger()
 
     def __init__(self) -> None:
-        self._logger.debug('Create data loader')
+        logging.debug('Create data loader')
         self.index = None
 
     @abstractmethod

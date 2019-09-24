@@ -9,13 +9,12 @@ import networkx as nx
 
 
 class GraphGenerator():
-    _logger = logging.getLogger()
 
     def __init__(self, freq: float, fps: int) -> None:
-        self._logger.debug('Create graph generator')
-        self._logger.debug('Set graph generator frequency to %s Hz', freq)
+        logging.debug('Create graph generator')
+        logging.debug('Set graph generator frequency to %s Hz', freq)
         self._frequency = freq
-        self._logger.debug('Set graph generator frame per seconds to %s', fps)
+        logging.debug('Set graph generator frame per seconds to %s', fps)
         self._frames = fps
 
     def data_to_frames(self, data: DataFrame) -> List[DataFrame]:

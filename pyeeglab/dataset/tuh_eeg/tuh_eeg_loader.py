@@ -1,4 +1,5 @@
 import json
+import logging
 
 from os.path import join, sep
 from typing import List, Dict
@@ -11,7 +12,7 @@ from .tuh_eeg_index import TUHEEGCorpusIndex
 
 class TUHEEGCorpusLoader(DataLoader):
     def __init__(self, path: str) -> None:
-        self._logger.debug('Create TUH EEG Corpus Loader')
+        logging.debug('Create TUH EEG Corpus Loader')
         if path[-1] != sep:
             path = path + sep
         self.index = TUHEEGCorpusIndex(path)

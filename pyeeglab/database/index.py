@@ -39,11 +39,10 @@ class Metadata(BaseTable):
 
 
 class Index(ABC):
-    _logger = logging.getLogger()
 
     def __init__(self, db: str, path: str) -> None:
-        self._logger.debug('Create index at %s', db)
-        self._logger.debug('Load index at %s', db)
+        logging.debug('Create index at %s', db)
+        logging.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)

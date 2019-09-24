@@ -13,22 +13,21 @@ from ..io.raw import Raw
 
 
 class Preprocessor():
-    _logger = logging.getLogger()
 
     def __init__(self,shift: int, tmax: int, chs: List[str], freq: float, l_freq: float, h_freq: float, frame: int):
-        self._logger.debug('Create data preprocessor')
-        self._logger.debug('Set data preprocessor shift time to %s seconds', shift)
+        logging.debug('Create data preprocessor')
+        logging.debug('Set data preprocessor shift time to %s seconds', shift)
         self.shift = shift
-        self._logger.debug('Set data preprocessor time to %s seconds', tmax)
+        logging.debug('Set data preprocessor time to %s seconds', tmax)
         self.tmax = tmax
-        self._logger.debug('Set data preprocessor channels to %s', '|'.join(chs))
+        logging.debug('Set data preprocessor channels to %s', '|'.join(chs))
         self.channels = chs
-        self._logger.debug('Set data preprocessor frequency to %s Hz', freq)
+        logging.debug('Set data preprocessor frequency to %s Hz', freq)
         self.frequency = freq
-        self._logger.debug('Set data preprocessor band to %s/%s Hz ', l_freq, h_freq)
+        logging.debug('Set data preprocessor band to %s/%s Hz ', l_freq, h_freq)
         self.low_frequency = l_freq
         self.high_frequency = h_freq
-        self._logger.debug('Set data preprocessor frames to %s', frame)
+        logging.debug('Set data preprocessor frames to %s', frame)
         self.frames = frame
 
     def get_sign(self, count, type, c=0, p1=0, p2=0):
@@ -50,7 +49,7 @@ class Preprocessor():
     def load_data(self, export, sign):
         path = join(export, sign)
         if isfile(path):
-            self._logger.debug('Load data from %s', path)
+            logging.debug('Load data from %s', path)
             with open(path, 'rb') as file:
                 data = pickle.load(file)
             return data
@@ -58,14 +57,14 @@ class Preprocessor():
 
     def save_data(self, export, sign, data):
         path = join(export, sign)
-        self._logger.debug('Save data to %s', path)
+        logging.debug('Save data to %s', path)
         with open(path, 'wb') as file:
             pickle.dump(data, file)
     
     def _normalize(self, data: Raw) -> pd.DataFrame:
         with data.open() as reader:
             data.set_tmax(self.tmax, self.shift)
-            self._logger.debug('Load %s data for processing', data.id)
+            logging.debug('Load %s data for processing', data.id)
             reader.load_data()
             data.set_channels(self.channels)
             data.set_frequency(self.frequency, self.low_frequency, self.high_frequency)
@@ -73,7 +72,7 @@ class Preprocessor():
 
     def normalize(self, data, labels, export=None):
         sign = self.get_sign(len(data), 'norm')
-        self._logger.debug('Get data %s', sign)
+        logging.debug('Get data %s', sign)
         if export is not None:
             load = self.load_data(export, sign)
             if load is not None:
@@ -97,7 +96,7 @@ class Preprocessor():
 
     def get_frames(self, data, labels, export=None):
         sign = self.get_sign(len(data), 'frames')
-        self._logger.debug('Get frames %s', sign)
+        logging.debug('Get frames %s', sign)
         if export is not None:
             load = self.load_data(export, sign)
             if load is not None:
@@ -123,7 +122,7 @@ class Preprocessor():
     
     def get_correlations(self, data, labels, export=None):
         sign = self.get_sign(len(data), 'correlations')
-        self._logger.debug('Get correlations %s', sign)
+        logging.debug('Get correlations %s', sign)
         if export is not None:
             load = self.load_data(export, sign)
             if load is not None:
@@ -147,7 +146,7 @@ class Preprocessor():
 
     def get_adjs(self, data, labels, c, p1, p2, export=None):
         sign = self.get_sign(len(data), 'adjs', c, p1, p2)
-        self._logger.debug('Get adjs %s', sign)
+        logging.debug('Get adjs %s', sign)
         if export is not None:
             load = self.load_data(export, sign)
             if load is not None:
@@ -177,7 +176,7 @@ class Preprocessor():
 
     def get_weighted_adjs(self, data, labels, export=None):
         sign = self.get_sign(len(data), 'weightedadjs')
-        self._logger.debug('Get adjs %s', sign)
+        logging.debug('Get adjs %s', sign)
         if export is not None:
             load = self.load_data(export, sign)
             if load is not None:
@@ -201,7 +200,7 @@ class Preprocessor():
 
     def get_graphs(self, data, labels, c, p1, p2, node_features, export=None):
         sign = self.get_sign(len(data), 'graphs', c, p1, p2)
-        self._logger.debug('Get graphs %s', sign)
+        logging.debug('Get graphs %s', sign)
         if export is not None:
             load = self.load_data(export, sign)
             if load is not None:
