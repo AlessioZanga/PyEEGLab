@@ -22,6 +22,7 @@ setuptools.setup(
         'matplotlib',
         'networkx>=2.2',
         'mne>=0.17',
+        'yasa>=0.1.7',
         'sqlalchemy>=1.2',
     ],
 )
