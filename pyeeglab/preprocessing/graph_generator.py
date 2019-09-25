@@ -19,7 +19,7 @@ class GraphGenerator():
 
     def data_to_frames(self, data: DataFrame) -> List[DataFrame]:
         step = len(data)
-        if self.frames >= 1:
+        if self.frames > 1:
             step = round(step/self.frames)
         return [data[t:t+step] for t in range(0, len(data), step)]
 
