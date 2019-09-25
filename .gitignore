@@ -6,4 +6,5 @@ export
 pyeeglab/**/__pycache__
 **.egg-info
 .idea
+.vscode
 demo.py
