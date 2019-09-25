@@ -30,7 +30,8 @@ class TUHEEGCorpusDataset(Dataset):
 
     def load_data(self, frames: int, export: str = None):
         self.preprocessor.set_frames(frames)
-        dataset = self.preprocessor.normalize(
+        dataset = self.preprocessor.load(
+            'normalized',
             self.dataset,
             self.labels,
             export
@@ -39,7 +40,8 @@ class TUHEEGCorpusDataset(Dataset):
 
     def load_frames(self, frames: int, export: str = None):
         self.preprocessor.set_frames(frames)
-        dataset = self.preprocessor.get_frames(
+        dataset = self.preprocessor.load(
+            'frames',
             self.dataset,
             self.labels,
             export
@@ -49,7 +51,8 @@ class TUHEEGCorpusDataset(Dataset):
 
     def load_correlations(self, frames: int, export: str = None):
         self.preprocessor.set_frames(frames)
-        dataset = self.preprocessor.get_correlations(
+        dataset = self.preprocessor.load(
+            'correlations',
             self.dataset,
             self.labels,
             export
@@ -59,7 +62,8 @@ class TUHEEGCorpusDataset(Dataset):
 
     def load_adjs(self, frames: int, c: float, p1: int, p2: int, export: str = None):
         self.preprocessor.set_frames(frames)
-        dataset = self.preprocessor.get_adjs(
+        dataset = self.preprocessor.load(
+            'adjs',
             self.dataset,
             self.labels,
             c,
@@ -71,7 +75,8 @@ class TUHEEGCorpusDataset(Dataset):
         return data, dataset['labels']
 
     def load_adjs_no_frames(self, c: float, p1: int, p2: int, export: str = None):
-        dataset = self.preprocessor.get_adjs(
+        dataset = self.preprocessor.load(
+            'adjs',
             self.dataset,
             self.labels,
             c,
@@ -85,7 +90,8 @@ class TUHEEGCorpusDataset(Dataset):
 
     def load_weighted_adjs(self, frames: int, export: str = None):
         self.preprocessor.set_frames(frames)
-        dataset = self.preprocessor.get_weighted_adjs(
+        dataset = self.preprocessor.load(
+            'weighted_adjs',
             self.dataset,
             self.labels,
             export
@@ -94,7 +100,8 @@ class TUHEEGCorpusDataset(Dataset):
         return data, dataset['labels']
 
     def load_weighted_adjs_no_frames(self, export: str = None):
-        dataset = self.preprocessor.get_weighted_adjs(
+        dataset = self.preprocessor.load(
+            'weighted_adjs',
             self.dataset,
             self.labels,
             export
@@ -105,7 +112,8 @@ class TUHEEGCorpusDataset(Dataset):
 
     def load_graphs(self, frames: int, c: float, p1: int, p2: int, node_features: bool, export: str = None):
         self.preprocessor.set_frames(frames)
-        dataset = self.preprocessor.get_graphs(
+        dataset = self.preprocessor.load(
+            'graphs',
             self.dataset,
             self.labels,
             c,
@@ -117,7 +125,8 @@ class TUHEEGCorpusDataset(Dataset):
         return dataset['data'], dataset['labels']
 
     def load_graphs_no_frames(self, c: float, p1: int, p2: int, node_features: bool, export: str = None):
-        dataset = self.preprocessor.get_graphs(
+        dataset = self.preprocessor.load(
+            'graphs',
             self.dataset,
             self.labels,
             c,

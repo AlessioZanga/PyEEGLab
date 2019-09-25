@@ -69,7 +69,7 @@ class Preprocessor():
         with open(path, 'wb') as file:
             pickle.dump(data, file)
 
-    def _normalize(self, data: Raw) -> DataFrame:
+    def _get_normalized(self, data: Raw) -> DataFrame:
         with data.open() as reader:
             data.set_tmax(self.tmax, self.shift)
             logging.debug('Load %s data for processing', data.id)
@@ -79,36 +79,36 @@ class Preprocessor():
             return reader.to_data_frame()[:self.tmax * self.frequency]
 
     def _get_frames(self, data: Raw, *args) -> List[DataFrame]:
-        data = self._normalize(data)
+        data = self._get_normalized(data)
         grapher = GraphGenerator(self.frequency, self.frames)
         return grapher.data_to_frames(data)
 
     def _get_correlations(self, data: Raw, *args) -> List[DataFrame]:
-        data = self._normalize(data)
+        data = self._get_normalized(data)
         grapher = GraphGenerator(self.frequency, self.frames)
         frames = grapher.data_to_frames(data)
         return [grapher.frame_to_correlation(frame) for frame in frames]
 
     def _get_adjs(self, data: Raw, c: float, p1: int, p2: int, *args):
-        data = self._normalize(data)
+        data = self._get_normalized(data)
         grapher = GraphGenerator(self.frequency, self.frames)
         return grapher.dataframe_to_graphs(data, c, p1, p2, True)
 
     def _get_weighted_adjs(self, data: Raw, *args):
-        data = self._normalize(data)
+        data = self._get_normalized(data)
         grapher = GraphGenerator(self.frequency, self.frames)
         return grapher.dataframe_to_graphs(data, 0, 0, 0, True, True)
 
     def _get_graphs(self, data: Raw, c: float, p1: int, p2: int, node_features: bool) -> List[Graph]:
-        data = self._normalize(data)
+        data = self._get_normalized(data)
         grapher = GraphGenerator(self.frequency, self.frames)
         return grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)        
         
-    # Modes: frames, correlations, adjs, weighted_adjs, graphs
+    # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
 
     def load(self, mode, data, labels, c: float = 0, p1: int = 0, p2: int = 0, node_features: bool = False, export: str = None):
         sign = self.get_sign(len(data), mode, c, p1, p2, node_features)
-        logging.debug('Get ' + mode + ' %s', sign)
+        logging.debug('Get %s %s', mode, sign)
         if isfile(export):
             return self.load_data(export, sign)
         params = zip(
