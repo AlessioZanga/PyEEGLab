@@ -1,21 +1,23 @@
 language: python
 python:
-- '2.7'
-- '3.6'
-install:
-- pip install -r requirements.txt
-- pip install setuptools wheel tqdm twine
-- pip install .
+  - '2.7'
+  - '3.6'
 jobs:
   include:
   - stage: test
-    script: pytest
+    install:
+      - pip install -r requirements.txt
+      - pip install .
+      - pip install pytest pytest-cov codecov
+    script:
+      - pytest --cov=./
+      - codecov
   - stage: deploy
     script: python setup.py sdist bdist_wheel --universal
-deploy:
-  provider: pypi
-  user: AlessioZanga
-  password:
-    secure: B6JGqiXI8b2dpEfhr+uwanH0/nzRhMff+swHVWAjEoBeQnIigq09FRqfJWEYjE5FNkKDQpmjOKJrDy3HCigMQwIIOHsE3MkftUeANfs6CizJsZgCgij2A+vK2rDP1w3OEaowjh//SDeX8YGWEBRoP2pdWIrE9EnpBC44BftWoZreHNKMYXOnNrk4tUDjNz0gFoy0v0mSMqdWTcOxNqivLykKwKZ1kYFaRLo4WpTRo0KGDHYnBMTE5FnLjogBW9NjiymNRf4m6sEVPPoQBHkVFHFsfh6MB8qOC5cNzoiHv8VmfREBSatUHVxXrBBAC90gWEQAFgJRsF98ikWJznLmXOPvaJbXGvDYEPx6A4/DaBXiQjMPxTK41i/UsetM+CVVs8VfCmWa6oGGLvDKJP5LcZdSXM6vH/3DUoVwR8y3aGuB9aiol+F9HJKUdHavhISf9B5HtJNJA9EDnW0Gq4Bf7ggwgA6q2LTXWk3iwqn5qXDVFdzkWQOmt1nEtmA8GKPykTTsC6tdMLjS1w+ck+d1w7AziMY7nI+8APWbuZ3E+bXYsfRZsddbo+KDSZq97WfADxH7AFtEO4os/czIUtG/4y1wTTEMdCMR/sEZ2eK1uPTB5n4jhoeWGKRz3hkXBAcje7VvPdio+c+gIvco9enbtd1UfEyLosC0co5KtdFqdIg=
-  on:
-    branch: master
+    deploy:
+      provider: pypi
+      user: AlessioZanga
+      password:
+        secure: B6JGqiXI8b2dpEfhr+uwanH0/nzRhMff+swHVWAjEoBeQnIigq09FRqfJWEYjE5FNkKDQpmjOKJrDy3HCigMQwIIOHsE3MkftUeANfs6CizJsZgCgij2A+vK2rDP1w3OEaowjh//SDeX8YGWEBRoP2pdWIrE9EnpBC44BftWoZreHNKMYXOnNrk4tUDjNz0gFoy0v0mSMqdWTcOxNqivLykKwKZ1kYFaRLo4WpTRo0KGDHYnBMTE5FnLjogBW9NjiymNRf4m6sEVPPoQBHkVFHFsfh6MB8qOC5cNzoiHv8VmfREBSatUHVxXrBBAC90gWEQAFgJRsF98ikWJznLmXOPvaJbXGvDYEPx6A4/DaBXiQjMPxTK41i/UsetM+CVVs8VfCmWa6oGGLvDKJP5LcZdSXM6vH/3DUoVwR8y3aGuB9aiol+F9HJKUdHavhISf9B5HtJNJA9EDnW0Gq4Bf7ggwgA6q2LTXWk3iwqn5qXDVFdzkWQOmt1nEtmA8GKPykTTsC6tdMLjS1w+ck+d1w7AziMY7nI+8APWbuZ3E+bXYsfRZsddbo+KDSZq97WfADxH7AFtEO4os/czIUtG/4y1wTTEMdCMR/sEZ2eK1uPTB5n4jhoeWGKRz3hkXBAcje7VvPdio+c+gIvco9enbtd1UfEyLosC0co5KtdFqdIg=
+      on:
+        branch: master
