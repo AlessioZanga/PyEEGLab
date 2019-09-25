@@ -1,9 +1,14 @@
 language: python
-
 python:
-  - "2.7"
-  - "3.6"
-
+- '2.7'
+- '3.6'
 install:
   - pip install -r requirements.txt
+- pip install setuptools wheel tqdm twine
   - pip install .
+jobs:
+  include:
+  - stage: test
+    script: pytest
+  - stage: deploy
+    script: python setup.py sdist bdist_wheel --universal
