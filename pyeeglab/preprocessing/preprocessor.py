@@ -13,7 +13,7 @@ from ..io.raw import Raw
 
 class Preprocessor():
 
-    def __init__(self, shift: int, tmax: int, chs: List[str], freq: float, l_freq: float, h_freq: float, frame: int):
+    def __init__(self, shift: int, tmax: int, chs: List[str], freq: float) -> None:
         logging.debug('Create data preprocessor')
         logging.debug('Set data preprocessor shift time to %s seconds', shift)
         self.shift = shift
@@ -23,11 +23,18 @@ class Preprocessor():
         self.channels = chs
         logging.debug('Set data preprocessor frequency to %s Hz', freq)
         self.frequency = freq
+        self.low_frequency = 0
+        self.high_frequency = 0
+        self.frames = 0
+
+    def set_bandpass_frequency(self, l_freq: float, h_freq: float) -> None:
         logging.debug('Set data preprocessor band to %s/%s Hz ', l_freq, h_freq)
         self.low_frequency = l_freq
         self.high_frequency = h_freq
-        logging.debug('Set data preprocessor frames to %s', frame)
-        self.frames = frame
+
+    def set_frames(self, frames: int) -> None:
+        logging.debug('Set data preprocessor frames to %s', frames)
+        self.frames = frames
 
     def get_sign(self, count, type, c=0, p1=0, p2=0):
         return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}.pkl'.format(
