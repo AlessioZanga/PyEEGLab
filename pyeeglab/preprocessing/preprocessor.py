@@ -14,7 +14,7 @@ from ..io.raw import Raw
 
 class Preprocessor():
 
-    def __init__(self, shift: int, tmax: int, chs: List[str], freq: float) -> None:
+    def __init__(self, shift: int, tmax: int, chs: List[str], freq: float, frames: int) -> None:
         logging.debug('Create data preprocessor')
         logging.debug('Set data preprocessor shift time to %s seconds', shift)
         self.shift = shift
@@ -26,17 +26,14 @@ class Preprocessor():
         self.frequency = freq
         self.low_frequency = 0
         self.high_frequency = 0
-        self.set_frames(0)
+        logging.debug('Set data preprocessor frames to %s', frames)
+        self.frames = frames
+        self.grapher = GraphGenerator(self.frequency, self.frames)
 
     def set_bandpass_frequency(self, l_freq: float, h_freq: float) -> None:
         logging.debug('Set data preprocessor band to %s/%s Hz ', l_freq, h_freq)
         self.low_frequency = l_freq
         self.high_frequency = h_freq
-
-    def set_frames(self, frames: int) -> None:
-        logging.debug('Set data preprocessor frames to %s', frames)
-        self.frames = frames
-        self.grapher = GraphGenerator(self.frequency, self.frames)
 
     def get_sign(self, count: int, mode: str, c: float = 0, p1: int = 0, p2: float = 0, node_features: bool = False) -> str:
         return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}_{12}.pkl'.format(
@@ -118,10 +115,12 @@ class Preprocessor():
         data = pool.starmap(getattr(self, '_get_' + mode), params)
         pool.close()
         pool.join()
-        data = {
+        if self.frames < 1:
+            data = [d[0] for d in data]
+        dataset = {
             'labels': labels,
             'data': data
         }
         if export is not None:
-            self.save_data(export, sign, data)
-        return data
+            self.save_data(export, sign, dataset)
+        return dataset
