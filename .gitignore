@@ -3,7 +3,7 @@ build
 data
 dist
 export
-pyeeglab/**/__pycache__
+**/__pycache__
 **.egg-info
 .idea
 .vscode
