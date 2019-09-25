@@ -1,9 +1,10 @@
 import logging
 from typing import List
 from itertools import combinations
-from scipy.stats import spearmanr
 from yasa import bandpower
+from numpy import percentile
 from pandas import DataFrame
+from scipy.stats import spearmanr
 from networkx import Graph, set_node_attributes
 
 
@@ -29,28 +30,30 @@ class GraphGenerator():
         return bandp.loc[ : , bands]
 
     def frame_to_correlation(self, frame: DataFrame) -> DataFrame:
+        index = frame.columns
         frame = spearmanr(frame)
-        return frame.correlation
+        return DataFrame(frame.correlation, index=index, columns=index)
 
     def filter_correlation(self, corr: float, upper: float, lower: float, approx=0.01) -> bool:
         if corr >= upper*(1-approx) or corr <= lower*(1-approx):
             return True
         return False
 
-    def correlations_to_adjacencies(self, data: List[DataFrame], c: int, p1: float, p2: float) -> List[DataFrame]:
+    def correlations_to_adjacencies(self, data: List[DataFrame], c: float, p1: int, p2: int) -> List[DataFrame]:
+        index = data[0].index
         samples = list(range(len(data)))
         rows = list(range(data[0].shape[0]))
         columns = list(range(data[0].shape[1]))
         q = [
             [
-                [data[k][i][j] for k in samples]
+                [data[k].iloc[i, j] for k in samples]
                 for j in columns
             ]
             for i in rows
         ]
         q = [
             [
-                (np.percentile(q[i][j], p1), np.percentile(q[i][j], p2))
+                (percentile(q[i][j], p1), percentile(q[i][j], p2))
                 for j in range(len(q[i]))
             ]
             for i in range(len(q))
@@ -59,8 +62,8 @@ class GraphGenerator():
             [
                 [
                     self.filter_correlation(
-                        data[k][i][j],
-                        max(c, q[i][j][1]),
+                        data[k].iloc[i, j],
+                        max(+c, q[i][j][1]),
                         min(-c, q[i][j][0])
                     )
                     for j in columns
@@ -69,6 +72,7 @@ class GraphGenerator():
             ]
             for k in samples
         ]
+        data = [DataFrame(d, index=index, columns=index) for d in data]
         return data
 
     def matrix_to_list(self, adj: DataFrame) -> List[float]:
@@ -88,15 +92,13 @@ class GraphGenerator():
             set_node_attributes(G, features)
         return G
 
-    def dataframe_to_graphs(self, data: DataFrame, c: int, p1: float, p2: float, adj_only=False, weighted=False, node_features=False):
-        index = data.columns
+    def dataframe_to_graphs(self, data: DataFrame, c: float, p1: int, p2: int, adj_only=False, weighted=False, node_features=False):
         data = self.data_to_frames(data)
         if node_features:
             features = [self.extract_features(frame) for frame in data]
         data = [self.frame_to_correlation(frame) for frame in data]
         if not weighted:
             data = self.correlations_to_adjacencies(data, c, p1, p2)
-        data = [DataFrame(d, index=index, columns=index) for d in data]
         if adj_only:
             data = [self.matrix_to_list(adj) for adj in data]
         else:
