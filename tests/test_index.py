@@ -5,4 +5,4 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import pyeeglab
 
 def test_index():
-    index = pyeeglab.TUHEEGCorpusLoader('./data')
+    index = pyeeglab.TUHEEGCorpusLoader('./tests/data')
