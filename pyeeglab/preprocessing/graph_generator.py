@@ -4,8 +4,7 @@ from itertools import combinations
 from scipy.stats import spearmanr
 from yasa import bandpower
 from pandas import DataFrame
-import numpy as np
-import networkx as nx
+from networkx import Graph, set_node_attributes
 
 
 class GraphGenerator():
@@ -77,17 +76,17 @@ class GraphGenerator():
         adj = [adj[y][x] for (x, y) in com]
         return adj
 
-    def adjacency_to_graph(self, adj: DataFrame, node_features: DataFrame):
+    def adjacency_to_graph(self, adj: DataFrame, features: DataFrame) -> Graph:
         nodes = sorted(adj.index)
         adj = adj[adj > 0].stack().index.to_list()
         adj = [x for x in adj if x[0] != x[1]]
-        g = nx.Graph()
-        g.add_nodes_from(nodes)
-        g.add_edges_from(adj)
-        if node_features is not None:
-            features = {node: {'features': node_features.loc[node, : ].to_numpy()} for node in nodes}
-            nx.set_node_attributes(g, features)
-        return g
+        G = Graph()
+        G.add_nodes_from(nodes)
+        G.add_edges_from(adj)
+        if features is not None:
+            features = {node: {'features': features.loc[node, : ].to_numpy()} for node in nodes}
+            set_node_attributes(G, features)
+        return G
 
     def dataframe_to_graphs(self, data: DataFrame, c: int, p1: float, p2: float, adj_only=False, weighted=False, node_features=False):
         index = data.columns
