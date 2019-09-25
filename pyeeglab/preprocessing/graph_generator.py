@@ -80,7 +80,7 @@ class GraphGenerator():
         adj = [adj[y][x] for (x, y) in com]
         return adj
 
-    def adjacency_to_graph(self, adj: DataFrame, features: DataFrame) -> Graph:
+    def adjacency_to_graph(self, adj: DataFrame, features: DataFrame = None) -> Graph:
         nodes = sorted(adj.index)
         adj = adj[adj > 0].stack().index.to_list()
         adj = [x for x in adj if x[0] != x[1]]
