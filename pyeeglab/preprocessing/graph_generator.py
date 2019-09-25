@@ -54,9 +54,9 @@ class GraphGenerator():
         q = [
             [
                 (percentile(q[i][j], p1), percentile(q[i][j], p2))
-                for j in range(len(q[i]))
+                for j in columns
             ]
-            for i in range(len(q))
+            for i in rows
         ]
         data = [
             [
