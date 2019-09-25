@@ -10,24 +10,23 @@ from networkx import Graph, set_node_attributes
 
 class GraphGenerator():
 
-    def __init__(self, freq: float, fps: int) -> None:
+    def __init__(self, frequency: float, frames: int) -> None:
         logging.debug('Create graph generator')
-        logging.debug('Set graph generator frequency to %s Hz', freq)
-        self._frequency = freq
-        logging.debug('Set graph generator frame per seconds to %s', fps)
-        self._frames = fps
+        logging.debug('Set graph generator frequency to %s Hz', frequency)
+        self.frequency = frequency
+        logging.debug('Set graph generator frame per seconds to %s', frames)
+        self.frames = frames
 
     def data_to_frames(self, data: DataFrame) -> List[DataFrame]:
         step = len(data)
-        if self._frames >= 1:
-            step = round(step/self._frames)
-        data = [data[t:t+step] for t in range(0, len(data), step)]
-        return data
+        if self.frames >= 1:
+            step = round(step/self.frames)
+        return [data[t:t+step] for t in range(0, len(data), step)]
 
     def extract_features(self, frame: DataFrame, bands: List[str] = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']) -> DataFrame:
         frame = frame.swapaxes('index', 'columns')
-        bandp = bandpower(frame.to_numpy() , self._frequency, frame.index)
-        return bandp.loc[ : , bands]
+        bandp = bandpower(frame.to_numpy(), self.frequency, frame.index)
+        return bandp.loc[:, bands]
 
     def frame_to_correlation(self, frame: DataFrame) -> DataFrame:
         index = frame.columns
