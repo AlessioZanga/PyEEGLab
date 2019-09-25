@@ -20,8 +20,8 @@ class TUHEEGCorpusDataset(Dataset):
             self.loader.get_lowest_frequency()
         )
 
-    def get_channels(self, channels: List[str]) -> List[str]:
-        channels = list(set(self.loader.get_channelset()) - set(channels))
+    def get_channels(self, drop_channels: List[str]) -> List[str]:
+        channels = list(set(self.loader.get_channelset()) - set(drop_channels))
         channels = sorted(channels)
         return channels
 
