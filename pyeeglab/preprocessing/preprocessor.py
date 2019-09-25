@@ -26,7 +26,7 @@ class Preprocessor():
         self.frequency = freq
         self.low_frequency = 0
         self.high_frequency = 0
-        self.frames = 0
+        self.set_frames(0)
 
     def set_bandpass_frequency(self, l_freq: float, h_freq: float) -> None:
         logging.debug('Set data preprocessor band to %s/%s Hz ', l_freq, h_freq)
@@ -36,6 +36,7 @@ class Preprocessor():
     def set_frames(self, frames: int) -> None:
         logging.debug('Set data preprocessor frames to %s', frames)
         self.frames = frames
+        self.grapher = GraphGenerator(self.frequency, self.frames)
 
     def get_sign(self, count: int, mode: str, c: float = 0, p1: int = 0, p2: float = 0, node_features: bool = False) -> str:
         return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}_{12}.pkl'.format(
@@ -80,29 +81,24 @@ class Preprocessor():
 
     def _get_frames(self, data: Raw, *args) -> List[DataFrame]:
         data = self._get_normalized(data)
-        grapher = GraphGenerator(self.frequency, self.frames)
-        return grapher.data_to_frames(data)
+        return self.grapher.data_to_frames(data)
 
     def _get_correlations(self, data: Raw, *args) -> List[DataFrame]:
         data = self._get_normalized(data)
-        grapher = GraphGenerator(self.frequency, self.frames)
-        frames = grapher.data_to_frames(data)
-        return [grapher.frame_to_correlation(frame) for frame in frames]
+        frames = self.grapher.data_to_frames(data)
+        return [self.grapher.frame_to_correlation(frame) for frame in frames]
 
     def _get_adjs(self, data: Raw, c: float, p1: int, p2: int, *args):
         data = self._get_normalized(data)
-        grapher = GraphGenerator(self.frequency, self.frames)
-        return grapher.dataframe_to_graphs(data, c, p1, p2, True)
+        return self.grapher.dataframe_to_graphs(data, c, p1, p2, True)
 
     def _get_weighted_adjs(self, data: Raw, *args):
         data = self._get_normalized(data)
-        grapher = GraphGenerator(self.frequency, self.frames)
-        return grapher.dataframe_to_graphs(data, 0, 0, 0, True, True)
+        return self.grapher.dataframe_to_graphs(data, 0, 0, 0, True, True)
 
     def _get_graphs(self, data: Raw, c: float, p1: int, p2: int, node_features: bool) -> List[Graph]:
         data = self._get_normalized(data)
-        grapher = GraphGenerator(self.frequency, self.frames)
-        return grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)        
+        return self.grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)        
         
     # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
 
