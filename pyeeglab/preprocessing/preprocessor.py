@@ -1,20 +1,19 @@
-import uuid
-import pickle
-import logging
-import numpy as np
-import pandas as pd
-
 from os import sched_getaffinity
 from os.path import join, isfile
 from typing import List
 from multiprocessing import Pool
+import uuid
+import pickle
+import logging
+import pandas as pd
+
 from .graph_generator import GraphGenerator
 from ..io.raw import Raw
 
 
 class Preprocessor():
 
-    def __init__(self,shift: int, tmax: int, chs: List[str], freq: float, l_freq: float, h_freq: float, frame: int):
+    def __init__(self, shift: int, tmax: int, chs: List[str], freq: float, l_freq: float, h_freq: float, frame: int):
         logging.debug('Create data preprocessor')
         logging.debug('Set data preprocessor shift time to %s seconds', shift)
         self.shift = shift
@@ -60,7 +59,7 @@ class Preprocessor():
         logging.debug('Save data to %s', path)
         with open(path, 'wb') as file:
             pickle.dump(data, file)
-    
+
     def _normalize(self, data: Raw) -> pd.DataFrame:
         with data.open() as reader:
             data.set_tmax(self.tmax, self.shift)
@@ -112,14 +111,14 @@ class Preprocessor():
         if export is not None:
             self.save_data(export, sign, data)
         return data
-    
+
     def _get_correlations(self, data):
         data = self._normalize(data)
         grapher = GraphGenerator(self.frequency, self.frames)
         frames = grapher.data_to_frames(data)
         correlations = [grapher.frame_to_correlation(frame) for frame in frames]
         return correlations
-    
+
     def get_correlations(self, data, labels, export=None):
         sign = self.get_sign(len(data), 'correlations')
         logging.debug('Get correlations %s', sign)

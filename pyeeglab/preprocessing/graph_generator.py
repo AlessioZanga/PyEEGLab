@@ -23,8 +23,8 @@ class GraphGenerator():
             step = round(step/self._frames)
         data = [data[t:t+step] for t in range(0, len(data), step)]
         return data
-    
-    def extract_features(self, frame: DataFrame, bands=['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']) -> DataFrame:
+
+    def extract_features(self, frame: DataFrame, bands: List[str] = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']) -> DataFrame:
         frame = frame.swapaxes('index', 'columns')
         bandp = bandpower(frame.to_numpy() , self._frequency, frame.index)
         return bandp.loc[ : , bands]

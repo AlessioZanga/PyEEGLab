@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from .raw import Raw
-from ..database.index import Index
 
 
 class DataLoader(ABC):
