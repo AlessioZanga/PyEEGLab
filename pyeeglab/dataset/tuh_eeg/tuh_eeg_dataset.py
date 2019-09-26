@@ -29,84 +29,11 @@ class TUHEEGCorpusDataset(Dataset):
     def set_bandpass_frequency(self, l_freq: float, h_freq: float) -> None:
         self.preprocessor.set_bandpass_frequency(l_freq, h_freq)
 
-    def load_data(self, export: str = None):
-        dataset = self.preprocessor.load(
-            'normalized',
-            self.dataset,
-            self.labels,
-            export
-        )
-        return dataset['data'], dataset['labels']
+    # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
 
-    def load_frames(self, export: str = None):
+    def load(self, mode: str = 'adjs', c: float = 0.7, p1: int = 25, p2: int = 75, node_features: bool = False, export: str = None):
         dataset = self.preprocessor.load(
-            'frames',
-            self.dataset,
-            self.labels,
-            export
-        )
-        data = np.array(dataset['data']).astype('float32')
-        return data, dataset['labels']
-
-    def load_correlations(self, export: str = None):
-        dataset = self.preprocessor.load(
-            'correlations',
-            self.dataset,
-            self.labels,
-            export
-        )
-        data = np.array(dataset['data']).astype('float32')
-        return data['data'], dataset['labels']
-
-    def load_adjs(self, c: float, p1: int, p2: int, export: str = None):
-        dataset = self.preprocessor.load(
-            'adjs',
-            self.dataset,
-            self.labels,
-            c,
-            p1,
-            p2,
-            export
-        )
-        data = np.array(dataset['data']).astype('float32')
-        return data, dataset['labels']
-
-    def load_adjs_no_frames(self, c: float, p1: int, p2: int, export: str = None):
-        dataset = self.preprocessor.load(
-            'adjs',
-            self.dataset,
-            self.labels,
-            c,
-            p1,
-            p2,
-            export
-        )
-        data = np.array(dataset['data']).astype('float32')
-        return data, dataset['labels']
-
-    def load_weighted_adjs(self, export: str = None):
-        dataset = self.preprocessor.load(
-            'weighted_adjs',
-            self.dataset,
-            self.labels,
-            export
-        )
-        data = np.array(dataset['data']).astype('float32')
-        return data, dataset['labels']
-
-    def load_weighted_adjs_no_frames(self, export: str = None):
-        dataset = self.preprocessor.load(
-            'weighted_adjs',
-            self.dataset,
-            self.labels,
-            export
-        )
-        data = np.array(dataset['data']).astype('float32')
-        return data, dataset['labels']
-
-    def load_graphs(self, c: float, p1: int, p2: int, node_features: bool, export: str = None):
-        dataset = self.preprocessor.load(
-            'graphs',
+            mode,
             self.dataset,
             self.labels,
             c,
@@ -115,20 +42,5 @@ class TUHEEGCorpusDataset(Dataset):
             node_features,
             export
         )
-        return dataset['data'], dataset['labels']
-
-    def load_graphs_no_frames(self, c: float, p1: int, p2: int, node_features: bool, export: str = None):
-        dataset = self.preprocessor.load(
-            'graphs',
-            self.dataset,
-            self.labels,
-            c,
-            p1,
-            p2,
-            node_features,
-            export
-        )
-        return dataset['data'], dataset['labels']
-
-    def load(self, c: float, p1: int, p2: int, export: str = None):
-        return self.load_adjs(c, p1, p2, export)
+        data = np.array(dataset['data']).astype('float32')
+        return data, dataset['labels']
