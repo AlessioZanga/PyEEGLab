@@ -96,14 +96,16 @@ class Preprocessor():
     def _get_graphs(self, data: Raw, c: float, p1: int, p2: int, node_features: bool) -> List[Graph]:
         data = self._get_normalized(data)
         return self.grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)        
-        
+
     # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
 
     def load(self, mode, data, labels, c: float = 0, p1: int = 0, p2: int = 0, node_features: bool = False, export: str = None):
         sign = self.get_sign(len(data), mode, c, p1, p2, node_features)
         logging.debug('Get %s %s', mode, sign)
-        if isfile(export):
-            return self.load_data(export, sign)
+        if export is not None:
+            dataset = self.load_data(export, sign)
+            if dataset is not None:
+                return dataset
         params = zip(
             data,
             [c] * len(data),
