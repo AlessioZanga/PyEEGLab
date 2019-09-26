@@ -42,6 +42,8 @@ class TUHEEGCorpusDataset(Dataset):
             node_features,
             export
         )
-        data = np.array(dataset['data']).astype('float32')
+        data = dataset['data']
+        if mode != 'graphs':
+            data = np.array(dataset['data']).astype('float32')
         labels = np.array(dataset['labels']).astype('int32')
         return data, labels
