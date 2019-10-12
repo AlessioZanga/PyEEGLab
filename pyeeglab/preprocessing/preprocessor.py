@@ -83,7 +83,7 @@ class Preprocessor():
     def _get_correlations(self, data: Raw, *args) -> List[DataFrame]:
         data = self._get_normalized(data)
         frames = self.grapher.data_to_frames(data)
-        return [self.grapher.frame_to_correlation(frame) for frame in frames]
+        return [self.grapher.frame_to_correlation(frame).to_numpy() for frame in frames]
 
     def _get_adjs(self, data: Raw, c: float, p1: int, p2: int, *args):
         data = self._get_normalized(data)
