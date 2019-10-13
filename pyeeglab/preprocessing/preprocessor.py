@@ -5,6 +5,7 @@ from multiprocessing import Pool
 import uuid
 import pickle
 import logging
+from numpy import ndarray
 from pandas import DataFrame
 from networkx import Graph
 
@@ -76,11 +77,12 @@ class Preprocessor():
             data.set_frequency(self.frequency, self.low_frequency, self.high_frequency)
             return reader.to_data_frame()[:self.tmax * self.frequency]
 
-    def _get_frames(self, data: Raw, *args) -> List[DataFrame]:
+    def _get_frames(self, data: Raw, *args) -> List[ndarray]:
         data = self._get_normalized(data)
-        return self.grapher.data_to_frames(data)
+        frames = self.grapher.data_to_frames(data)
+        return [frame.to_numpy() for frame in frames]
 
-    def _get_correlations(self, data: Raw, *args) -> List[DataFrame]:
+    def _get_correlations(self, data: Raw, *args) -> List[ndarray]:
         data = self._get_normalized(data)
         frames = self.grapher.data_to_frames(data)
         return [self.grapher.frame_to_correlation(frame).to_numpy() for frame in frames]

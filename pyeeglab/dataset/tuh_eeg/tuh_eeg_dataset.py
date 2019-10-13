@@ -33,7 +33,7 @@ class TUHEEGCorpusDataset(Dataset):
         for preprocessor in self.preprocessors:
             preprocessor.set_bandpass_frequency(l_freq, h_freq)
 
-    # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
+    # Modes: frames, correlations, adjs, weighted_adjs, graphs
 
     def load(self, mode: str = 'adjs', c: float = 0.7, p1: int = 25, p2: int = 75, node_features: bool = False, export: str = None):
         data = []
