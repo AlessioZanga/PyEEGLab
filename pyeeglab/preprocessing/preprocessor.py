@@ -67,7 +67,7 @@ class Preprocessor():
         with open(path, 'wb') as file:
             pickle.dump(data, file)
 
-    def _get_normalized(self, data: Raw) -> DataFrame:
+    def _get_normalized(self, data: Raw, *args) -> DataFrame:
         with data.open() as reader:
             data.set_tmax(self.tmax, self.shift)
             logging.debug('Load %s data for processing', data.id)
