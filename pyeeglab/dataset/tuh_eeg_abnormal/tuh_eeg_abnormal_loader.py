@@ -7,15 +7,15 @@ from sqlalchemy import func
 from ...database.index import File, Metadata
 from ...io.loader import DataLoader
 from ...io.raw import RawEDF
-from .tuh_eeg_index import TUHEEGCorpusIndex
+from .tuh_eeg_abnormal_index import TUHEEGAbnormalIndex
 
 
-class TUHEEGCorpusLoader(DataLoader):
+class TUHEEGAbnormalLoader(DataLoader):
     def __init__(self, path: str) -> None:
         logging.debug('Create TUH EEG Corpus Loader')
         if path[-1] != sep:
             path = path + sep
-        self.index = TUHEEGCorpusIndex(path)
+        self.index = TUHEEGAbnormalIndex(path)
 
     def get_dataset(self) -> List[RawEDF]:
         edfs = self.index.db.query(File).filter(

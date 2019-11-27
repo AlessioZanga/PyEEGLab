@@ -28,9 +28,9 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from pyeeglab import TUHEEGCorpusDataset
+from pyeeglab import TUHEEGAbnormalDataset
 
-dataset = TUHEEGCorpusDataset('../data', frames=8)
+dataset = TUHEEGAbnormalDataset('../data', frames=8)
 dataset.set_bandpass_frequency(1.5, 48)
 data, labels = dataset.load('graphs', 0.7, 25, 75, True, '../export')
 
