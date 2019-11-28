@@ -22,9 +22,21 @@ If you need a bleeding edge version, you can install it directly from GitHub:
 
     pip install git+https://github.com/AlessioZanga/PyEEGLab@develop
 
+## How to get the TUH EEG Abnormal dataset
+
+> **WARNING (1)**: Retriving the TUH EEG Abnormal dataset require at least 65GB of free disk space.
+
+> **WARNING (2)**: Retriving the TUH EEG Abnormal dataset require valid credentials, you can get your own at https://www.isip.piconepress.com/projects/tuh_eeg/html/request_access.php.
+
+In the root directory of this project there is a Makefile, by typing:
+
+    make tuh_eeg_abnormal
+
+you will trigger the dataset download.
+
 ## Documentation
 
-> **WARNING**: Documentation is currently Work-In-Progress, if you need additional info, please, contact me directly.
+> **WIP**: Documentation is currently Work-In-Progress, if you need additional info, please, contact me directly.
 
 ## Credits
 
