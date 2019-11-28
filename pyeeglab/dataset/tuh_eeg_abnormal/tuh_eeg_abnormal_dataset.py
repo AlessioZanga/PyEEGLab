@@ -1,15 +1,15 @@
 from typing import List
 import numpy as np
 
-from .tuh_eeg_loader import TUHEEGCorpusLoader
+from .tuh_eeg_abnormal_loader import TUHEEGAbnormalLoader
 from ..dataset import Dataset
 from ...preprocessing import Preprocessor
 
 
-class TUHEEGCorpusDataset(Dataset):
+class TUHEEGAbnormalDataset(Dataset):
 
     def __init__(self, path: str, drop_channels: List[str] = ['IBI', 'BURSTS', 'STI 014'], shift: int = 60, tmax: int = 60, frames: int = 8, augmentation: int = 1) -> None:
-        self.loader = TUHEEGCorpusLoader(path)
+        self.loader = TUHEEGAbnormalLoader(path)
         self.dataset = self.loader.get_dataset()
         self.labels = [data.label for data in self.dataset]
         self.labels = [0 if label == 'normal' else 1 for label in self.labels]

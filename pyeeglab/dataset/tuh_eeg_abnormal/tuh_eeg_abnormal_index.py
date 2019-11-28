@@ -11,7 +11,7 @@ from mne.io import read_raw_edf
 from ...database.index import File, Metadata, Index
 
 
-class TUHEEGCorpusIndex(Index):
+class TUHEEGAbnormalIndex(Index):
     def __init__(self, path: str) -> None:
         logging.debug('Create TUH EEG Corpus Index')
         super().__init__('sqlite:///' + join(path, 'index.db'), path)

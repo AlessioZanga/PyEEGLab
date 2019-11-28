@@ -3,7 +3,7 @@ import logging
 from mne.utils import set_config
 from importlib.util import find_spec
 
-from .dataset import TUHEEGCorpusDataset, TUHEEGCorpusLoader
+from .dataset import TUHEEGAbnormalDataset, TUHEEGAbnormalLoader
 from .database import File, Metadata
 from .io import RawEDF
 from .preprocessing import GraphGenerator, Preprocessor

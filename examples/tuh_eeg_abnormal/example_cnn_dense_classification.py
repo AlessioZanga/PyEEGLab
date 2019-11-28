@@ -8,11 +8,6 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 tf.enable_eager_execution(config=config)
 
-if tf.test.is_gpu_available():
-    LSTM = tf.keras.layers.CuDNNLSTM
-else:
-    LSTM = tf.keras.layers.LSTM
-
 from keras.utils import to_categorical
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
@@ -21,12 +16,11 @@ import numpy as np
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from pyeeglab import TUHEEGCorpusDataset
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from pyeeglab import TUHEEGAbnormalDataset
 
-dataset = TUHEEGCorpusDataset('../data', frames=8)
-dataset.set_bandpass_frequency(1.5, 48)
-data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../export')
+dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0', frames=8)
+data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../../export')
 
 adjs = data[0].shape[0]
 classes = len(set(labels))
@@ -58,9 +52,7 @@ for train_idx, test_idx in skf.split(data[0], labels):
         cnns.append(x)
 
     combine = tf.keras.layers.Concatenate()([x.output for x in cnns])
-    reshape = tf.keras.layers.Reshape((len(cnns), cnns[0].output_shape[1]))(combine)
-    lstm = LSTM(32)(reshape)
-    z = tf.keras.layers.Dense(classes, activation='softmax')(lstm)
+    z = tf.keras.layers.Dense(classes, activation='softmax')(combine)
 
     model = tf.keras.Model(inputs=[x.input for x in cnns], outputs=z)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
