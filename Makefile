@@ -1,0 +1,9 @@
+.PHONY: tuh_eeg_abnormal tuh_eeg_artifact
+
+tuh_eeg_abnormal:
+	echo "Request your access password at: https://www.isip.piconepress.com/projects/tuh_eeg/html/request_access.php"
+	rsync -auxvL nedc_tuh_eeg@www.isip.piconepress.com:~/data/tuh_eeg_abnormal/ data/tuh_eeg_abnormal
+
+tuh_eeg_artifact:
+	echo "Request your access password at: https://www.isip.piconepress.com/projects/tuh_eeg/html/request_access.php"
+	rsync -auxvL nedc_tuh_eeg@www.isip.piconepress.com:~/data/tuh_eeg_artifact/ data/tuh_eeg_artifact
