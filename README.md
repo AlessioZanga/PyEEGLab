@@ -14,9 +14,17 @@ It is possible to extract others data representations using different configurat
 
 ## How to Install
 
+PyEEGLab is distributed using the pip repository:
+
+    pip install PyEEGLab
+
+If you need a bleeding edge version, you can install it directly from GitHub:
+
+    pip install git+https://github.com/AlessioZanga/PyEEGLab@develop
+
 ## Documentation
 
-Work-In-Progress.
+> **WARNING**: Documentation is currently Work-In-Progress, if you need additional info, please, contact me directly.
 
 ## Credits
 
