@@ -16,11 +16,11 @@ import numpy as np
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from pyeeglab import TUHEEGAbnormalDataset
 
-dataset = TUHEEGAbnormalDataset('../data', frames=8)
-data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../export')
+dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0', frames=8)
+data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../../export')
 
 adjs = data[0].shape[0]
 classes = len(set(labels))
