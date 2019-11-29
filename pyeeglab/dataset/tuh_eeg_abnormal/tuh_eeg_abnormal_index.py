@@ -35,10 +35,10 @@ class TUHEEGAbnormalIndex(Index):
         meta = file[l:].split(sep)
         metadata = {
             'id': str(uuid.uuid5(uuid.NAMESPACE_X500, file[l:])),
-            'type': meta[1],
-            'label': meta[2],
-            'patient_id': meta[5],
-            'session_id': meta[6],
+            'type': meta[0],
+            'label': meta[1],
+            'patient_id': meta[4],
+            'session_id': meta[5],
             'format': meta[-1].split('.')[-1],
             'path': file[l:],
         }
