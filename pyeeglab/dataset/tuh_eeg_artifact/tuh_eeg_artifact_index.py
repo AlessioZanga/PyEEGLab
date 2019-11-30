@@ -11,7 +11,7 @@ from mne.io import read_raw_edf
 from ...database.index import File, Metadata, Index
 
 
-class TUHEEGAbnormalIndex(Index):
+class TUHEEGArtifactIndex(Index):
     def __init__(self, path: str) -> None:
         logging.debug('Create TUH EEG Corpus Index')
         super().__init__('sqlite:///' + join(path, 'index.db'), path)
@@ -30,15 +30,16 @@ class TUHEEGAbnormalIndex(Index):
             if splitext(filename)[1] not in ['.db', '.log']
         ]
         return files
+
     def _get_file_metadata(self, path: str) -> Dict:
         l = len(self.path)
         meta = path[l:].split(sep)
         metadata = {
             'id': str(uuid.uuid5(uuid.NAMESPACE_X500, path[l:])),
-            'type': meta[0],
-            'label': meta[1],
-            'patient_id': meta[4],
-            'session_id': meta[5],
+            'type': 'NA',
+            'label': 'NA',
+            'patient_id': meta[2],
+            'session_id': meta[3],
             'format': meta[-1].split('.')[-1],
             'path': path[l:],
         }

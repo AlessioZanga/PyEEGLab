@@ -70,7 +70,8 @@ class Preprocessor():
 
     def _get_normalized(self, data: Raw, *args) -> DataFrame:
         with data.open() as reader:
-            data.set_tmax(self.tmax, self.shift)
+            if (self.tmax >= 0 and self.shift >= 0):
+                data.set_tmax(self.tmax, self.shift)
             logging.debug('Load %s data for processing', data.id)
             reader.load_data()
             data.set_channels(self.channels)

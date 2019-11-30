@@ -19,7 +19,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from pyeeglab import TUHEEGAbnormalDataset
 
-dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0', frames=8)
+dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf', frames=8)
 dataset.set_bandpass_frequency(1.5, 48)
 data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../../export')
 
