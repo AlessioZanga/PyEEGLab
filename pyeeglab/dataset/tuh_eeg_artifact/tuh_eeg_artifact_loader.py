@@ -28,7 +28,7 @@ class TUHEEGArtifactLoader(DataLoader):
         del state['index']
         return state
 
-    def _parse_annotations(self, path: str, exclude: List[str] = ['null']) -> List:
+    def _parse_annotations(self, path: str, exclude: List[str] = ['elpp', 'bckg', 'null']) -> List:
         with open(path, 'r') as file:
             annotations = file.read()
         pattern = re.compile(r'^(\d+.\d+) (\d+.\d+) (\w+) (\d.\d+)$', re.MULTILINE)
