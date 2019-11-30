@@ -3,6 +3,8 @@ build
 data
 dist
 export
+tests/**/*.db
+tests/**/*.log
 **/__pycache__
 **.egg-info
 .idea
