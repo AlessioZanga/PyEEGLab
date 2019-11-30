@@ -50,9 +50,10 @@ class TUHEEGArtifactLoader(DataLoader):
             edfs.append(edf)
         return edfs
 
-    def get_dataset(self) -> List[RawEDF]:
+    def get_dataset(self, exclude: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[RawEDF]:
         files = self.index.db.query(File).filter(
-            File.format == 'edf'
+            File.format == 'edf',
+            ~File.channel_ref.in_(exclude)
         ).all()
         files = [(f.id, join(self.index.path, f.path)) for f in files]
         pool = Pool(len(sched_getaffinity(0)))
@@ -69,8 +70,11 @@ class TUHEEGArtifactLoader(DataLoader):
         txts = { f.id: (join(self.index.path, f.path), f.label) for f in txts }
         return txts
 
-    def get_channelset(self) -> List[str]:
-        edfs = self.index.db.query(Metadata).group_by(Metadata.channels).all()
+    def get_channelset(self, exclude: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[str]:
+        edfs = self.index.db.query(File, Metadata).filter(File.id == Metadata.id)
+        edfs = edfs.filter(~File.channel_ref.in_(exclude))
+        edfs = edfs.group_by(Metadata.channels).all()
+        edfs = [edf[1] for edf in edfs]
         edfs = [set(json.loads(edf.channels)) for edf in edfs]
         channels = edfs[0]
         for edf in edfs[1:]:

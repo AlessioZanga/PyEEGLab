@@ -37,6 +37,7 @@ class TUHEEGAbnormalIndex(Index):
             'id': str(uuid.uuid5(uuid.NAMESPACE_X500, path[l:])),
             'type': meta[0],
             'label': meta[1],
+            'channel_ref': meta[2],
             'patient_id': meta[4],
             'session_id': meta[5],
             'format': meta[-1].split('.')[-1],

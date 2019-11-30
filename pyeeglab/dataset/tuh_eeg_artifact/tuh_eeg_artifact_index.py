@@ -38,6 +38,7 @@ class TUHEEGArtifactIndex(Index):
             'id': str(uuid.uuid5(uuid.NAMESPACE_X500, path[l:])),
             'type': 'NA',
             'label': 'NA',
+            'channel_ref': meta[0],
             'patient_id': meta[2],
             'session_id': meta[3],
             'format': meta[-1].split('.')[-1],
