@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import pyeeglab
 
-PATH = './tests/samples/tuh_eeg_abnormal/edf'
+PATH = './tests/samples/tuh_eeg_abnormal/v2.0.0/edf'
 
 def test_index():
     pyeeglab.TUHEEGAbnormalLoader(PATH)
