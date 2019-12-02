@@ -21,3 +21,9 @@ def test_dataset():
     dataset = pyeeglab.TUHEEGArtifactDataset(PATH, frames=8)
     dataset.load('graphs', 0.7, 25, 75, True)
 """
+
+def test_text_miner():
+    loader = pyeeglab.TUHEEGArtifactLoader(PATH)
+    text = loader.get_dataset_text()
+    miner = pyeeglab.TextMiner(text)
+    print(miner.get_dataset())
