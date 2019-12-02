@@ -12,6 +12,7 @@ from .tuh_eeg_abnormal_index import TUHEEGAbnormalIndex
 
 class TUHEEGAbnormalLoader(DataLoader):
     def __init__(self, path: str) -> None:
+        super().__init__()
         logging.debug('Create TUH EEG Corpus Loader')
         if path[-1] != sep:
             path = path + sep
@@ -31,7 +32,7 @@ class TUHEEGAbnormalLoader(DataLoader):
         txts = self.index.db.query(File).filter(
             File.format == 'txt'
         ).all()
-        txts = { f.id: (join(self.index.path, f.path), f.label) for f in txts }
+        txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
         return txts
 
     def get_channelset(self) -> List[str]:

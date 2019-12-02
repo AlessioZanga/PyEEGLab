@@ -3,11 +3,11 @@ import json
 import logging
 
 from os import sched_getaffinity
-from os.path import join, sep, isfile
+from os.path import join, sep
 from math import floor, ceil
 from typing import List, Dict
-from sqlalchemy import func
 from multiprocessing import Pool
+from sqlalchemy import func
 from ...database.index import File, Metadata
 from ...io.loader import DataLoader
 from ...io.raw import RawEDF
@@ -16,6 +16,7 @@ from .tuh_eeg_artifact_index import TUHEEGArtifactIndex
 
 class TUHEEGArtifactLoader(DataLoader):
     def __init__(self, path: str) -> None:
+        super().__init__()
         logging.debug('Create TUH EEG Corpus Loader')
         if path[-1] != sep:
             path = path + sep
@@ -67,7 +68,7 @@ class TUHEEGArtifactLoader(DataLoader):
         txts = self.index.db.query(File).filter(
             File.format == 'txt'
         ).all()
-        txts = { f.id: (join(self.index.path, f.path), f.label) for f in txts }
+        txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
         return txts
 
     def get_channelset(self, exclude: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[str]:

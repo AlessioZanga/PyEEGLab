@@ -98,7 +98,7 @@ class Preprocessor():
 
     def _get_graphs(self, data: Raw, c: float, p1: int, p2: int, node_features: bool) -> List[Graph]:
         data = self._get_normalized(data)
-        return self.grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)        
+        return self.grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)
 
     # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
 
