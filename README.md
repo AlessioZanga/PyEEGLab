@@ -42,9 +42,9 @@ you will trigger the dataset download.
 
 If you use this code in your project use the citation below:
 
-    @misc{zanga2019pyeeglab,
-        title={PyEEGLab},
-        author={Zanga Alessio},
+    @misc{Zanga2019PyEEGLab,
+        title={PyEEGLab: a simple tool for EEG manipulation},
+        author={Alessio Zanga},
         year={2019},
         howpublished={\url{https://github.com/AlessioZanga/PyEEGLab}},
     }
