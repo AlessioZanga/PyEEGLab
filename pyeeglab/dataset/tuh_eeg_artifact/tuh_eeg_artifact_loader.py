@@ -45,9 +45,9 @@ class TUHEEGArtifactLoader(DataLoader):
         edfs = []
         for annotation in annotations:
             edf = RawEDF(fid, path, annotation[2])
-            tmax = ceil(annotation[1]-annotation[0])
-            shift = floor(annotation[0])
-            edf.set_tmax(tmax, shift)
+            offset = floor(annotation[0])
+            length = ceil(annotation[1]-annotation[0])
+            edf.crop(offset, length)
             edfs.append(edf)
         return edfs
 

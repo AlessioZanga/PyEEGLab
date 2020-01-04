@@ -21,7 +21,7 @@ class Raw(ABC):
         pass
 
     @abstractmethod
-    def set_tmax(self, tmax: int, shift: int) -> None:
+    def crop(self, offset: int, duration: int) -> None:
         pass
 
     @abstractmethod
@@ -47,9 +47,9 @@ class RawEDF(Raw):
             self._reader.close()
         self._reader = None
 
-    def set_tmax(self, tmax: int, shift: int) -> None:
-        logging.debug('Crop RawEDF %s data to %s seconds', self.id, tmax)
-        self.open().crop(shift, shift + tmax)
+    def crop(self, offset: int, length: int) -> None:
+        logging.debug('Crop RawEDF %s data to %s seconds from %s', self.id, length, offset)
+        self.open().crop(offset, offset + length)
 
     def set_channels(self, channels: List[str]) -> None:
         channels = set(self.open().ch_names) - set(channels)

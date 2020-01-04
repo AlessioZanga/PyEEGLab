@@ -8,15 +8,15 @@ from ...preprocessing import Preprocessor
 
 class TUHEEGAbnormalDataset(Dataset):
 
-    def __init__(self, path: str, drop_channels: List[str] = ['IBI', 'BURSTS', 'STI 014'], shift: int = 60, tmax: int = 60, frames: int = 8, augmentation: int = 1) -> None:
+    def __init__(self, path: str, drop_channels: List[str] = ['IBI', 'BURSTS', 'STI 014'], offset: int = 60, length: int = 60, frames: int = 8, augmentation: int = 1) -> None:
         self.loader = TUHEEGAbnormalLoader(path)
         self.dataset = self.loader.get_dataset()
         self.labels = [data.label for data in self.dataset]
         self.labels = [0 if label == 'normal' else 1 for label in self.labels]
         self.preprocessors = [
             Preprocessor(
-                k * shift,
-                tmax,
+                k * offset,
+                length,
                 self.get_channels(drop_channels),
                 self.loader.get_lowest_frequency(),
                 frames
