@@ -1,7 +1,6 @@
 import uuid
 import json
 import logging
-import warnings
 
 from typing import List, Dict
 from os import walk
@@ -17,8 +16,6 @@ class TUHEEGAbnormalIndex(Index):
         super().__init__('sqlite:///' + join(path, 'index.db'), path)
         logging.debug('Redirect MNE logging interface to file')
         set_log_file(join(path, 'mne.log'), overwrite=False)
-        logging.debug('Disable MNE runtime warnings')
-        warnings.filterwarnings("ignore", category=RuntimeWarning)
         self.index()
 
     def _get_files(self) -> List[str]:
