@@ -13,15 +13,15 @@ class Raw(ABC):
         self.label = label
 
     @abstractmethod
-    def open(self) -> mne.io.Raw:
-        pass
-
-    @abstractmethod
     def close(self) -> None:
         pass
 
     @abstractmethod
     def crop(self, offset: int, length: int) -> None:
+        pass
+
+    @abstractmethod
+    def open(self) -> mne.io.Raw:
         pass
 
     @abstractmethod
@@ -38,12 +38,6 @@ class RawEDF(Raw):
     def __init__(self, fid: str, path: str, label: str) -> None:
         super().__init__(fid, path, label)
 
-    def open(self) -> mne.io.Raw:
-        if self._reader is None:
-            logging.debug('Open RawEDF %s reader', self.id)
-            self._reader = mne.io.read_raw_edf(self.path)
-        return self._reader
-
     def close(self) -> None:
         if self._reader is not None:
             logging.debug('Close RawEDF %s reader', self.id)
@@ -53,6 +47,12 @@ class RawEDF(Raw):
     def crop(self, offset: int, length: int) -> None:
         logging.debug('Crop RawEDF %s data to %s seconds from %s', self.id, length, offset)
         self.open().crop(offset, offset + length)
+
+    def open(self) -> mne.io.Raw:
+        if self._reader is None:
+            logging.debug('Open RawEDF %s reader', self.id)
+            self._reader = mne.io.read_raw_edf(self.path)
+        return self._reader
 
     def set_channels(self, channels: List[str]) -> None:
         channels = set(self.open().ch_names) - set(channels)
