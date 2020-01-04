@@ -7,8 +7,8 @@ import mne
 class Raw(ABC):
     _reader = None
 
-    def __init__(self, id: str, path: str, label: str) -> None:
-        self.id = id
+    def __init__(self, fid: str, path: str, label: str) -> None:
+        self.id = fid
         self.path = path
         self.label = label
 
@@ -34,6 +34,9 @@ class Raw(ABC):
 
 
 class RawEDF(Raw):
+
+    def __init__(self, fid: str, path: str, label: str) -> None:
+        super().__init__(fid, path, label)
 
     def open(self) -> mne.io.Raw:
         if self._reader is None:
