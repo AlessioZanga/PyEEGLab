@@ -25,6 +25,10 @@ class Raw(ABC):
         pass
 
     @abstractmethod
+    def get_annotations(self):
+        pass
+
+    @abstractmethod
     def set_channels(self, channels: List[str]) -> None:
         pass
 
@@ -51,8 +55,19 @@ class RawEDF(Raw):
     def open(self) -> mne.io.Raw:
         if self._reader is None:
             logging.debug('Open RawEDF %s reader', self.id)
-            self._reader = mne.io.read_raw_edf(self.path)
+            try:
+                self._reader = mne.io.read_raw_edf(self.path)
+            except RuntimeError:
+                logging.debug('Using preload for RawEDF %s reader', self.id)
+                self._reader = mne.io.read_raw_edf(self.path, preload=True)
         return self._reader
+
+    def get_annotations(self):
+        annotations = self.open().annotations
+        annotations = list(zip(annotations.onset, annotations.durations))
+        keys = ['begin', 'end']
+        annotations = dict([zip(keys, a) for a in annotations])
+        return annotations
 
     def set_channels(self, channels: List[str]) -> None:
         channels = set(self.open().ch_names) - set(channels)
