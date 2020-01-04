@@ -46,8 +46,7 @@ class Index(ABC):
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        self.db = Session()
+        self.db = sessionmaker(bind=engine)()
         self.path = path
 
     @abstractmethod
