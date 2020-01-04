@@ -21,7 +21,7 @@ class Raw(ABC):
         pass
 
     @abstractmethod
-    def crop(self, offset: int, duration: int) -> None:
+    def crop(self, offset: int, length: int) -> None:
         pass
 
     @abstractmethod
