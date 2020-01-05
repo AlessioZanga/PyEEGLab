@@ -39,6 +39,18 @@ class Metadata(BaseTable):
             setattr(self, k, v)
 
 
+class Event(BaseTable):
+    __tablename__ = 'event'
+    id = Column(Text, ForeignKey('file.id'), primary_key=True)
+    begin = Column(Integer, nullable=False)
+    end = Column(Integer, nullable=False)
+    label = Column(Integer, nullable=False, index=True)
+
+    def __init__(self, dictionary) -> None:
+        for k, v in dictionary.items():
+            setattr(self, k, v)
+
+
 class Index(ABC):
 
     def __init__(self, db: str, path: str) -> None:
