@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from sqlalchemy import Column, Integer, Text, ForeignKey
+from sqlalchemy import Column, Integer, Float, Text, ForeignKey
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -42,9 +42,9 @@ class Metadata(BaseTable):
 class Event(BaseTable):
     __tablename__ = 'event'
     id = Column(Text, ForeignKey('file.id'), primary_key=True)
-    begin = Column(Integer, nullable=False)
-    end = Column(Integer, nullable=False)
-    label = Column(Integer, nullable=False, index=True)
+    begin = Column(Float, nullable=False)
+    end = Column(Float, nullable=False)
+    label = Column(Text, nullable=False, index=True)
 
     def __init__(self, dictionary) -> None:
         for k, v in dictionary.items():
