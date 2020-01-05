@@ -41,7 +41,8 @@ class Metadata(BaseTable):
 
 class Event(BaseTable):
     __tablename__ = 'event'
-    id = Column(Text, ForeignKey('file.id'), index=True)
+    id = Column(Text, primary_key=True)
+    file_id = Column(Text, ForeignKey('file.id'), index=True)
     begin = Column(Float, nullable=False)
     end = Column(Float, nullable=False)
     label = Column(Text, nullable=False, index=True)
