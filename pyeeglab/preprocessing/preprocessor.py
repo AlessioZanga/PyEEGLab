@@ -15,16 +15,16 @@ from ..io.raw import Raw
 
 class Preprocessor():
 
-    def __init__(self, shift: int, tmax: int, chs: List[str], freq: float, frames: int) -> None:
+    def __init__(self, offset: int, length: int, chs: List[str], frequency: float, frames: int) -> None:
         logging.debug('Create data preprocessor')
-        logging.debug('Set data preprocessor shift time to %s seconds', shift)
-        self.shift = shift
-        logging.debug('Set data preprocessor time to %s seconds', tmax)
-        self.tmax = tmax
+        logging.debug('Set data preprocessor offset time to %s seconds', offset)
+        self.offset = offset
+        logging.debug('Set data preprocessor length to %s seconds', length)
+        self.length = length
         logging.debug('Set data preprocessor channels to %s', '|'.join(chs))
         self.channels = chs
-        logging.debug('Set data preprocessor frequency to %s Hz', freq)
-        self.frequency = freq
+        logging.debug('Set data preprocessor frequency to %s Hz', frequency)
+        self.frequency = frequency
         self.low_frequency = 0
         self.high_frequency = 0
         logging.debug('Set data preprocessor frames to %s', frames)
@@ -39,8 +39,8 @@ class Preprocessor():
     def get_sign(self, count: int, mode: str, c: float = 0, p1: int = 0, p2: float = 0, node_features: bool = False) -> str:
         return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}_{12}.pkl'.format(
             count,
-            self.shift,
-            self.tmax,
+            self.offset,
+            self.length,
             str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self.channels))),
             self.frequency,
             self.low_frequency,
@@ -70,13 +70,13 @@ class Preprocessor():
 
     def _get_normalized(self, data: Raw, *args) -> DataFrame:
         with data.open() as reader:
-            if (self.tmax >= 0 and self.shift >= 0):
-                data.set_tmax(self.tmax, self.shift)
+            if (self.offset >= 0 and self.length >= 0):
+                data.crop(self.offset, self.length)
             logging.debug('Load %s data for processing', data.id)
             reader.load_data()
             data.set_channels(self.channels)
             data.set_frequency(self.frequency, self.low_frequency, self.high_frequency)
-            return reader.to_data_frame()[:self.tmax * self.frequency]
+            return reader.to_data_frame()[:self.length * self.frequency]
 
     def _get_frames(self, data: Raw, *args) -> List[ndarray]:
         data = self._get_normalized(data)
@@ -98,7 +98,7 @@ class Preprocessor():
 
     def _get_graphs(self, data: Raw, c: float, p1: int, p2: int, node_features: bool) -> List[Graph]:
         data = self._get_normalized(data)
-        return self.grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)        
+        return self.grapher.dataframe_to_graphs(data, c, p1, p2, node_features=node_features)
 
     # Modes: normalized, frames, correlations, adjs, weighted_adjs, graphs
 

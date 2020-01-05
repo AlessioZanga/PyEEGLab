@@ -1,7 +1,8 @@
 import logging
+import warnings
 
-from mne.utils import set_config
 from importlib.util import find_spec
+from mne.utils import set_config
 
 from .dataset import TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, TUHEEGArtifactDataset, TUHEEGArtifactLoader
 from .database import File, Metadata
@@ -13,3 +14,5 @@ logging.getLogger().setLevel(logging.DEBUG)
 
 if find_spec('cupy') is not None:
     set_config('MNE_USE_CUDA', 'true')
+
+warnings.filterwarnings("ignore", category=RuntimeWarning)

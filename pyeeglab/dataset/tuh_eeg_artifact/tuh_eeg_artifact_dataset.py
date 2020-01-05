@@ -12,6 +12,8 @@ class TUHEEGArtifactDataset(Dataset):
         self.loader = TUHEEGArtifactLoader(path)
         self.dataset = self.loader.get_dataset()
         self.labels = [data.label for data in self.dataset]
+        onehot_encoder = sorted(set(self.labels))
+        self.labels = [onehot_encoder.index(label) for label in self.labels]
         self.preprocessors = [
             Preprocessor(
                 -1,

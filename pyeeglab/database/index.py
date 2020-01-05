@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from sqlalchemy import Column, Integer, Text, ForeignKey
+from sqlalchemy import Column, Integer, Float, Text, ForeignKey
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,6 +39,19 @@ class Metadata(BaseTable):
             setattr(self, k, v)
 
 
+class Event(BaseTable):
+    __tablename__ = 'event'
+    id = Column(Text, primary_key=True)
+    file_id = Column(Text, ForeignKey('file.id'), index=True)
+    begin = Column(Float, nullable=False)
+    end = Column(Float, nullable=False)
+    label = Column(Text, nullable=False, index=True)
+
+    def __init__(self, dictionary) -> None:
+        for k, v in dictionary.items():
+            setattr(self, k, v)
+
+
 class Index(ABC):
 
     def __init__(self, db: str, path: str) -> None:
@@ -46,8 +59,7 @@ class Index(ABC):
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        self.db = Session()
+        self.db = sessionmaker(bind=engine)()
         self.path = path
 
     @abstractmethod
