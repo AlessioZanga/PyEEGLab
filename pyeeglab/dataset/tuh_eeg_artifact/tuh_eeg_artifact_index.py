@@ -1,3 +1,4 @@
+import re
 import uuid
 import json
 import logging
@@ -7,7 +8,7 @@ from os import walk
 from os.path import join, sep, splitext
 from mne import set_log_file
 from mne.io import read_raw_edf
-from ...database.index import File, Metadata, Index
+from ...database.index import File, Metadata, Event, Index
 
 
 class TUHEEGArtifactIndex(Index):
@@ -54,7 +55,22 @@ class TUHEEGArtifactIndex(Index):
             })
         return metadata
 
-    def index(self) -> None:
+    def _get_edf_events(self, fid: str, path: str, exclude: List[str]) -> List:
+        path = path[:-4] + '.tse'
+        with open(path, 'r') as file:
+            annotations = file.read()
+        pattern = re.compile(r'^(\d+.\d+) (\d+.\d+) (\w+) (\d.\d+)$', re.MULTILINE)
+        events = re.findall(pattern, annotations)
+        events = [
+            (str(uuid.uuid4()), fid, float(e[0]), float(e[1]), e[2])
+            for e in events if e[2] not in exclude
+        ]
+        keys = ['id', 'file_id', 'begin', 'end', 'label']
+        events = [dict(zip(keys, event)) for event in events]
+        events = [Event(event) for event in events]
+        return events
+
+    def index(self, exclude_events: List[str] = ['elpp', 'bckg', 'null']) -> None:
         logging.debug('Index files')
         files = self._get_files()
         for file in files:
@@ -66,7 +82,10 @@ class TUHEEGArtifactIndex(Index):
                 if f.format == 'edf':
                     path = join(self.path, f.path)
                     metadata = self._get_edf_metadata(f.id, path)
-                    logging.debug('Add file %s edf metada to index', f.id)
+                    logging.debug('Add file %s edf metadata to index', f.id)
                     self.db.add(metadata)
+                    events = self._get_edf_events(f.id, path, exclude_events)
+                    logging.debug('Add file %s edf events to index', f.id)
+                    self.db.add_all(events)
         logging.debug('Index files completed')
         self.db.commit()

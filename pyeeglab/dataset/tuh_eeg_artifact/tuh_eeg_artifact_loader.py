@@ -1,4 +1,3 @@
-import re
 import json
 import logging
 
@@ -8,7 +7,7 @@ from math import floor, ceil
 from typing import List, Dict
 from multiprocessing import Pool
 from sqlalchemy import func
-from ...database.index import File, Metadata
+from ...database.index import File, Metadata, Event
 from ...io.loader import DataLoader
 from ...io.raw import RawEDF
 from .tuh_eeg_artifact_index import TUHEEGArtifactIndex
@@ -20,6 +19,7 @@ class TUHEEGArtifactLoader(DataLoader):
         logging.debug('Create TUH EEG Corpus Loader')
         if path[-1] != sep:
             path = path + sep
+        self.path = path
         self.index = TUHEEGArtifactIndex(path)
 
     def __getstate__(self):
@@ -29,39 +29,24 @@ class TUHEEGArtifactLoader(DataLoader):
         del state['index']
         return state
 
-    def _parse_annotations(self, path: str, exclude: List[str] = ['elpp', 'bckg', 'null']) -> List:
-        with open(path, 'r') as file:
-            annotations = file.read()
-        pattern = re.compile(r'^(\d+.\d+) (\d+.\d+) (\w+) (\d.\d+)$', re.MULTILINE)
-        matches = re.findall(pattern, annotations)
-        matches = [
-            (float(m[0]), float(m[1]), m[2], float(m[3]))
-            for m in matches if m[2] not in exclude
-        ]
-        return matches
+    def _get_dataset(self, f: File, e: Event) -> RawEDF:
+        edf = RawEDF(f.id, join(self.path, f.path), e.label)
+        offset = floor(e.begin)
+        length = ceil(e.end-e.begin)
+        edf.crop(offset, length)
+        return edf
 
-    def _get_dataset(self, fid: str, path: str) -> List[RawEDF]:
-        annotations = self._parse_annotations(path[:-4] + '.tse')
-        edfs = []
-        for annotation in annotations:
-            edf = RawEDF(fid, path, annotation[2])
-            offset = floor(annotation[0])
-            length = ceil(annotation[1]-annotation[0])
-            edf.crop(offset, length)
-            edfs.append(edf)
-        return edfs
-
-    def get_dataset(self, exclude: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[RawEDF]:
-        files = self.index.db.query(File).filter(
+    def get_dataset(self, exclude_channel_ref: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[RawEDF]:
+        files = self.index.db.query(File, Event)
+        files = files.filter(File.id == Event.file_id)
+        files = files.filter(
             File.format == 'edf',
-            ~File.channel_ref.in_(exclude)
+            ~File.channel_ref.in_(exclude_channel_ref)
         ).all()
-        files = [(f.id, join(self.index.path, f.path)) for f in files]
         pool = Pool(len(sched_getaffinity(0)))
         edfs = pool.starmap(self._get_dataset, files)
         pool.close()
         pool.join()
-        edfs = [e for edf in edfs for e in edf]
         return edfs
 
     def get_dataset_text(self) -> Dict:
@@ -72,7 +57,8 @@ class TUHEEGArtifactLoader(DataLoader):
         return txts
 
     def get_channelset(self, exclude: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[str]:
-        edfs = self.index.db.query(File, Metadata).filter(File.id == Metadata.id)
+        edfs = self.index.db.query(File, Metadata)
+        edfs = edfs.filter(File.id == Metadata.id)
         edfs = edfs.filter(~File.channel_ref.in_(exclude))
         edfs = edfs.group_by(Metadata.channels).all()
         edfs = [edf[1] for edf in edfs]
