@@ -29,7 +29,7 @@ class TUHEEGArtifactLoader(DataLoader):
         del state['index']
         return state
 
-    def _get_dataset(self, f: File, e: Event) -> RawEDF:
+    def _get_dataset_by_event(self, f: File, e: Event) -> RawEDF:
         edf = RawEDF(f.id, join(self.path, f.path), e.label)
         offset = floor(e.begin)
         length = ceil(e.end-e.begin)
@@ -44,7 +44,7 @@ class TUHEEGArtifactLoader(DataLoader):
             ~File.channel_ref.in_(exclude_channel_ref)
         ).all()
         pool = Pool(len(sched_getaffinity(0)))
-        edfs = pool.starmap(self._get_dataset, files)
+        edfs = pool.starmap(self._get_dataset_by_event, files)
         pool.close()
         pool.join()
         return edfs
