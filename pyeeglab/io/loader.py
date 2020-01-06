@@ -55,10 +55,11 @@ class DataLoader(ABC):
         return fifs
 
     def get_dataset_text(self) -> Dict:
-        txts = self.index.db.query(File).filter(
-            File.extension == 'txt'
-        ).all()
-        txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
+        txts = self.index.db.query(File, Event)
+        txts = txts.filter(File.id == Event.file_id)
+        txts = txts.filter(File.extension == 'txt')
+        txts = txts.all()
+        txts = {f.id: (join(self.index.path, f.path), e.label) for f, e in txts}
         return txts
 
     def get_channelset(self) -> List[str]:
