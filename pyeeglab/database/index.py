@@ -58,13 +58,14 @@ class Event(BaseTable):
 
 class Index(ABC):
 
-    def __init__(self, db: str, path: str) -> None:
+    def __init__(self, db: str, path: str, exclude_events: List[str] = []) -> None:
         logging.debug('Create index at %s', db)
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
         self.db = sessionmaker(bind=engine)()
         self.path = path
+        self.exclude_events = exclude_events
         logging.debug('Redirect MNE logging interface to file')
         set_log_file(join(path, 'mne.log'), overwrite=False)
 
