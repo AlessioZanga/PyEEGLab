@@ -44,11 +44,7 @@ class EEGMMIDBLoader(DataLoader):
         return edfs
 
     def get_dataset_text(self) -> Dict:
-        txts = self.index.db.query(File).filter(
-            File.format == 'txt'
-        ).all()
-        txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
-        return txts
+        return {}
 
     def get_channelset(self) -> List[str]:
         edfs = self.index.db.query(File, Metadata)
