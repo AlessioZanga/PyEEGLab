@@ -46,7 +46,7 @@ class DataLoader(ABC):
         files = self.index.db.query(File, Metadata, Event)
         files = files.filter(File.id == Metadata.file_id)
         files = files.filter(File.id == Event.file_id)
-        files = files.filter(File.format == self.extension)
+        files = files.filter(File.extension == self.extension)
         files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         files = files.all()
@@ -59,7 +59,7 @@ class DataLoader(ABC):
 
     def get_dataset_text(self) -> Dict:
         txts = self.index.db.query(File).filter(
-            File.format == 'txt'
+            File.extension == 'txt'
         ).all()
         txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
         return txts

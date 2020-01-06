@@ -5,7 +5,7 @@ import mne
 
 class Raw():
 
-    def __init__(self, fid: str, path: str, label: str) -> None:
+    def __init__(self, fid: str, path: str, label: str = None) -> None:
         self.id = fid
         self.path = path
         self.label = label
