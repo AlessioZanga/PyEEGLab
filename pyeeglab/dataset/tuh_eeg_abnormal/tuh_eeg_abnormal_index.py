@@ -33,8 +33,8 @@ class TUHEEGAbnormalIndex(Index):
             'id': str(uuid.uuid4()),
             'file_id': raw.id,
             'begin': 60,
-            'end': 60,
-            'label': 'NA'
+            'end': 120,
+            'label': raw.label
         })
         events = [events]
         return events
@@ -49,7 +49,7 @@ class TUHEEGAbnormalIndex(Index):
                 logging.debug('Add file %s at %s to index', f.id, f.path)
                 self.db.add(f)
                 if f.format == 'edf':
-                    edf = RawEDF(f.id, join(self.path, f.path), None)
+                    edf = RawEDF(f.id, join(self.path, f.path), f.label)
                     metadata = self._get_record_metadata(edf)
                     logging.debug('Add file %s edf metadata to index', f.id)
                     self.db.add(metadata)
