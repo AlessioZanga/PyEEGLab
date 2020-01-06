@@ -13,11 +13,8 @@ BaseTable = declarative_base()
 class File(BaseTable):
     __tablename__ = 'file'
     id = Column(Text, primary_key=True)
-    type = Column(Text, nullable=False, index=True)
     label = Column(Text, nullable=False, index=True)
     channel_ref = Column(Text, nullable=False, index=True)
-    patient_id = Column(Text, nullable=False)
-    session_id = Column(Text, nullable=False)
     format = Column(Text, nullable=False, index=True)
     path = Column(Text, nullable=False)
 
