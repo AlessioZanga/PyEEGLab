@@ -1,23 +1,56 @@
 import json
 import logging
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import List, Dict
-from os.path import join
+
+from os import sched_getaffinity
+from os.path import isfile, join, sep
+from multiprocessing import Pool
+
 from sqlalchemy import func
 
-from .raw import Raw
-from ..database import File, Metadata
+from .raw import Raw, RawEDF, RawFIF
+from ..database import File, Metadata, Event
 
 
 class DataLoader(ABC):
 
-    def __init__(self) -> None:
+    def __init__(self, path: str) -> None:
         logging.debug('Create data loader')
+        if path[-1] != sep:
+            path = path + sep
+        self.path = path
         self.index = None
 
-    @abstractmethod
-    def get_dataset(self) -> List[Raw]:
-        pass
+    def __getstate__(self):
+        # Workaround for unpickable sqlalchemy.orm.session
+        # during multiprocess dataset loading
+        state = self.__dict__.copy()
+        del state['index']
+        return state
+
+    def _get_data_by_event(self, f: File, e: Event) -> Raw:
+        path_edf = join(self.path, f.path)
+        path_fif = path_edf + '-' + e.id + '.fif.gz'
+        if not isfile(path_fif):
+            edf = RawEDF(f.id, path_edf, e.label)
+            edf.crop(e.begin, e.end-e.begin)
+            edf.open().save(path_fif)
+        fif = RawFIF(f.id, path_fif, e.label)
+        return fif
+
+    def get_dataset(self, ext: str = 'edf', exclude_channel_ref: List[str] = []) -> List[Raw]:
+        files = self.index.db.query(File, Event)
+        files = files.filter(File.id == Event.file_id)
+        files = files.filter(
+            File.format == ext,
+            ~File.channel_ref.in_(exclude_channel_ref)
+        ).all()
+        pool = Pool(len(sched_getaffinity(0)))
+        fifs = pool.starmap(self._get_data_by_event, files)
+        pool.close()
+        pool.join()
+        return fifs
 
     def get_dataset_text(self) -> Dict:
         txts = self.index.db.query(File).filter(
