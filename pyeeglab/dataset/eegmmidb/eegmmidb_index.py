@@ -2,7 +2,7 @@ import uuid
 import logging
 
 from os.path import join, sep
-from ...io import RawEDF
+from ...io import Raw
 from ...database import File, Index
 
 
@@ -35,11 +35,11 @@ class EEGMMIDBIndex(Index):
                 logging.debug('Add file %s at %s to index', f.id, f.path)
                 self.db.add(f)
                 if f.format == 'edf':
-                    edf = RawEDF(f.id, join(self.path, f.path), None)
-                    metadata = self._get_record_metadata(edf)
+                    raw = Raw(f.id, join(self.path, f.path), None)
+                    metadata = self._get_record_metadata(raw)
                     logging.debug('Add file %s edf metadata to index', f.id)
                     self.db.add(metadata)
-                    events = self._get_record_events(edf)
+                    events = self._get_record_events(raw)
                     logging.debug('Add file %s edf events to index', f.id)
                     self.db.add_all(events)
         logging.debug('Index files completed')

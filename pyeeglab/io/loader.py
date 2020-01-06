@@ -9,7 +9,7 @@ from multiprocessing import Pool
 
 from sqlalchemy import func
 
-from .raw import Raw, RawEDF, RawFIF
+from .raw import Raw
 from ..database import File, Metadata, Event
 
 
@@ -36,10 +36,10 @@ class DataLoader(ABC):
         path_edf = join(self.path, f.path)
         path_fif = path_edf + '-' + e.id + '.fif.gz'
         if not isfile(path_fif):
-            edf = RawEDF(f.id, path_edf, e.label)
+            edf = Raw(f.id, path_edf, e.label)
             edf.crop(e.begin, e.end-e.begin)
             edf.open().save(path_fif)
-        fif = RawFIF(f.id, path_fif, e.label)
+        fif = Raw(f.id, path_fif, e.label)
         return fif
 
     def get_dataset(self) -> List[Raw]:
