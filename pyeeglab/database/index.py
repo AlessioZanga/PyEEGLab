@@ -72,7 +72,7 @@ class Index(ABC):
     def index(self) -> None:
         pass
 
-    def _get_files(self, exclude_extensions: List[str] = ['.db', '.log']) -> List[str]:
+    def _get_files(self, exclude_extensions: List[str] = ['.db', '.gz', '.log']) -> List[str]:
         logging.debug('Get files from path')
         files = [
             join(dirpath, filename)
