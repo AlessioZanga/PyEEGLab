@@ -52,7 +52,7 @@ class TUHEEGArtifactIndex(Index):
             })
         return metadata
 
-    def _get_edf_events(self, fid: str, path: str, exclude: List[str]) -> List:
+    def _get_edf_events(self, fid: str, path: str, exclude_events: List[str]) -> List:
         path = path[:-4] + '.tse'
         with open(path, 'r') as file:
             annotations = file.read()
@@ -60,7 +60,7 @@ class TUHEEGArtifactIndex(Index):
         events = re.findall(pattern, annotations)
         events = [
             (str(uuid.uuid4()), fid, float(e[0]), float(e[1]), e[2])
-            for e in events if e[2] not in exclude
+            for e in events if e[2] not in exclude_events
         ]
         keys = ['id', 'file_id', 'begin', 'end', 'label']
         events = [dict(zip(keys, event)) for event in events]
