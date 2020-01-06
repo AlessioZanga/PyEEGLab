@@ -1,6 +1,7 @@
 import logging
 from typing import List
 from itertools import combinations
+from math import floor
 from yasa import bandpower
 from numpy import percentile
 from pandas import DataFrame
@@ -20,8 +21,8 @@ class GraphGenerator():
     def data_to_frames(self, data: DataFrame) -> List[DataFrame]:
         step = len(data)
         if self.frames > 1:
-            step = round(step/self.frames)
-        return [data[t:t+step] for t in range(0, len(data), step)]
+            step = floor(step/self.frames)
+        return [data[t:t+step] for t in range(0, len(data) - step + 1, step)]
 
     def extract_features(self, frame: DataFrame, bands: List[str] = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']) -> DataFrame:
         frame = frame.swapaxes('index', 'columns')
