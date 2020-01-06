@@ -12,4 +12,6 @@ eegmmidb:
 	wget -r -N -c -np https://physionet.org/files/eegmmidb/1.0.0/ -P data
 
 clean:
+	find -L data -iname "*.db" -type f -delete
+	find -L data -iname "*.log" -type f -delete
 	find -L data -iname "*.fif.gz" -type f -delete
