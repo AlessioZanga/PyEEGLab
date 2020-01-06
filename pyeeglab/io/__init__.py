@@ -1,2 +1,2 @@
 from .loader import DataLoader
-from .raw import RawEDF
+from .raw import Raw, RawEDF, RawFIF
