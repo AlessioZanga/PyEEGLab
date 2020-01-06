@@ -60,13 +60,14 @@ class Event(BaseTable):
 
 class Index(ABC):
 
-    def __init__(self, db: str, path: str, exclude_events: List[str] = []) -> None:
+    def __init__(self, db: str, path: str, include_extensions: List[str] = ['edf'], exclude_events: List[str] = []) -> None:
         logging.debug('Create index at %s', db)
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
         self.db = sessionmaker(bind=engine)()
         self.path = path
+        self.include_extensions = include_extensions
         self.exclude_events = exclude_events
         logging.debug('Redirect MNE logging interface to file')
         set_log_file(join(path, 'mne.log'), overwrite=False)
@@ -146,7 +147,7 @@ class Index(ABC):
             for file in files
             if not self.db.query(File).filter(File.id == file.id).all()
         ]
-        raws = [file for file in files if file.extension in ['edf']]
+        raws = [file for file in files if file.extension in self.include_extensions]
         metadata = self._parallel_record_metadata(raws)
         events = self._parallel_record_events(raws)
         self.db.add_all(files + metadata + events)

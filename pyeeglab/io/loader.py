@@ -7,21 +7,18 @@ from os import sched_getaffinity
 from os.path import isfile, join, sep
 from multiprocessing import Pool
 
-from sqlalchemy import func
-
 from .raw import Raw
 from ..database import File, Metadata, Event
 
 
 class DataLoader(ABC):
 
-    def __init__(self, path: str, extension: str = 'edf', exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = []) -> None:
+    def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = []) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
         self.index = None
-        self.extension = extension
         self.exclude_channel_ref = exclude_channel_ref
         self.exclude_frequency = exclude_frequency
 
@@ -34,7 +31,7 @@ class DataLoader(ABC):
 
     def _get_data_by_event(self, f: File, e: Event) -> Raw:
         path_edf = join(self.path, f.path)
-        path_fif = path_edf + '-' + e.id + '.fif.gz'
+        path_fif = path_edf + '_' + e.id + '_raw.fif.gz'
         if not isfile(path_fif):
             edf = Raw(f.id, path_edf, e.label)
             edf.crop(e.begin, e.end-e.begin)
@@ -46,7 +43,7 @@ class DataLoader(ABC):
         files = self.index.db.query(File, Metadata, Event)
         files = files.filter(File.id == Metadata.file_id)
         files = files.filter(File.id == Event.file_id)
-        files = files.filter(File.extension == self.extension)
+        files = files.filter(File.extension.in_(self.index.include_extensions))
         files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         files = files.all()
