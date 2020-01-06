@@ -65,6 +65,7 @@ class RawEDF(Raw):
     def get_events(self):
         events = self.open().annotations
         events = list(zip(events.onset, events.duration, events.description))
+        events = [(event[0], event[0] + event[1], event[2]) for event in events]
         keys = ['begin', 'end', 'label']
         events = [dict(zip(keys, event)) for event in events]
         return events
