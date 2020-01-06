@@ -25,7 +25,7 @@ class Raw(ABC):
         pass
 
     @abstractmethod
-    def get_annotations(self):
+    def get_events(self):
         pass
 
     @abstractmethod
@@ -62,12 +62,12 @@ class RawEDF(Raw):
                 self._reader = mne.io.read_raw_edf(self.path, preload=True)
         return self._reader
 
-    def get_annotations(self):
-        annotations = self.open().annotations
-        annotations = list(zip(annotations.onset, annotations.durations))
-        keys = ['begin', 'end']
-        annotations = dict([zip(keys, a) for a in annotations])
-        return annotations
+    def get_events(self):
+        events = self.open().annotations
+        events = list(zip(events.onset, events.duration, events.description))
+        keys = ['begin', 'end', 'label']
+        events = [dict(zip(keys, event)) for event in events]
+        return events
 
     def set_channels(self, channels: List[str]) -> None:
         channels = set(self.open().ch_names) - set(channels)
