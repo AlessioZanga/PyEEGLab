@@ -15,12 +15,8 @@ from ..io.raw import Raw
 
 class Preprocessor():
 
-    def __init__(self, offset: int, length: int, chs: List[str], frequency: float, frames: int) -> None:
+    def __init__(self, chs: List[str], frequency: float, frames: int) -> None:
         logging.debug('Create data preprocessor')
-        logging.debug('Set data preprocessor offset time to %s seconds', offset)
-        self.offset = offset
-        logging.debug('Set data preprocessor length to %s seconds', length)
-        self.length = length
         logging.debug('Set data preprocessor channels to %s', '|'.join(chs))
         self.channels = chs
         logging.debug('Set data preprocessor frequency to %s Hz', frequency)
@@ -37,10 +33,8 @@ class Preprocessor():
         self.high_frequency = h_freq
 
     def get_sign(self, count: int, mode: str, c: float = 0, p1: int = 0, p2: float = 0, node_features: bool = False) -> str:
-        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}_{11}_{12}.pkl'.format(
+        return 'data_{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}_{8}_{9}_{10}.pkl'.format(
             count,
-            self.offset,
-            self.length,
             str(uuid.uuid5(uuid.NAMESPACE_X500, '-'.join(self.channels))),
             self.frequency,
             self.low_frequency,
@@ -70,13 +64,11 @@ class Preprocessor():
 
     def _get_normalized(self, data: Raw, *args) -> DataFrame:
         with data.open() as reader:
-            if (self.offset >= 0 and self.length >= 0):
-                data.crop(self.offset, self.length)
             logging.debug('Load %s data for processing', data.id)
             reader.load_data()
             data.set_channels(self.channels)
             data.set_frequency(self.frequency, self.low_frequency, self.high_frequency)
-            return reader.to_data_frame()[:self.length * self.frequency]
+            return reader.to_data_frame()
 
     def _get_frames(self, data: Raw, *args) -> List[ndarray]:
         data = self._get_normalized(data)
