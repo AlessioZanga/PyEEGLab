@@ -32,7 +32,7 @@ class File(BaseTable):
 
 class Metadata(BaseTable):
     __tablename__ = 'metadata'
-    id = Column(Text, ForeignKey('file.id'), primary_key=True)
+    file_id = Column(Text, ForeignKey('file.id'), primary_key=True)
     file_duration = Column(Integer, nullable=False)
     channels_count = Column(Integer, nullable=False)
     frequency = Column(Integer, nullable=False, index=True)
@@ -88,7 +88,7 @@ class Index(ABC):
 
     def _get_record_metadata(self, raw) -> Metadata:
         metadata = {
-            'id': raw.id,
+            'file_id': raw.id,
             'file_duration': raw.open().n_times/raw.open().info['sfreq'],
             'channels_count': raw.open().info['nchan'],
             'frequency': raw.open().info['sfreq'],
