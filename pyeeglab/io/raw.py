@@ -44,15 +44,14 @@ class Raw(ABC):
 
     def set_frequency(self, frequency: float, low_freq: float = 0, high_freq: float = 0) -> None:
         sfreq = self.open().info['sfreq']
-        if sfreq > frequency:
-            logging.debug('Downsample %s from %s to %s', self.id, sfreq, frequency)
         n_jobs = 1
         if find_spec('cupy') is not None:
-            logging.debug('Load CUDA Cores for processing %s', self.id)
             n_jobs = 'cuda'
         if low_freq > 0 and high_freq > 0:
             self.open().filter(low_freq, high_freq, n_jobs=n_jobs)
-        self.open().resample(frequency, n_jobs=n_jobs)
+        if sfreq > frequency:
+            logging.debug('Downsample %s from %s to %s', self.id, sfreq, frequency)
+            self.open().resample(frequency, n_jobs=n_jobs)
 
 
 class RawEDF(Raw):
