@@ -27,6 +27,7 @@ class TUHEEGAbnormalIndex(Index):
             if splitext(filename)[1] not in ['.db', '.log']
         ]
         return files
+
     def _get_file_metadata(self, path: str) -> Dict:
         l = len(self.path)
         meta = path[l:].split(sep)
