@@ -8,7 +8,7 @@ from ...preprocessing import Preprocessor
 
 class TUHEEGAbnormalDataset(Dataset):
 
-    def __init__(self, path: str, drop_channels: List[str] = ['IBI', 'BURSTS', 'STI 014'], frames: int = 8) -> None:
+    def __init__(self, path: str = './data/tuh_eeg_abnormal/v2.0.0/edf/', drop_channels: List[str] = ['IBI', 'BURSTS', 'STI 014'], frames: int = 8) -> None:
         self.loader = TUHEEGAbnormalLoader(path)
         self.dataset = self.loader.get_dataset()
         self.labels = [data.label for data in self.dataset]
