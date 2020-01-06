@@ -29,7 +29,7 @@ class TUHEEGArtifactIndex(Index):
         file = File(file)
         return file
 
-    def _get_record_events(self, raw) -> List[Event]:
+    def _get_record_events(self, raw: Raw) -> List[Event]:
         path = raw.path[:-4] + '.tse'
         with open(path, 'r') as file:
             annotations = file.read()

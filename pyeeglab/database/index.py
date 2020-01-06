@@ -13,6 +13,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from ..io.raw import Raw
+
 
 BaseTable = declarative_base()
 
@@ -87,7 +89,7 @@ class Index(ABC):
     def _get_file(self, path: str) -> File:
         pass
 
-    def _get_record_metadata(self, raw) -> Metadata:
+    def _get_record_metadata(self, raw: Raw) -> Metadata:
         metadata = {
             'file_id': raw.id,
             'file_duration': raw.open().n_times/raw.open().info['sfreq'],
@@ -98,7 +100,7 @@ class Index(ABC):
         metadata = Metadata(metadata)
         return metadata
 
-    def _get_record_events(self, raw) -> List[Event]:
+    def _get_record_events(self, raw: Raw) -> List[Event]:
         events = raw.get_events()
         for event in events:
             event['id'] = str(uuid.uuid4())
