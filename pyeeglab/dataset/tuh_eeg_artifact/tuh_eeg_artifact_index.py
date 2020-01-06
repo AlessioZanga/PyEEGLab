@@ -13,10 +13,10 @@ class TUHEEGArtifactIndex(Index):
 
     def __init__(self, path: str, exclude_events: List[str] = ['elpp', 'bckg', 'null']) -> None:
         logging.debug('Create TUH EEG Corpus Index')
-        super().__init__('sqlite:///' + join(path, 'index.db'), path, exclude_events)
+        super().__init__('sqlite:///' + join(path, 'index.db'), path, exclude_events = exclude_events)
         self.index()
 
-    def _get_file(self, path: str) -> Dict:
+    def _get_file(self, path: str) -> File:
         length = len(self.path)
         meta = path[length:].split(sep)
         file = {
