@@ -3,7 +3,6 @@ import logging
 
 from os import sched_getaffinity
 from os.path import join, sep
-from math import floor, ceil
 from typing import List, Dict
 from multiprocessing import Pool
 from sqlalchemy import func
@@ -31,9 +30,7 @@ class TUHEEGArtifactLoader(DataLoader):
 
     def _get_dataset_by_event(self, f: File, e: Event) -> RawEDF:
         edf = RawEDF(f.id, join(self.path, f.path), e.label)
-        offset = floor(e.begin)
-        length = ceil(e.end-e.begin)
-        edf.crop(offset, length)
+        edf.crop(e.begin, e.end-e.begin)
         return edf
 
     def get_dataset(self, exclude_channel_ref: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[RawEDF]:
