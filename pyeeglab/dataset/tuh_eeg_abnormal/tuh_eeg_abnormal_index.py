@@ -51,7 +51,10 @@ class TUHEEGAbnormalIndex(Index):
                 if f.format == 'edf':
                     edf = RawEDF(f.id, join(self.path, f.path), None)
                     metadata = self._get_record_metadata(edf)
-                    logging.debug('Add file %s edf metada to index', f.id)
+                    logging.debug('Add file %s edf metadata to index', f.id)
                     self.db.add(metadata)
+                    events = self._get_record_events(edf)
+                    logging.debug('Add file %s edf events to index', f.id)
+                    self.db.add_all(events)
         logging.debug('Index files completed')
         self.db.commit()
