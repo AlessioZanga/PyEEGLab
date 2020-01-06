@@ -1,10 +1,12 @@
 import uuid
 import logging
 
+from typing import List
+
 from os.path import join, sep
 
 from ...io import RawEDF
-from ...database import File, Index
+from ...database import File, Index, Event
 
 
 class TUHEEGAbnormalIndex(Index):
@@ -25,6 +27,17 @@ class TUHEEGAbnormalIndex(Index):
         }
         file = File(file)
         return file
+
+    def _get_record_events(self, raw) -> List[Event]:
+        events = Event({
+            'id': str(uuid.uuid4()),
+            'file_id': raw.id,
+            'begin': 60,
+            'end': 60,
+            'label': 'NA'
+        })
+        events = [events]
+        return events
 
     def index(self) -> None:
         logging.debug('Index files')
