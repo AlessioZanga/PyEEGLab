@@ -53,10 +53,10 @@ class TUHEEGArtifactLoader(DataLoader):
         txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
         return txts
 
-    def get_channelset(self, exclude: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[str]:
+    def get_channelset(self, exclude_channel_ref: List[str] = ['02_tcp_le', '03_tcp_ar_a']) -> List[str]:
         edfs = self.index.db.query(File, Metadata)
         edfs = edfs.filter(File.id == Metadata.id)
-        edfs = edfs.filter(~File.channel_ref.in_(exclude))
+        edfs = edfs.filter(~File.channel_ref.in_(exclude_channel_ref))
         edfs = edfs.group_by(Metadata.channels).all()
         edfs = [edf[1] for edf in edfs]
         edfs = [set(json.loads(edf.channels)) for edf in edfs]
