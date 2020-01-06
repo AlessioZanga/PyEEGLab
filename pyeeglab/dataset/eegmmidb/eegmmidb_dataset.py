@@ -8,7 +8,7 @@ from ...preprocessing import Preprocessor
 
 class EEGMMIDBDataset(Dataset):
 
-    def __init__(self, path: str, frames: int = 8) -> None:
+    def __init__(self, path: str = './data/physionet.org/files/eegmmidb/1.0.0/', frames: int = 8) -> None:
         self.loader = EEGMMIDBLoader(path)
         self.dataset = self.loader.get_dataset()
         self.labels = [data.label for data in self.dataset]

@@ -5,7 +5,7 @@ from importlib.util import find_spec
 from mne.utils import set_config
 
 from .dataset import TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, TUHEEGArtifactDataset, TUHEEGArtifactLoader, EEGMMIDBDataset, EEGMMIDBLoader
-from .io import RawEDF
+from .io import Raw
 from .preprocessing import GraphGenerator, Preprocessor
 from .text import TextMiner
 

@@ -5,14 +5,15 @@ import logging
 from typing import List, Dict
 from os.path import join, sep
 
-from ...io import RawEDF
+from ...io import Raw
 from ...database import File, Event, Index
 
 
 class TUHEEGArtifactIndex(Index):
-    def __init__(self, path: str) -> None:
+
+    def __init__(self, path: str, exclude_events: List[str] = ['elpp', 'bckg', 'null']) -> None:
         logging.debug('Create TUH EEG Corpus Index')
-        super().__init__('sqlite:///' + join(path, 'index.db'), path)
+        super().__init__('sqlite:///' + join(path, 'index.db'), path, exclude_events)
         self.index()
 
     def _get_file(self, path: str) -> Dict:
@@ -28,7 +29,7 @@ class TUHEEGArtifactIndex(Index):
         file = File(file)
         return file
 
-    def _get_record_events(self, raw, exclude_events: List[str]) -> List[Event]:
+    def _get_record_events(self, raw: Raw) -> List[Event]:
         path = raw.path[:-4] + '.tse'
         with open(path, 'r') as file:
             annotations = file.read()
@@ -36,14 +37,14 @@ class TUHEEGArtifactIndex(Index):
         events = re.findall(pattern, annotations)
         events = [
             (str(uuid.uuid4()), raw.id, float(e[0]), float(e[1]), e[2])
-            for e in events if e[2] not in exclude_events
+            for e in events if e[2] not in self.exclude_events
         ]
         keys = ['id', 'file_id', 'begin', 'end', 'label']
         events = [dict(zip(keys, event)) for event in events]
         events = [Event(event) for event in events]
         return events
 
-    def index(self, exclude_events: List[str] = ['elpp', 'bckg', 'null']) -> None:
+    def index(self) -> None:
         logging.debug('Index files')
         files = self._get_files()
         for file in files:
@@ -53,11 +54,11 @@ class TUHEEGArtifactIndex(Index):
                 logging.debug('Add file %s at %s to index', f.id, f.path)
                 self.db.add(f)
                 if f.format == 'edf':
-                    edf = RawEDF(f.id, join(self.path, f.path), None)
-                    metadata = self._get_record_metadata(edf)
+                    raw = Raw(f.id, join(self.path, f.path), None)
+                    metadata = self._get_record_metadata(raw)
                     logging.debug('Add file %s edf metadata to index', f.id)
                     self.db.add(metadata)
-                    events = self._get_record_events(edf, exclude_events)
+                    events = self._get_record_events(raw)
                     logging.debug('Add file %s edf events to index', f.id)
                     self.db.add_all(events)
         logging.debug('Index files completed')

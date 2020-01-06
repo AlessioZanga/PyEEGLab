@@ -1,4 +1,4 @@
-.PHONY: tuh_eeg_abnormal tuh_eeg_artifact
+.PHONY: tuh_eeg_abnormal tuh_eeg_artifact eegmmidb clean
 
 tuh_eeg_abnormal:
 	echo "Request your access password at: https://www.isip.piconepress.com/projects/tuh_eeg/html/request_access.php"
@@ -10,3 +10,8 @@ tuh_eeg_artifact:
 
 eegmmidb:
 	wget -r -N -c -np https://physionet.org/files/eegmmidb/1.0.0/ -P data
+
+clean:
+	find -L data -iname "*.db" -type f -delete
+	find -L data -iname "*.log" -type f -delete
+	find -L data -iname "*.fif.gz" -type f -delete

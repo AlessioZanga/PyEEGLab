@@ -13,6 +13,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from ..io.raw import Raw
+
 
 BaseTable = declarative_base()
 
@@ -32,7 +34,7 @@ class File(BaseTable):
 
 class Metadata(BaseTable):
     __tablename__ = 'metadata'
-    id = Column(Text, ForeignKey('file.id'), primary_key=True)
+    file_id = Column(Text, ForeignKey('file.id'), primary_key=True)
     file_duration = Column(Integer, nullable=False)
     channels_count = Column(Integer, nullable=False)
     frequency = Column(Integer, nullable=False, index=True)
@@ -58,13 +60,14 @@ class Event(BaseTable):
 
 class Index(ABC):
 
-    def __init__(self, db: str, path: str) -> None:
+    def __init__(self, db: str, path: str, exclude_events: List[str] = []) -> None:
         logging.debug('Create index at %s', db)
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
         BaseTable.metadata.create_all(engine)
         self.db = sessionmaker(bind=engine)()
         self.path = path
+        self.exclude_events = exclude_events
         logging.debug('Redirect MNE logging interface to file')
         set_log_file(join(path, 'mne.log'), overwrite=False)
 
@@ -86,9 +89,9 @@ class Index(ABC):
     def _get_file(self, path: str) -> File:
         pass
 
-    def _get_record_metadata(self, raw) -> Metadata:
+    def _get_record_metadata(self, raw: Raw) -> Metadata:
         metadata = {
-            'id': raw.id,
+            'file_id': raw.id,
             'file_duration': raw.open().n_times/raw.open().info['sfreq'],
             'channels_count': raw.open().info['nchan'],
             'frequency': raw.open().info['sfreq'],
@@ -97,7 +100,7 @@ class Index(ABC):
         metadata = Metadata(metadata)
         return metadata
 
-    def _get_record_events(self, raw) -> List[Event]:
+    def _get_record_events(self, raw: Raw) -> List[Event]:
         events = raw.get_events()
         for event in events:
             event['id'] = str(uuid.uuid4())

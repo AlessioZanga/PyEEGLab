@@ -9,18 +9,21 @@ from multiprocessing import Pool
 
 from sqlalchemy import func
 
-from .raw import Raw, RawEDF, RawFIF
+from .raw import Raw
 from ..database import File, Metadata, Event
 
 
 class DataLoader(ABC):
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, extension: str = 'edf', exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = []) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
         self.index = None
+        self.extension = extension
+        self.exclude_channel_ref = exclude_channel_ref
+        self.exclude_frequency = exclude_frequency
 
     def __getstate__(self):
         # Workaround for unpickable sqlalchemy.orm.session
@@ -33,19 +36,21 @@ class DataLoader(ABC):
         path_edf = join(self.path, f.path)
         path_fif = path_edf + '-' + e.id + '.fif.gz'
         if not isfile(path_fif):
-            edf = RawEDF(f.id, path_edf, e.label)
+            edf = Raw(f.id, path_edf, e.label)
             edf.crop(e.begin, e.end-e.begin)
             edf.open().save(path_fif)
-        fif = RawFIF(f.id, path_fif, e.label)
+        fif = Raw(f.id, path_fif, e.label)
         return fif
 
-    def get_dataset(self, ext: str = 'edf', exclude_channel_ref: List[str] = []) -> List[Raw]:
-        files = self.index.db.query(File, Event)
+    def get_dataset(self) -> List[Raw]:
+        files = self.index.db.query(File, Metadata, Event)
+        files = files.filter(File.id == Metadata.file_id)
         files = files.filter(File.id == Event.file_id)
-        files = files.filter(
-            File.format == ext,
-            ~File.channel_ref.in_(exclude_channel_ref)
-        ).all()
+        files = files.filter(File.format == self.extension)
+        files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        files = files.all()
+        files = [(file[0], file[2]) for file in files]
         pool = Pool(len(sched_getaffinity(0)))
         fifs = pool.starmap(self._get_data_by_event, files)
         pool.close()
@@ -59,20 +64,23 @@ class DataLoader(ABC):
         txts = {f.id: (join(self.index.path, f.path), f.label) for f in txts}
         return txts
 
-    def get_channelset(self, exclude_channel_ref: List[str] = []) -> List[str]:
-        edfs = self.index.db.query(File, Metadata)
-        edfs = edfs.filter(File.id == Metadata.id)
-        edfs = edfs.filter(~File.channel_ref.in_(exclude_channel_ref))
-        edfs = edfs.group_by(Metadata.channels).all()
-        edfs = [edf[1] for edf in edfs]
-        edfs = [set(json.loads(edf.channels)) for edf in edfs]
-        channels = edfs[0]
-        for edf in edfs[1:]:
-            channels = channels.intersection(edf)
+    def get_channelset(self) -> List[str]:
+        files = self.index.db.query(File, Metadata)
+        files = files.filter(File.id == Metadata.file_id)
+        files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        files = files.group_by(Metadata.channels)
+        files = files.all()
+        files = [file[1] for file in files]
+        files = [set(json.loads(file.channels)) for file in files]
+        channels = files[0]
+        for file in files[1:]:
+            channels = channels.intersection(file)
         return sorted(channels)
 
     def get_lowest_frequency(self) -> float:
-        frequency = self.index.db.query(func.min(Metadata.frequency)).all()
-        if frequency is None:
-            return 0
-        return frequency[0][0]
+        frequency = self.index.db.query(Metadata)
+        frequency = frequency.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        frequency = frequency.all()
+        frequency = min([f.frequency for f in frequency], default=0)
+        return frequency
