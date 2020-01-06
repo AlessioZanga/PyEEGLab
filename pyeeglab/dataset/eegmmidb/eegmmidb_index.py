@@ -7,7 +7,7 @@ from os import walk
 from os.path import join, sep, splitext
 from mne import set_log_file
 from ...io import RawEDF
-from ...database.index import File, Metadata, Event, Index
+from ...database import File, Metadata, Event, Index
 
 
 class EEGMMIDBIndex(Index):

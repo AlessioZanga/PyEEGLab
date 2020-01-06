@@ -8,7 +8,7 @@ from os import walk
 from os.path import join, sep, splitext
 from mne import set_log_file
 from mne.io import read_raw_edf
-from ...database.index import File, Metadata, Event, Index
+from ...database import File, Metadata, Event, Index
 
 
 class TUHEEGArtifactIndex(Index):

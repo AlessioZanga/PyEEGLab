@@ -6,9 +6,8 @@ from os.path import join, sep
 from typing import List, Dict
 from multiprocessing import Pool
 from sqlalchemy import func
-from ...database.index import File, Metadata, Event
-from ...io.loader import DataLoader
-from ...io.raw import RawEDF
+from ...database import File, Metadata, Event
+from ...io import DataLoader, RawEDF
 from .tuh_eeg_artifact_index import TUHEEGArtifactIndex
 
 

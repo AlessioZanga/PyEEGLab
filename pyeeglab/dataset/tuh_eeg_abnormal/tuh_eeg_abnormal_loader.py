@@ -4,9 +4,8 @@ import logging
 from os.path import join, sep
 from typing import List, Dict
 from sqlalchemy import func
-from ...database.index import File, Metadata
-from ...io.loader import DataLoader
-from ...io.raw import RawEDF
+from ...database import File, Metadata
+from ...io import DataLoader, RawEDF
 from .tuh_eeg_abnormal_index import TUHEEGAbnormalIndex
 
 
