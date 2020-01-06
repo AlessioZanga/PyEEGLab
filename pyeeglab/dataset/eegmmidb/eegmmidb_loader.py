@@ -1,12 +1,10 @@
-import json
 import logging
 
 from os import sched_getaffinity
 from os.path import isfile, join, sep
-from typing import List, Dict
+from typing import List
 from multiprocessing import Pool
-from sqlalchemy import func
-from ...database import File, Metadata, Event
+from ...database import File, Event
 from ...io import DataLoader, RawEDF, RawFIF
 from .eegmmidb_index import EEGMMIDBIndex
 
@@ -46,23 +44,3 @@ class EEGMMIDBLoader(DataLoader):
         pool.close()
         pool.join()
         return fifs
-
-    def get_dataset_text(self) -> Dict:
-        return {}
-
-    def get_channelset(self) -> List[str]:
-        edfs = self.index.db.query(File, Metadata)
-        edfs = edfs.filter(File.id == Metadata.id)
-        edfs = edfs.group_by(Metadata.channels).all()
-        edfs = [edf[1] for edf in edfs]
-        edfs = [set(json.loads(edf.channels)) for edf in edfs]
-        channels = edfs[0]
-        for edf in edfs[1:]:
-            channels = channels.intersection(edf)
-        return sorted(channels)
-
-    def get_lowest_frequency(self) -> float:
-        frequency = self.index.db.query(func.min(Metadata.frequency)).all()
-        if frequency is None:
-            return 0
-        return frequency[0][0]
