@@ -50,7 +50,10 @@ class RawEDF(Raw):
 
     def crop(self, offset: int, length: int) -> None:
         logging.debug('Crop RawEDF %s data to %s seconds from %s', self.id, length, offset)
-        self.open().crop(offset, offset + length)
+        tmax = self.open().n_times / self.open().info['sfreq'] - 0.1
+        if offset + length < tmax:
+            tmax = offset + length
+        self.open().crop(offset, tmax)
 
     def open(self) -> mne.io.Raw:
         if self._reader is None:
