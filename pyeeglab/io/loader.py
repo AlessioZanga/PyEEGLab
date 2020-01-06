@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from typing import List, Dict
 from os.path import join
 from sqlalchemy import func
-from ..database import File, Metadata
 
 from .raw import Raw
+from ..database import File, Metadata
 
 
 class DataLoader(ABC):

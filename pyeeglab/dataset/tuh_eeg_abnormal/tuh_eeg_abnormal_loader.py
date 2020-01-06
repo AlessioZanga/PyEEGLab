@@ -2,8 +2,10 @@ import logging
 
 from os.path import join, sep
 from typing import List
-from ...database import File
+
 from ...io import DataLoader, RawEDF
+from ...database import File
+
 from .tuh_eeg_abnormal_index import TUHEEGAbnormalIndex
 
 
