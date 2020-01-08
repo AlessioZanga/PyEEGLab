@@ -8,17 +8,18 @@ from os.path import isfile, join, sep
 from multiprocessing import Pool
 
 from .raw import Raw
-from ..database import File, Metadata, Event
+from ..database import File, Metadata, Event, Index
 
 
 class DataLoader(ABC):
+
+    index: Index
 
     def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = []) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
-        self.index = None
         self.exclude_channel_ref = exclude_channel_ref
         self.exclude_frequency = exclude_frequency
 

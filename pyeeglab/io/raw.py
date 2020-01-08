@@ -1,21 +1,24 @@
 import logging
 from typing import List
 from importlib.util import find_spec
-import mne
+
+from mne.io import Raw as Reader
+from mne.io import read_raw_edf, read_raw_fif
 
 class Raw():
+
+    reader: Reader
 
     def __init__(self, fid: str, path: str, label: str = None) -> None:
         self.id = fid
         self.path = path
         self.label = label
-        self._reader = None
 
     def close(self) -> None:
-        if self._reader is not None:
+        if self.reader is not None:
             logging.debug('Close Raw %s reader', self.id)
-            self._reader.close()
-        self._reader = None
+            self.reader.close()
+        self.reader = None
 
     def crop(self, offset: int, length: int) -> None:
         logging.debug('Crop Raw %s data to %s seconds from %s', self.id, length, offset)
@@ -24,19 +27,19 @@ class Raw():
             tmax = offset + length
         self.open().crop(offset, tmax)
 
-    def open(self) -> mne.io.Raw:
-        if self._reader is None:
+    def open(self) -> Reader:
+        if self.reader is None:
             if self.path.endswith('.edf'):
                 logging.debug('Open RawEDF %s reader', self.id)
                 try:
-                    self._reader = mne.io.read_raw_edf(self.path)
+                    self.reader = read_raw_edf(self.path)
                 except RuntimeError:
                     logging.debug('Using preload for RawEDF %s reader', self.id)
-                    self._reader = mne.io.read_raw_edf(self.path, preload=True)
+                    self.reader = read_raw_edf(self.path, preload=True)
             if self.path.endswith('.fif.gz'):
                 logging.debug('Open RawFIF %s reader', self.id)
-                self._reader = mne.io.read_raw_fif(self.path)
-        return self._reader
+                self.reader = read_raw_fif(self.path)
+        return self.reader
 
     def get_events(self):
         events = self.open().annotations
