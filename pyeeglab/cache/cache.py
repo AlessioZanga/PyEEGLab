@@ -42,7 +42,7 @@ class SinglePickleCache(Cache):
         key = key + '.pkl'
         key = join(self.path, key)
         if isfile(key):
-            logging.debug('Key file found')
+            logging.debug('Cache file found')
             with open(key, 'rb') as file:
                 try:
                     logging.debug('Loading cache file')
@@ -51,10 +51,10 @@ class SinglePickleCache(Cache):
                 except:
                     logging.debug('Loading cache file failed')
                     pass
-        logging.debug('Key file not found, genereting new one')
+        logging.debug('Cache file not found, genereting new one')
         data = loader.get_dataset()
         data = pipeline.run(data)
         with open(key, 'wb') as file:
             logging.debug('Dumping cache file')
-            dump(data)
+            dump(data, file)
         return data
