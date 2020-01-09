@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Dict
 
 from os.path import isfile, join
+from pathlib import Path
 from hashlib import md5
 from pickle import load, dump
 
@@ -36,6 +37,7 @@ class SinglePickleCache(Cache):
     def __init__(self, path: str):
         super().__init__()
         logging.debug('Create single pickle cache manager')
+        Path(path).mkdir(parents=True, exist_ok=True)
         self.path = path
 
     def load(self, dataset: str, loader: DataLoader, pipeline: Pipeline):
