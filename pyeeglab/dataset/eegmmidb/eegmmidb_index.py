@@ -23,5 +23,4 @@ class EEGMMIDBIndex(Index):
             'path': path[length:],
         }
         file = File(file)
-        logging.debug('Add file %s raw to index', file.id)
         return file

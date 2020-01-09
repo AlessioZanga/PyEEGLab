@@ -26,7 +26,6 @@ class TUHEEGArtifactIndex(Index):
             'path': path[length:],
         }
         file = File(file)
-        logging.debug('Add file %s raw to index', file.id)
         return file
 
     def _get_record_events(self, file: File) -> List[Event]:

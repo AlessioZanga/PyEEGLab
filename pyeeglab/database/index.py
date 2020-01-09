@@ -147,6 +147,8 @@ class Index(ABC):
             for file in files
             if not self.db.query(File).filter(File.id == file.id).all()
         ]
+        for file in files:
+            logging.debug('Add file %s raw to index', file.id)
         raws = [file for file in files if file.extension in self.include_extensions]
         metadata = self._parallel_record_metadata(raws)
         events = self._parallel_record_events(raws)
