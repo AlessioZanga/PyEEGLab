@@ -2,7 +2,7 @@ import logging
 from abc import ABC
 
 from ..io import DataLoader
-from ..cache import Cache
+from ..cache import Cache, SinglePickleCache
 from ..preprocessing import Pipeline
 
 class Dataset(ABC):
@@ -13,7 +13,7 @@ class Dataset(ABC):
 
     def __init__(self) -> None:
         logging.debug('Create dataset')
-        # self.cache = ...
+        self.cache = SinglePickleCache('export')
         self.pipeline = Pipeline()
 
     def load(self):

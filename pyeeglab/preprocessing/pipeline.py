@@ -48,11 +48,12 @@ class Pipeline():
         return data
 
     def run(self, data: List[Raw]) -> List:
+        labels = [raw.label for raw in data]
         pool = Pool(len(sched_getaffinity(0)))
         data = pool.map(self._trigger_pipeline, data)
         pool.close()
         pool.join()
-        return data
+        return (data, labels)
 
     def __eq__(self, other):
         return hash(self) == hash(other)
