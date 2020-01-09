@@ -60,7 +60,6 @@ class Raw():
         channels = list(channels)
         if len(channels) > 0:
             logging.debug('Set Raw %s channels drop %s', self.id, '|'.join(channels))
-            self.open().load_data()
             self.open().drop_channels(channels)
         return self
 
