@@ -14,10 +14,12 @@ class Cache(ABC):
         logging.debug('Create cache manager')
 
     def _get_cache_key(self, dataset: str, loader: DataLoader, pipeline: Pipeline) -> str:
+        if dataset.endswith('dataset'):
+            dataset = dataset[:-7]
         key = [loader, pipeline]
         key = [hash(k) for k in key]
         key = [str(k).encode() for k in key]
-        key = [md5(k).hexdigest() for k in key]
+        key = [md5(k).hexdigest()[:10] for k in key]
         key = list(zip(['loader', 'pipeline'], key))
         key = ['_'.join(k) for k in key]
         key = dataset + '_' + '_'.join(key)
