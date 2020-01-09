@@ -22,8 +22,9 @@ class Pipeline():
 
     pipeline: List[Preprocessor] = []
 
-    def __init__(self) -> None:
+    def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
         logging.debug('Create new preprocessing pipeline')
+        self.add_all(preprocessors)
 
     def add(self, preprocessor: Preprocessor) -> 'Pipeline':
         self.pipeline.append(preprocessor)
