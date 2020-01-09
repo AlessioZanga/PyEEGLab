@@ -11,10 +11,11 @@ class Dataset(ABC):
     loader: DataLoader
     pipeline: Pipeline
 
-    def __init__(self) -> None:
+    def __init__(self, loader: DataLoader) -> None:
         logging.debug('Create dataset')
-        self.cache = SinglePickleCache('export')
-        self.pipeline = Pipeline()
+        self.loader = loader
+        self.set_cache_manager(SinglePickleCache('export'))
+        self.set_pipeline(Pipeline())
 
     def load(self):
         dataset = self.__class__.__name__.lower()
@@ -26,4 +27,9 @@ class Dataset(ABC):
 
     def set_pipeline(self, pipeline: Pipeline) -> 'Dataset':
         self.pipeline = pipeline
+        options = {
+            'channel_set': self.loader.get_channelset(),
+            'lowest_frequency': self.loader.get_lowest_frequency()
+        }
+        self.pipeline.options = options
         return self
