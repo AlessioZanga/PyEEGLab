@@ -64,6 +64,9 @@ class DataLoader(ABC):
         return txts
 
     def get_channelset(self) -> List[str]:
+        files = self.index.db.query(File, Metadata)
+        files = files.filter(File.id == Metadata.file_id)
+        files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         files = files.group_by(Metadata.channels)
         files = files.all()
