@@ -1,9 +1,9 @@
-import json
 import logging
 from abc import ABC, abstractmethod
 from typing import List, Dict
 
 from os import sched_getaffinity
+from json import dumps
 from hashlib import md5
 from multiprocessing import Pool
 
@@ -23,13 +23,13 @@ class Preprocessor(ABC):
     def to_json(self) -> str:
         pass
 
-    @abstractmethod
     def __eq__(self, other):
-        pass
+        return hash(self) == hash(other)
 
-    @abstractmethod
     def __hash__(self):
-        pass
+        value = md5(self.to_json()).hexdigest()
+        value = int(value, 16)
+        return value
 
 
 class Pipeline():
@@ -68,7 +68,7 @@ class Pipeline():
 
     def __hash__(self):
         value = [p.to_json() for p in self.pipeline]
-        value = json.dumps(value).encode()
+        value = dumps(value).encode()
         value = md5(value).hexdigest()
         value = int(value, 16)
         return value
