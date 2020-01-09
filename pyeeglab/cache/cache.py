@@ -7,5 +7,5 @@ class Cache(ABC):
         logging.debug('Create cache manager')
 
     @abstractmethod
-    def load(self):
+    def load(self, key: str):
         pass
