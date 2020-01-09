@@ -1,9 +1,9 @@
-import json
 import logging
 from abc import ABC
 from typing import List, Dict
 
 from os import sched_getaffinity
+from json import dumps
 from os.path import isfile, join, sep
 from hashlib import md5
 from multiprocessing import Pool
@@ -90,7 +90,7 @@ class DataLoader(ABC):
 
     def __hash__(self):
         value = [self.path] + self.exclude_channel_ref + self.exclude_frequency
-        value = json.dumps(value).encode()
+        value = dumps(value).encode()
         value = md5(value).hexdigest()
         value = int(value, 16)
         return value
