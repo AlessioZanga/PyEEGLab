@@ -3,7 +3,7 @@ from abc import ABC
 from typing import List, Dict
 
 from os import sched_getaffinity
-from json import dumps
+from json import loads, dumps
 from os.path import isfile, join, sep
 from hashlib import md5
 from multiprocessing import Pool
@@ -72,7 +72,7 @@ class DataLoader(ABC):
         files = files.group_by(Metadata.channels)
         files = files.all()
         files = [file[1] for file in files]
-        files = [set(json.loads(file.channels)) for file in files]
+        files = [set(loads(file.channels)) for file in files]
         channels = files[0]
         for file in files[1:]:
             channels = channels.intersection(file)
