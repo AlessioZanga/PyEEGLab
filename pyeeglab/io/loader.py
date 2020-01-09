@@ -5,6 +5,7 @@ from typing import List, Dict
 
 from os import sched_getaffinity
 from os.path import isfile, join, sep
+from hashlib import md5
 from multiprocessing import Pool
 
 from .raw import Raw
@@ -88,7 +89,8 @@ class DataLoader(ABC):
         return hash(self) == hash(other)
 
     def __hash__(self):
-        value = hash(self.path)
-        value += hash(tuple(self.exclude_channel_ref))
-        value += hash(tuple(self.exclude_frequency))
+        value = [self.path] + self.exclude_channel_ref + self.exclude_frequency
+        value = json.dumps(value).encode()
+        value = md5(value).hexdigest()
+        value = int(value, 16)
         return value
