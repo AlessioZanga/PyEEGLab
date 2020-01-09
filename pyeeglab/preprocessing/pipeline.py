@@ -50,6 +50,7 @@ class Pipeline():
         return self
 
     def _trigger_pipeline(self, data: Raw, kwargs):
+        data.open().load_data()
         for preprocessor in self.pipeline:
             data = preprocessor.run(data, **kwargs)
         return data
