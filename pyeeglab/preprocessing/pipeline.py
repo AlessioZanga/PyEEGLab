@@ -17,6 +17,14 @@ class Preprocessor(ABC):
     def run(self, data: Raw):
         pass
 
+    @abstractmethod
+    def __eq__(self, other):
+        pass
+
+    @abstractmethod
+    def __hash__(self):
+        pass
+
 
 class Pipeline():
 
@@ -45,3 +53,11 @@ class Pipeline():
         pool.close()
         pool.join()
         return data
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __hash__(self):
+        value = [hash(p) for p in self.pipeline]
+        value = tuple(value)
+        return hash(value)

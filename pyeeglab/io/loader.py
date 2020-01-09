@@ -63,10 +63,7 @@ class DataLoader(ABC):
         txts = {f.id: (join(self.index.path, f.path), e.label) for f, e in txts}
         return txts
 
-    def get_channelset(self) -> List[str]:
-        files = self.index.db.query(File, Metadata)
-        files = files.filter(File.id == Metadata.file_id)
-        files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+    def get_channelset(self) -> List[str]:value += hash(tuple(self.exclude_channel_ref))n_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         files = files.group_by(Metadata.channels)
         files = files.all()
@@ -83,3 +80,12 @@ class DataLoader(ABC):
         frequency = frequency.all()
         frequency = min([f.frequency for f in frequency], default=0)
         return frequency
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+    
+    def __hash__(self):
+        value = hash(self.path)
+        value += hash(tuple(self.exclude_channel_ref))
+        value += hash(tuple(self.exclude_frequency))
+        return value

@@ -13,9 +13,12 @@ class Dataset(ABC):
 
     def __init__(self) -> None:
         logging.debug('Create dataset')
+        # self.cache = ...
+        self.pipeline = Pipeline()
 
     def load(self):
-        return self.cache.load()
+        dataset = self.__class__.__name__.lower()
+        return self.cache.load(dataset, self.loader, self.pipeline)
 
     def set_cache_manager(self, cache: Cache) -> 'Dataset':
         self.cache = cache
