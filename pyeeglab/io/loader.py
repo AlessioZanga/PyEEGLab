@@ -86,7 +86,7 @@ class DataLoader(ABC):
 
     def __eq__(self, other):
         return hash(self) == hash(other)
-    
+
     def __hash__(self):
         value = hash(self.path)
         value += hash(tuple(self.exclude_channel_ref))

@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 
 from os import sched_getaffinity
 from multiprocessing import Pool
@@ -14,7 +14,7 @@ class Preprocessor(ABC):
         logging.debug('Create new preprocessor')
 
     @abstractmethod
-    def run(self, data: Raw):
+    def run(self, data: Raw, **kwargs):
         pass
 
     @abstractmethod
@@ -28,6 +28,7 @@ class Preprocessor(ABC):
 
 class Pipeline():
 
+    options: Dict
     pipeline: List[Preprocessor] = []
 
     def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
@@ -42,15 +43,16 @@ class Pipeline():
         self.pipeline += preprocessors
         return self
 
-    def _trigger_pipeline(self, data: Raw):
+    def _trigger_pipeline(self, data: Raw, kwargs):
         for preprocessor in self.pipeline:
-            data = preprocessor.run(data)
+            data = preprocessor.run(data, **kwargs)
         return data
 
     def run(self, data: List[Raw]) -> List:
         labels = [raw.label for raw in data]
+        data = [(d, self.options) for d in data]
         pool = Pool(len(sched_getaffinity(0)))
-        data = pool.map(self._trigger_pipeline, data)
+        data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
         pool.join()
         return {'data': data, 'labels': labels}
