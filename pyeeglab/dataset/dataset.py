@@ -31,5 +31,5 @@ class Dataset(ABC):
             'channel_set': self.loader.get_channelset(),
             'lowest_frequency': self.loader.get_lowest_frequency()
         }
-        self.pipeline.options = options
+        self.pipeline.options.update(options)
         return self

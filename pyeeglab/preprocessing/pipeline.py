@@ -28,7 +28,7 @@ class Preprocessor(ABC):
 
 class Pipeline():
 
-    options: Dict
+    options: Dict = {}
     pipeline: List[Preprocessor] = []
 
     def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
