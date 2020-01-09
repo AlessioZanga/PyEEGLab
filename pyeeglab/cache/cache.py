@@ -24,3 +24,7 @@ class Cache(ABC):
     @abstractmethod
     def load(self, dataset: str, loader: DataLoader, pipeline: Pipeline):
         pass
+
+    @abstractmethod
+    def save(self, dataset: str, loader: DataLoader, pipeline: Pipeline):
+        pass
