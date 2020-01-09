@@ -7,7 +7,7 @@ from mne.io import read_raw_edf, read_raw_fif
 
 class Raw():
 
-    reader: Reader
+    reader: Reader = None
 
     def __init__(self, fid: str, path: str, label: str = None) -> None:
         self.id = fid
