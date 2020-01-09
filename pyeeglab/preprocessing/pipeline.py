@@ -64,6 +64,11 @@ class Pipeline():
         pool.join()
         return {'data': data, 'labels': labels}
 
+    def to_json(self) -> str:
+        json = [p.to_json() for p in self.pipeline]
+        json = '[ ' + ', '.join(json) + ' ]'
+        return json
+
     def __eq__(self, other):
         return hash(self) == hash(other)
 
