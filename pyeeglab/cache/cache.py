@@ -34,7 +34,7 @@ class SinglePickleCache(Cache):
 
     def __init__(self, path: str):
         super().__init__()
-        logging.debug('Create single picle cache manager')
+        logging.debug('Create single pickle cache manager')
         self.path = path
 
     def load(self, dataset: str, loader: DataLoader, pipeline: Pipeline):
