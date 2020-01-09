@@ -53,7 +53,7 @@ class Pipeline():
         data = pool.map(self._trigger_pipeline, data)
         pool.close()
         pool.join()
-        return (data, labels)
+        return {'data': data, 'labels': labels}
 
     def __eq__(self, other):
         return hash(self) == hash(other)
