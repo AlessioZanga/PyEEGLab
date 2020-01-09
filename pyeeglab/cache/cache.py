@@ -18,9 +18,9 @@ class Cache(ABC):
         key = [hash(k) for k in key]
         key = [str(k).encode() for k in key]
         key = [md5(k).hexdigest() for k in key]
-        key = list(zip(['loader_', 'pipeline_'], key))
-        key = [''.join(k) for k in key]
-        key = dataset + '_' + ''.join(key)
+        key = list(zip(['loader', 'pipeline'], key))
+        key = ['_'.join(k) for k in key]
+        key = dataset + '_' + '_'.join(key)
         return key
 
     @abstractmethod
