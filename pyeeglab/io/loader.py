@@ -63,7 +63,7 @@ class DataLoader(ABC):
         txts = {f.id: (join(self.index.path, f.path), e.label) for f, e in txts}
         return txts
 
-    def get_channelset(self) -> List[str]:value += hash(tuple(self.exclude_channel_ref))n_(self.exclude_channel_ref))
+    def get_channelset(self) -> List[str]:
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         files = files.group_by(Metadata.channels)
         files = files.all()
