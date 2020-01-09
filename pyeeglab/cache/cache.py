@@ -1,5 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
+from typing import Dict
 
 from os.path import isfile, join
 from hashlib import md5
@@ -26,7 +27,7 @@ class Cache(ABC):
         return key
 
     @abstractmethod
-    def load(self, dataset: str, loader: DataLoader, pipeline: Pipeline):
+    def load(self, dataset: str, loader: DataLoader, pipeline: Pipeline) -> Dict:
         pass
 
 

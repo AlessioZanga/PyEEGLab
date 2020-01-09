@@ -55,7 +55,7 @@ class Pipeline():
             data = preprocessor.run(data, **kwargs)
         return data
 
-    def run(self, data: List[Raw]) -> List:
+    def run(self, data: List[Raw]) -> Dict:
         labels = [raw.label for raw in data]
         data = [(d, self.options) for d in data]
         pool = Pool(len(sched_getaffinity(0)))

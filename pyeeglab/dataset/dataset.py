@@ -1,5 +1,6 @@
 import logging
 from abc import ABC
+from typing import Dict
 
 from ..io import DataLoader
 from ..cache import Cache, SinglePickleCache
@@ -17,7 +18,7 @@ class Dataset(ABC):
         self.set_cache_manager(SinglePickleCache('export'))
         self.set_pipeline(Pipeline())
 
-    def load(self):
+    def load(self) -> Dict:
         dataset = self.__class__.__name__.lower()
         return self.cache.load(dataset, self.loader, self.pipeline)
 
