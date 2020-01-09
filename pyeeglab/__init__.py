@@ -9,7 +9,7 @@ from .dataset import    TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
                         EEGMMIDBDataset, EEGMMIDBLoader, \
                         CHBMITLoader, CHBMITDataset
 from .io import Raw
-from .preprocessing import Pipeline, CommonChannelSet, LowestFrequency
+from .preprocessing import Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
