@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import List, Dict
 
 from os import sched_getaffinity
-from json import dumps
+from json import loads, dumps
 from hashlib import md5
 from multiprocessing import Pool
 
@@ -16,7 +16,7 @@ class Preprocessor(ABC):
         logging.debug('Create new preprocessor')
 
     @abstractmethod
-    def run(self, data: Raw, **kwargs):
+    def run(self, data, **kwargs):
         pass
 
     @abstractmethod
@@ -30,6 +30,44 @@ class Preprocessor(ABC):
         value = md5(self.to_json()).hexdigest()
         value = int(value, 16)
         return value
+
+
+class JoinedPreprocessor(Preprocessor):
+
+    def __init__(self, inputs: List, output: Preprocessor) -> None:
+        super().__init__()
+        logging.debug('Create new joinded preprocessor')
+        self.inputs = inputs
+        self.output = output
+
+    def run(self, data, **kwargs):
+        for i in len(self.inputs):
+            if isinstance(self.inputs[i], list):
+                for preprocessor in self.inputs[i]:
+                    data = preprocessor.run(data, **kwargs)
+            if isinstance(self.inputs[i], Preprocessor):
+                data = self.inputs[i].run(data, **kwargs)
+            self.inputs[i] = data
+        data = self.output.run(self.inputs, **kwargs)
+        return data
+
+    def to_json(self) -> str:
+        inputs_json = []
+        for i in self.inputs:
+            if isinstance(i, list):
+                j = [loads(p.to_json()) for p in i]
+            if isinstance(i, Preprocessor):
+                j = loads(i.to_json())
+            inputs_json.append(j)
+        output_json = loads(self.output.to_json())
+        json = {
+            self.__class__.__name__ : {
+                'inputs': inputs_json,
+                'output': output_json
+            }
+        }
+        json = dumps(json)
+        return json
 
 
 class Pipeline():

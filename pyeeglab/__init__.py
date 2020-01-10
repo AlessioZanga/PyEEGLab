@@ -10,9 +10,9 @@ from .dataset import    TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
                         CHBMITLoader, CHBMITDataset
 from .io import Raw
 from .cache import ChunksPickleCache
-from .preprocessing import VerticalPipeline, Pipeline, CommonChannelSet, \
-                           LowestFrequency, BandPassFrequency, ToDataframe, \
-                           ToNumpy, DynamicWindow, SpearmanCorrelation
+from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
+                           CommonChannelSet, LowestFrequency, BandPassFrequency, \
+                           ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
