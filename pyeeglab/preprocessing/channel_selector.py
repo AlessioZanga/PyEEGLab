@@ -15,7 +15,11 @@ class CommonChannelSet(Preprocessor):
         self.blacklist = blacklist
 
     def to_json(self) -> str:
-        json = {self.__class__.__name__ : {}}
+        json = {
+            self.__class__.__name__ : {
+                'blacklist': self.blacklist
+            }
+        }
         json = dumps(json)
         return json
 
