@@ -1,4 +1,5 @@
 import logging
+from typing import List
 
 from json import dumps
 
@@ -8,9 +9,10 @@ from .pipeline import Preprocessor
 
 class CommonChannelSet(Preprocessor):
 
-    def __init__(self) -> None:
+    def __init__(self, drop_channels: List[str] = []) -> None:
         super().__init__()
         logging.debug('Create common channel_set preprocessor')
+        self.drop_channels = drop_channels
 
     def to_json(self) -> str:
         json = {self.__class__.__name__ : {}}
@@ -18,5 +20,7 @@ class CommonChannelSet(Preprocessor):
         return json
 
     def run(self, data: Raw, **kwargs) -> Raw:
-        data.set_channels(kwargs['channel_set'])
+        channels = set(kwargs['channel_set']) - set(self.drop_channels)
+        channels = list(channels)
+        data.set_channels(channels)
         return data
