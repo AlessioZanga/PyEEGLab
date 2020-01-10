@@ -12,7 +12,7 @@ from .io import Raw
 from .cache import ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, CommonChannelSet, \
                            LowestFrequency, BandPassFrequency, ToDataframe, \
-                           DynamicWindow, SpearmanCorrelation
+                           ToNumpy, DynamicWindow, SpearmanCorrelation
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
