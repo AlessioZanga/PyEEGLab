@@ -9,14 +9,12 @@ from .dataset import    TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
                         EEGMMIDBDataset, EEGMMIDBLoader, \
                         CHBMITLoader, CHBMITDataset
 from .io import Raw
+from .cache import ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, CommonChannelSet, \
                            LowestFrequency, BandPassFrequency, ToDataframe, \
                            DynamicWindow, SpearmanCorrelation
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
-
-if find_spec('cupy') is not None:
-    set_config('MNE_USE_CUDA', 'true')
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
