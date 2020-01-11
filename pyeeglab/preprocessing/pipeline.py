@@ -86,15 +86,22 @@ class Pipeline():
     def add_all(self, preprocessors: List[Preprocessor]) -> 'Pipeline':
         self.pipeline += preprocessors
         return self
+    
+    def _pre_trigger_pipeline(self, data: Raw) -> Raw:
+        data.open().load_data()
+        return data
 
     def _trigger_pipeline(self, data: Raw, kwargs):
-        data.open().load_data()
         for preprocessor in self.pipeline:
             data = preprocessor.run(data, **kwargs)
         return data
 
     def run(self, data: List[Raw]) -> Dict:
         labels = [raw.label for raw in data]
+        pool = Pool(len(sched_getaffinity(0)))
+        data = pool.map(self._pre_trigger_pipeline, data)
+        pool.close()
+        pool.join()
         data = [(d, self.options) for d in data]
         pool = Pool(len(sched_getaffinity(0)))
         data = pool.starmap(self._trigger_pipeline, data)
