@@ -11,8 +11,9 @@ from .dataset import    TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
 from .io import Raw
 from .cache import ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
-                           CommonChannelSet, LowestFrequency, BandPassFrequency, \
-                           ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation
+                            CommonChannelSet, LowestFrequency, BandPassFrequency, \
+                            ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation, \
+                            BinarizedSpearmanCorrelation
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
