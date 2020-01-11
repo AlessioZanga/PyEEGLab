@@ -94,12 +94,12 @@ class ChunksPickleCache(Cache):
     def _save(self, key: str, data: List, pipeline: Pipeline):
         data = [data[i:i+self.chunks] for i in range(0, len(data), self.chunks)]
         index = {'files': []}
-        for i in range(len(data)):
-            data[i] = pipeline.run(data[i])
-            path = key[:-5] + '_' + str(i) + '.pkl'
+        for index, value in enumerate(data):
+            data[index] = pipeline.run(value)
+            path = key[:-5] + '_' + str(index) + '.pkl'
             with open(path, 'wb') as file:
-                logging.debug('Dumping cache file %d', i)
-                dump(data[i], file)
+                logging.debug('Dumping cache file %d', index)
+                dump(data[index], file)
                 index['files'].append(path)
         with open(key, 'w') as file:
             json.dump(file, index)
