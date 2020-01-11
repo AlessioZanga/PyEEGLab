@@ -26,11 +26,11 @@ class Raw():
         return self
 
     def crop(self, offset: int, length: int) -> 'Raw':
-        logging.debug('Crop Raw %s data to %s seconds from %s', self.id, length, offset)
+        logging.debug('Crop %s data to %s seconds from %s', self.id, length, offset)
         tmax = self.open().n_times / self.open().info['sfreq'] - 0.1
         if offset + length < tmax:
             tmax = offset + length
-        self.open().crop(offset, tmax)
+        self.reader = self.open().crop(offset, tmax)
         return self
 
     def open(self) -> Reader:
@@ -40,7 +40,7 @@ class Raw():
                 try:
                     self.reader = read_raw_edf(self.path)
                 except RuntimeError:
-                    logging.debug('Using preload for RawEDF %s reader', self.id)
+                    logging.debug('Preload RawEDF %s reader', self.id)
                     self.reader = read_raw_edf(self.path, preload=True)
             if self.path.endswith('.fif.gz'):
                 logging.debug('Open RawFIF %s reader', self.id)
@@ -56,21 +56,20 @@ class Raw():
         return events
 
     def set_channels(self, channels: List[str]) -> 'Raw':
-        channels = set(self.open().ch_names) - set(channels)
-        channels = list(channels)
         if len(channels) > 0:
-            logging.debug('Set Raw %s channels drop %s', self.id, '|'.join(channels))
-            self.open().drop_channels(channels)
+            logging.debug('Restrict %s channels to %s', self.id, '|'.join(channels))
+            self.reader = self.open().pick_channels(channels)
         return self
 
     def set_frequency(self, frequency: float) -> 'Raw':
         sfreq = self.open().info['sfreq']
         if sfreq > frequency:
-            logging.debug('Downsample %s from %s to %s', self.id, sfreq, frequency)
-            self.open().resample(frequency, n_jobs=self.n_jobs)
+            logging.debug('Downsample %s from %s Hz to %s Hz', self.id, sfreq, frequency)
+            self.reader = self.open().resample(frequency, n_jobs=self.n_jobs)
         return self
 
     def set_filter(self, low_freq: float = None, high_freq: float = None) -> 'Raw':
         if low_freq is not None or high_freq is not None:
-            self.open().filter(low_freq, high_freq, n_jobs=self.n_jobs)
+            logging.debug('Filter %s with low_req: %s Hz and high_freq: %s Hz', self.id, low_freq, high_freq)
+            self.reader = self.open().filter(low_freq, high_freq, n_jobs=self.n_jobs)
         return self
