@@ -41,14 +41,16 @@ class JoinedPreprocessor(Preprocessor):
         self.output = output
 
     def run(self, data, **kwargs):
-        for i in len(self.inputs):
-            if isinstance(self.inputs[i], list):
-                for preprocessor in self.inputs[i]:
-                    data = preprocessor.run(data, **kwargs)
-            if isinstance(self.inputs[i], Preprocessor):
-                data = self.inputs[i].run(data, **kwargs)
-            self.inputs[i] = data
-        data = self.output.run(self.inputs, **kwargs)
+        results = []
+        for item in self.inputs:
+            if isinstance(item, list):
+                result = data
+                for preprocessor in item:
+                    result = preprocessor.run(result, **kwargs)
+            if isinstance(item, Preprocessor):
+                result = item.run(data, **kwargs)
+            results.append(result)
+        data = self.output.run(results, **kwargs)
         return data
 
     def to_json(self) -> str:
