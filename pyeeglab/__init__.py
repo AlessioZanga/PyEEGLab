@@ -13,7 +13,8 @@ from .cache import ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
                             CommonChannelSet, LowestFrequency, BandPassFrequency, \
                             ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation, \
-                            BinarizedSpearmanCorrelation, CorrelationToAdjacency
+                            BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
+                            Bandpower
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)

@@ -2,6 +2,7 @@ import logging
 from typing import List
 
 from json import dumps
+from yasa import bandpower
 from numpy import array, ndarray, percentile
 from pandas import DataFrame
 from itertools import product
@@ -69,4 +70,30 @@ class BinarizedSpearmanCorrelation(SpearmanCorrelation):
         perc = percentile(perc, (self.p1, self.p2), axis=0)
         for index, value in enumerate(data):
             data[index] = self._binarize_dataset(value, perc)
+        return data
+
+
+class Bandpower(Preprocessor):
+
+    def __init__(self, bands: List[str] = ['Delta', 'Theta', 'Alpha', 'Beta', 'Gamma']) -> None:
+        super().__init__()
+        logging.debug('Create bandpower (%s) preprocessor', ','.join(bands))
+        self.bands = bands
+
+    def to_json(self) -> str:
+        json = {
+            self.__class__.__name__ : {
+                'bands': self.bands,
+            }
+        }
+        json = dumps(json)
+        return json
+
+    def run(self, data: List[DataFrame], **kwargs) -> List[DataFrame]:
+        data = [d.swapaxes('index', 'columns') for d in data]
+        data = [
+            bandpower(d.to_numpy(), kwargs['lowest_frequency'], d.index, win_sec=2)
+            for d in data
+        ]
+        data = [d.loc[:, self.bands] for d in data]
         return data
