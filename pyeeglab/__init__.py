@@ -14,7 +14,7 @@ from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
                             CommonChannelSet, LowestFrequency, BandPassFrequency, \
                             ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation, \
                             BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
-                            Bandpower
+                            Bandpower, GraphGenerator, GraphWithFeatures
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
