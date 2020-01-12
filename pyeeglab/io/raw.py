@@ -56,9 +56,11 @@ class Raw():
         return events
 
     def set_channels(self, channels: List[str]) -> 'Raw':
+        channels = set(self.open().ch_names) - set(channels)
+        channels = list(channels)
         if len(channels) > 0:
-            logging.debug('Restrict %s channels to %s', self.id, '|'.join(channels))
-            self.reader = self.open().pick_channels(channels)
+            logging.debug('Drop %s channels %s', self.id, '|'.join(channels))
+            self.reader = self.open().drop_channels(channels)
         return self
 
     def set_frequency(self, frequency: float) -> 'Raw':
