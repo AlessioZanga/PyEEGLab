@@ -71,6 +71,7 @@ class DataLoader(ABC):
         files = files.filter(File.id == Metadata.file_id)
         files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        files = files.filter(~File.path.in_(self.exclude_files))
         files = files.group_by(Metadata.channels)
         files = files.all()
         files = [file[1] for file in files]
