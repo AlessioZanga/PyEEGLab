@@ -16,13 +16,14 @@ class DataLoader(ABC):
 
     index: Index
 
-    def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = []) -> None:
+    def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = [], exclude_files: List[str] = []) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
         self.exclude_channel_ref = exclude_channel_ref
         self.exclude_frequency = exclude_frequency
+        self.exclude_files = exclude_files
 
     def __getstate__(self):
         # Workaround for unpickable sqlalchemy.orm.session
@@ -48,6 +49,7 @@ class DataLoader(ABC):
         files = files.filter(File.extension.in_(self.index.include_extensions))
         files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        files = files.filter(~File.path.in_(self.exclude_files))
         files = files.all()
         files = [(file[0], file[2]) for file in files]
         pool = Pool(len(sched_getaffinity(0)))
