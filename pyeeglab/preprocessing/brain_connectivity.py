@@ -22,6 +22,8 @@ class SpearmanCorrelation(Preprocessor):
 
     def run(self, data: List[DataFrame], **kwargs) -> List[DataFrame]:
         data = [d.corr(method='spearman') for d in data]
+        for d in data:
+            del d.index.name
         return data
 
 
