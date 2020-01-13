@@ -1,0 +1,11 @@
+CLINICAL HISTORY:  54 year old left handed female with multiple meningioma status post resection in 2001, simple partial seizures with facial twitching.  Seizure free since 2004.
+MEDICATIONS:  Carbatrol, Estrace, Lisinopril, HCTZ, Amlodipine, Calcium
+INTRODUCTION:  Digital video EEG was performed in lab using standard 10-20 system of electrode placement with 1 channel of EKG.  This is an awake and drowsy record.  The patient has a previous craniotomy on the left.
+DESCRIPTION OF THE RECORD:  In wakefulness, there is a 10 Hz alpha rhythm with a small amount of low-voltage, frontocentral beta.  A prominent breach rhythm is identified in the left frontocentral region.  Subtle, underlying focal slowing is noted.  There are also bursts of somewhat higher amplitude slowing noted in the left frontocentral region.  As the patient becomes somewhat drowsy, there is a bit of shifting slowing, some of which includes T3 and T5.  The underlying slowing may be subtle or may include a bit more arrhythmic delta, which may be frontal or occasionally mid to posterior temporal. Photic stimulation elicits bilateral driving. Hyperventilation accentuates the bursts of focal slowing from the left.  During hyperventilation, there is some head rocking or electrode artifact noted, a bit more on the left.
+HR:    90 bpm
+IMPRESSION:  Abnormal EEG due to:
+Focal slowing noted in the left hemisphere with 2 types of focal slowing, the first being underlying subtle slowing and the second being more well-defined arrhythmic delta.
+CLINICAL CORRELATION:  A breach rhythm is an anticipated finding following craniotomy.  There is some sharply contoured activity on the left in the region of the breach, but there are no definitive sharp waves.  This EEG is similar to many previous EEGs dating to 2002, but of note, in more recent years left mid-temporal sharp waves have not been identified.  In the past, sharp waves included T1, T3, and T5.
+
+
+

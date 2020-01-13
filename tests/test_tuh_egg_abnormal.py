@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from pyeeglab import TextMiner, TUHEEGAbnormalLoader, TUHEEGAbnormalDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow
+                     DynamicWindow, ToNumpy
 
 PATH = './tests/samples/tuh_eeg_abnormal/v2.0.0/edf'
 
@@ -23,9 +23,10 @@ def test_dataset():
     preprocessing = Pipeline([
         CommonChannelSet(),
         LowestFrequency(),
-        BandPassFrequency(0.1, 48),
+        BandPassFrequency(0.1, 47),
         ToDataframe(),
-        DynamicWindow(4)
+        DynamicWindow(4),
+        ToNumpy()
     ])
     dataset = dataset.set_pipeline(preprocessing).load()
 
