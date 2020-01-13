@@ -4,7 +4,9 @@ from typing import List, Dict
 
 from os import sched_getaffinity
 from json import loads, dumps
+from numpy import array
 from hashlib import md5
+from networkx import Graph
 from multiprocessing import Pool
 
 from ..io import Raw
@@ -102,7 +104,11 @@ class Pipeline():
         data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
         pool.join()
-        return {'data': data, 'labels': labels}
+        onehot_encoder = sorted(set(labels))
+        labels = array([onehot_encoder.index(label) for label in labels])
+        if not isinstance(data[0][0], Graph):
+            data = array(data)
+        return {'data': data, 'labels': labels, 'labels_encoder': onehot_encoder}
 
     def to_json(self) -> str:
         json = [p.to_json() for p in self.pipeline]
@@ -145,4 +151,8 @@ class VerticalPipeline(Pipeline):
         pool.join()
         for preprocessor in self.pipeline:
             data = self._trigger_pipeline(preprocessor, data)
-        return {'data': data, 'labels': labels}
+        onehot_encoder = sorted(set(labels))
+        labels = array([onehot_encoder.index(label) for label in labels])
+        if not isinstance(data[0][0], Graph):
+            data = array(data)
+        return {'data': data, 'labels': labels, 'labels_encoder': onehot_encoder}
