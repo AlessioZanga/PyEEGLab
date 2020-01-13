@@ -5,7 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from pyeeglab import TextMiner, TUHEEGArtifactLoader, TUHEEGArtifactDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, ToNumpy
+                     DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
+                     CorrelationToAdjacency, Bandpower, GraphWithFeatures
 
 class TestTUHEEGArtifact(unittest.TestCase):
     PATH = './tests/samples/tuh_eeg_artifact/v1.0.0/edf'
@@ -28,7 +29,13 @@ class TestTUHEEGArtifact(unittest.TestCase):
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            ToNumpy()
+            JoinedPreprocessor(
+                inputs=[
+                    [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
+                    Bandpower()
+                ],
+                output=GraphWithFeatures()
+            )
         ])
         dataset = dataset.set_pipeline(preprocessing).load()
 
