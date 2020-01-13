@@ -10,10 +10,7 @@ config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 set_session(sess)
 
-if tf.test.is_gpu_available():
-    from keras.layers import CuDNNLSTM as LSTM
-else:
-    from keras.layers import LSTM
+from keras.layers import LSTM
 
 from keras import Model, Input
 from keras.layers import Dense, Concatenate, Reshape, Flatten
@@ -28,11 +25,31 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from pyeeglab import TUHEEGAbnormalDataset
+from pyeeglab import    TUHEEGAbnormalDataset, SinglePickleCache, Pipeline, CommonChannelSet, \
+                        LowestFrequency, BandPassFrequency, ToDataframe, DynamicWindow, \
+                        BinarizedSpearmanCorrelation, CorrelationToAdjacency, Bandpower, \
+                        GraphWithFeatures, JoinedPreprocessor
 
-dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf', frames=8)
-dataset.set_bandpass_frequency(1.5, 48)
-data, labels = dataset.load('graphs', 0.7, 25, 75, True, '../../export')
+dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+dataset.set_cache_manager(SinglePickleCache('../../export'))
+
+preprocessing = Pipeline([
+    CommonChannelSet(),
+    LowestFrequency(),
+    BandPassFrequency(0.1, 47),
+    ToDataframe(),
+    DynamicWindow(8),
+    JoinedPreprocessor(
+        inputs=[
+            [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
+            Bandpower()
+        ],
+        output=GraphWithFeatures()
+    )
+])
+
+dataset = dataset.set_pipeline(preprocessing).load()
+data, labels = dataset['data'], dataset['labels']
 
 data = [
     [

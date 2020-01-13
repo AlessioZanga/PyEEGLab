@@ -8,10 +8,7 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 tf.enable_eager_execution(config=config)
 
-if tf.test.is_gpu_available():
-    LSTM = tf.keras.layers.CuDNNLSTM
-else:
-    LSTM = tf.keras.layers.LSTM
+LSTM = tf.keras.layers.LSTM
 
 from keras.utils import to_categorical
 from sklearn.metrics import accuracy_score, confusion_matrix
@@ -22,10 +19,24 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from pyeeglab import TUHEEGAbnormalDataset
+from pyeeglab import    TUHEEGAbnormalDataset, SinglePickleCache, Pipeline, CommonChannelSet, \
+                        LowestFrequency, ToDataframe, DynamicWindow, BinarizedSpearmanCorrelation, \
+                        ToNumpy
 
-dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf', frames=8)
-data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../../export')
+dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+dataset.set_cache_manager(SinglePickleCache('../../export'))
+
+preprocessing = Pipeline([
+    CommonChannelSet(),
+    LowestFrequency(),
+    ToDataframe(),
+    DynamicWindow(8),
+    BinarizedSpearmanCorrelation(),
+    ToNumpy()
+])
+
+dataset = dataset.set_pipeline(preprocessing).load()
+data, labels = dataset['data'], dataset['labels']
 
 adjs = data[0].shape[0]
 classes = len(set(labels))
