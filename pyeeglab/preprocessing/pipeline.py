@@ -77,19 +77,11 @@ class JoinedPreprocessor(Preprocessor):
 class Pipeline():
 
     options: Dict = {}
-    pipeline: List[Preprocessor] = []
+    pipeline: List[Preprocessor]
 
     def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
         logging.debug('Create new preprocessing pipeline')
-        self.add_all(preprocessors)
-
-    def add(self, preprocessor: Preprocessor) -> 'Pipeline':
-        self.pipeline.append(preprocessor)
-        return self
-
-    def add_all(self, preprocessors: List[Preprocessor]) -> 'Pipeline':
-        self.pipeline += preprocessors
-        return self
+        self.pipeline = preprocessors
 
     def _trigger_pipeline(self, data: Raw, kwargs):
         data.open().load_data()
