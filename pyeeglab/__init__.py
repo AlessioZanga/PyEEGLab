@@ -9,7 +9,7 @@ from .dataset import    TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
                         EEGMMIDBDataset, EEGMMIDBLoader, \
                         CHBMITLoader, CHBMITDataset
 from .io import Raw
-from .cache import ChunksPickleCache
+from .cache import SinglePickleCache, ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
                             CommonChannelSet, LowestFrequency, BandPassFrequency, \
                             ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation, \
