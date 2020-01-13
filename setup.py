@@ -18,7 +18,6 @@ setuptools.setup(
         'numpy',
         'pandas',
         'nltk',
-        'matplotlib',
         'networkx>=2.2',
         'mne>=0.19',
         'wfdb',
