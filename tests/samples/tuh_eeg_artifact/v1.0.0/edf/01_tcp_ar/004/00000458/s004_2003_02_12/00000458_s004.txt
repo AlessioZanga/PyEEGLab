@@ -1,0 +1,7 @@
+SEIZURE WHILE OFF CAMERA, TIME 9:31: The patient is off camera in the bathroom. Clinically, the nurses report that the patient has a seizure characterized by running. The video shows the patient off camera and the video stops at 9:32 and resumes at 9:54.
+DESCRIPTION OF THE RECORD: Before the event, there is some low voltage, rhythmic theta and delta from the right temporal region.  At 9:32:07, the background includes muscle activity for 15 seconds before the data is lost. Even with filtering of the record, there is no discernable change in the EEG although there is more consistent, rhythmic right temporal slowing.
+HR:  80 BPM.
+
+
+
+

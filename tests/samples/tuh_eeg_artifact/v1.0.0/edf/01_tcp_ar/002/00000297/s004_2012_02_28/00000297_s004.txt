@@ -1,0 +1,12 @@
+CLINICAL HISTORY:  64 year old right handed female with epilepsy characterized by right leg shaking following left meningioma resection.
+MEDICATIONS:  Dilantin, Keppra, Lisinopril, Metoprolol, Ranitidine, Amlodipine, Insulin, Zyrtec
+INTRODUCTION:  Digital video EEG was performed in lab using standard 10-20 system of electrode placement with 1 channel of EKG.  Hyperventilation and photic stimulation are performed.
+DESCRIPTION OF THE RECORD:  In wakefulness, there is a 9 Hz posterior dominant rhythm.  There is occasional focal slowing characterized by isolated delta or theta or brief bursts of delta and theta lasting less than 2 seconds.  A breach rhythm is noted, but there are also rare left anterior temporal sharp waves.  Most of the focal slowing in this EEG is mid to anterior temporal.  Features of drowsiness include attenuation of the background.  Photic stimulation elicits bilateral driving.  The patient is drifting off to sleep during photic stimulation with generous beta. Hyperventilation is performed with good effort and seems to accentuate the focal slowing and the rare sharp waves.
+HR:    72 bpm
+IMPRESSION:  Abnormal EEG due to:
+Left anterior temporal focal slowing.
+Left anterior temporal sharp waves.
+CLINICAL CORRELATION:  This EEG is slightly different from previous EEGs which were more of a frontal rather than a frontotemporal focus.  It is congruent with the previous structural process following neurosurgical resection of meningioma.
+
+
+

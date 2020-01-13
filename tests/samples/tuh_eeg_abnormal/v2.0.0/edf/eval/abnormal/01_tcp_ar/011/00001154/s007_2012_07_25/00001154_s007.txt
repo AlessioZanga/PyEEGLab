@@ -1,0 +1,12 @@
+CLINICAL HISTORY:  59 year old right handed woman with seizures 2 weeks ago, diabetes, hypertension, left-sided CVA, and past history of nonepileptic seizures with long-term monitoring in 2006.  Seizures at that time were characterized by vocalization, crying, rotatory movements, and jiggling movements.
+MEDICATIONS:  Dilantin, Topamax
+INTRODUCTION:  Digital video EEG was performed in lab using standard 10-20 system of electrode placement with 1 channel of EKG.  Hyperventilation and photic stimulation were completed.
+DESCRIPTION OF THE RECORD:  In wakefulness, there was a 9.5 Hz alpha rhythm.  This is a clearly focal EEG with focal slowing in the left hemisphere, maximum in the mid-to-posterior temporal region.  There are simple T5 and T3 sharp waves noted in the background.  There are occasional spikes which are left anterior temporal followed by a T2 more subtle spike.  Hyperventilation accentuates the focal slowing with more rhythmic theta-delta in the left frontotemporal region and attenuation of faster frequency activity.  Drowsiness is characterized by attenuation of the alpha rhythm.  The alpha drops our earlier on the left than the right.  Other features of drowsiness include a transition to more left mid-to-posterior temporal focal slowing and sharp waves. Photic stimulation elicits scant driving on the right.
+HR:    84 bpm
+IMPRESSION:  Abnormal EEG due to:
+Left temporal focal slowing, often posterior temporal.
+Sharp waves in the left temporal region including anterior temple or posterior temple, and sometimes with the field extending to T2.
+CLINICAL CORRELATION:  These findings are similar so many previous EEGs.  This patient has consistently demonstrated focal features and left temporal sharp waves but when seizures have been recorded both behavioral characteristics and EEG patterns have not demonstrated an epileptiform correlate.
+
+
+
