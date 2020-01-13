@@ -1,7 +1,8 @@
-import uuid
 import logging
 
 from typing import List
+
+from uuid import uuid4, uuid5, NAMESPACE_X500
 from os.path import join, sep
 
 from ...io import Raw
@@ -18,20 +19,18 @@ class TUHEEGAbnormalIndex(Index):
         length = len(self.path)
         meta = path[length:].split(sep)
         file = {
-            'id': str(uuid.uuid5(uuid.NAMESPACE_X500, path[length:])),
+            'id': str(uuid5(NAMESPACE_X500, path[length:])),
             'channel_ref': meta[2],
             'extension': meta[-1].split('.')[-1],
             'path': path[length:],
         }
-        file = File(file)
-        logging.debug('Add file %s raw to index', file.id)
-        return file
+        return File(file)
 
     def _get_record_events(self, file: File) -> List[Event]:
         logging.debug('Add file %s raw events to index', file.id)
         raw = Raw(file.id, join(self.path, file.path))
         events = Event({
-            'id': str(uuid.uuid4()),
+            'id': str(uuid4()),
             'file_id': raw.id,
             'begin': 60,
             'end': 120,

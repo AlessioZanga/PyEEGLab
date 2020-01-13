@@ -1,10 +1,10 @@
-import uuid
-import json
 import logging
 from abc import ABC, abstractmethod
 from typing import List
 
 from os import walk, sched_getaffinity
+from uuid import uuid4
+from json import dumps
 from os.path import join, splitext
 from multiprocessing import Pool
 from mne import set_log_file
@@ -108,7 +108,7 @@ class Index(ABC):
             'file_duration': raw.open().n_times/raw.open().info['sfreq'],
             'channels_count': raw.open().info['nchan'],
             'frequency': raw.open().info['sfreq'],
-            'channels': json.dumps(raw.open().info['ch_names']),
+            'channels': dumps(raw.open().info['ch_names']),
         }
         metadata = Metadata(metadata)
         return metadata
@@ -125,7 +125,7 @@ class Index(ABC):
         raw = Raw(file.id, join(self.path, file.path))
         events = raw.get_events()
         for event in events:
-            event['id'] = str(uuid.uuid4())
+            event['id'] = str(uuid4())
             event['file_id'] = raw.id
         events = [Event(event) for event in events]
         return events
@@ -147,6 +147,8 @@ class Index(ABC):
             for file in files
             if not self.db.query(File).filter(File.id == file.id).all()
         ]
+        for file in files:
+            logging.debug('Add file %s raw to index', file.id)
         raws = [file for file in files if file.extension in self.include_extensions]
         metadata = self._parallel_record_metadata(raws)
         events = self._parallel_record_events(raws)

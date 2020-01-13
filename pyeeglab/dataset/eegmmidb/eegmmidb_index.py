@@ -1,9 +1,8 @@
-import uuid
 import logging
 
+from uuid import uuid5, NAMESPACE_X500
 from os.path import join, sep
 
-from ...io import Raw
 from ...database import File, Index
 
 
@@ -17,11 +16,9 @@ class EEGMMIDBIndex(Index):
         length = len(self.path)
         meta = path[length:].split(sep)
         file = {
-            'id': str(uuid.uuid5(uuid.NAMESPACE_X500, path[length:])),
+            'id': str(uuid5(NAMESPACE_X500, path[length:])),
             'channel_ref': 'NA',
             'extension': meta[-1].split('.')[-1],
             'path': path[length:],
         }
-        file = File(file)
-        logging.debug('Add file %s raw to index', file.id)
-        return file
+        return File(file)

@@ -1,26 +1,29 @@
-import json
 import logging
 from abc import ABC
 from typing import List, Dict
 
 from os import sched_getaffinity
+from json import loads, dumps
 from os.path import isfile, join, sep
+from hashlib import md5
 from multiprocessing import Pool
 
 from .raw import Raw
-from ..database import File, Metadata, Event
+from ..database import File, Metadata, Event, Index
 
 
 class DataLoader(ABC):
 
-    def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = []) -> None:
+    index: Index
+
+    def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = [], exclude_files: List[str] = []) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
-        self.index = None
         self.exclude_channel_ref = exclude_channel_ref
         self.exclude_frequency = exclude_frequency
+        self.exclude_files = exclude_files
 
     def __getstate__(self):
         # Workaround for unpickable sqlalchemy.orm.session
@@ -46,6 +49,7 @@ class DataLoader(ABC):
         files = files.filter(File.extension.in_(self.index.include_extensions))
         files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        files = files.filter(~File.path.in_(self.exclude_files))
         files = files.all()
         files = [(file[0], file[2]) for file in files]
         pool = Pool(len(sched_getaffinity(0)))
@@ -67,10 +71,11 @@ class DataLoader(ABC):
         files = files.filter(File.id == Metadata.file_id)
         files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        files = files.filter(~File.path.in_(self.exclude_files))
         files = files.group_by(Metadata.channels)
         files = files.all()
         files = [file[1] for file in files]
-        files = [set(json.loads(file.channels)) for file in files]
+        files = [set(loads(file.channels)) for file in files]
         channels = files[0]
         for file in files[1:]:
             channels = channels.intersection(file)
@@ -82,3 +87,13 @@ class DataLoader(ABC):
         frequency = frequency.all()
         frequency = min([f.frequency for f in frequency], default=0)
         return frequency
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __hash__(self):
+        value = [self.path] + self.exclude_channel_ref + self.exclude_frequency
+        value = dumps(value).encode()
+        value = md5(value).hexdigest()
+        value = int(value, 16)
+        return value

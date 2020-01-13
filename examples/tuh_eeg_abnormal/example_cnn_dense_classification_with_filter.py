@@ -17,11 +17,25 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from pyeeglab import TUHEEGAbnormalDataset
+from pyeeglab import    TUHEEGAbnormalDataset, SinglePickleCache, Pipeline, CommonChannelSet, \
+                        LowestFrequency, BandPassFrequency, ToDataframe, DynamicWindow, \
+                        BinarizedSpearmanCorrelation, ToNumpy
 
-dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf', frames=8)
-dataset.set_bandpass_frequency(1.5, 48)
-data, labels = dataset.load('correlations', 0.7, 25, 75, True, '../../export')
+dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+dataset.set_cache_manager(SinglePickleCache('../../export'))
+
+preprocessing = Pipeline([
+    CommonChannelSet(),
+    LowestFrequency(),
+    BandPassFrequency(0.1, 47),
+    ToDataframe(),
+    DynamicWindow(8),
+    BinarizedSpearmanCorrelation(),
+    ToNumpy()
+])
+
+dataset = dataset.set_pipeline(preprocessing).load()
+data, labels = dataset['data'], dataset['labels']
 
 adjs = data[0].shape[0]
 classes = len(set(labels))

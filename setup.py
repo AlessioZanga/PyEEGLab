@@ -17,7 +17,6 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'pandas',
-        'scipy',
         'nltk',
         'matplotlib',
         'networkx>=2.2',

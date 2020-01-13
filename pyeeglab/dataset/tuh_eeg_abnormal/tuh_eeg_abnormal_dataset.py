@@ -1,20 +1,20 @@
-from typing import List
+from typing import Dict
 
 from .tuh_eeg_abnormal_loader import TUHEEGAbnormalLoader
 from ..dataset import Dataset
-from ...preprocessing import Preprocessor
 
 
 class TUHEEGAbnormalDataset(Dataset):
 
-    def __init__(self, path: str = './data/tuh_eeg_abnormal/v2.0.0/edf/', drop_channels: List[str] = ['IBI', 'BURSTS', 'STI 014'], frames: int = 8) -> None:
-        super().__init__()
-        self.loader = TUHEEGAbnormalLoader(path)
-        self.dataset = self.loader.get_dataset()
-        self.labels = [data.label for data in self.dataset]
-        self.labels = [0 if label == 'normal' else 1 for label in self.labels]
-        self.preprocessor = Preprocessor(
-            self.get_channels(drop_channels),
-            self.loader.get_lowest_frequency(),
-            frames
-        )
+    def __init__(self, path: str = './data/tuh_eeg_abnormal/v2.0.0/edf/') -> None:
+        super().__init__(TUHEEGAbnormalLoader(path))
+
+    def _get_dataset_options(self) -> Dict:
+        blacklist = ['IBI', 'BURSTS', 'STI 014', 'SUPPR']
+        channel_set = self.loader.get_channelset()
+        channel_set = set(channel_set) - set(blacklist)
+        channel_set = list(channel_set)
+        return {
+            'channel_set': channel_set,
+            'lowest_frequency': self.loader.get_lowest_frequency()
+        }
