@@ -1,7 +1,0 @@
-# example: foo.tse
-version = tse_v1.0.0
-# data starts here
-#
-0.0000 245.9960 null 1.0000
-245.9960 251.9960 bckg 1.0000
-251.9960 1442.0000 null 1.0000
