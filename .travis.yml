@@ -8,7 +8,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda env create -q -y -f environment.yml
+  - conda env create -q -f environment.yml
   - conda activate pyeeglab
   - pip install .
   - conda install -q -y pytest pytest-cov codecov
