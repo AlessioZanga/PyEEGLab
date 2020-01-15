@@ -4,6 +4,7 @@ channels:
     - numba
     - nodefaults
 dependencies:
+    - python>=3.7,<3.8
     - icc_rt
     - mne>=0.19
     - networkx>=2.2
