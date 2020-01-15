@@ -49,7 +49,7 @@ class CHBMITIndex(Index):
                     'id': str(uuid4()),
                     'file_id': file.id,
                     'begin': 60,
-                    'end': 90,
+                    'end': 120,
                     'label': 'rest'
                 })
             ]
