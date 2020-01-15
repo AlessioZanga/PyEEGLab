@@ -68,7 +68,7 @@ class SinglePickleCache(Cache):
 
 class ChunksPickleCache(Cache):
 
-    def __init__(self, path: str, chunks: int = 500):
+    def __init__(self, path: str, chunks: int = 5000):
         super().__init__()
         logging.debug('Create chunks pickle cache manager')
         Path(path).mkdir(parents=True, exist_ok=True)
@@ -77,7 +77,7 @@ class ChunksPickleCache(Cache):
 
     def _load(self, key: str):
         with open(key, 'r') as file:
-            index = json.load(file.read())
+            index = json.load(file)
             index = index['files']
         data = {'data': [], 'labels': []}
         for i in index:
@@ -102,7 +102,7 @@ class ChunksPickleCache(Cache):
                 dump(data[index], file)
                 files['files'].append(path)
         with open(key, 'w') as file:
-            json.dump(file, files)
+            json.dump(files, file)
         return data
 
     def load(self, dataset: str, loader: DataLoader, pipeline: Pipeline):

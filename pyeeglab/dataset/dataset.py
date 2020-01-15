@@ -22,7 +22,7 @@ class Dataset(ABC):
         dataset = self.__class__.__name__.lower()
         return self.cache.load(dataset, self.loader, self.pipeline)
 
-    def _get_dataset_options(self) -> Dict:
+    def _get_dataset_env(self) -> Dict:
         return {
             'channel_set': self.loader.get_channelset(),
             'lowest_frequency': self.loader.get_lowest_frequency()
@@ -34,6 +34,6 @@ class Dataset(ABC):
 
     def set_pipeline(self, pipeline: Pipeline) -> 'Dataset':
         self.pipeline = pipeline
-        options = self._get_dataset_options()
-        self.pipeline.options.update(options)
+        environment = self._get_dataset_env()
+        self.pipeline.environment.update(environment)
         return self

@@ -5,7 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from pyeeglab import TextMiner, CHBMITLoader, CHBMITDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, ToNumpy
+                     DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
+                     CorrelationToAdjacency, Bandpower, GraphWithFeatures
 
 class TestCHBMIT(unittest.TestCase):
     PATH = './tests/samples/physionet.org/files/chbmit/1.0.0'
@@ -28,7 +29,13 @@ class TestCHBMIT(unittest.TestCase):
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            ToNumpy()
+            JoinedPreprocessor(
+                inputs=[
+                    [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
+                    Bandpower()
+                ],
+                output=GraphWithFeatures()
+            )
         ])
         dataset = dataset.set_pipeline(preprocessing).load()
 
