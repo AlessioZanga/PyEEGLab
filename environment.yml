@@ -1,0 +1,21 @@
+name: pyeeglab
+channels:
+    - conda-forge
+    - numba
+    - nodefaults
+dependencies:
+    - icc_rt
+    - mne>=0.19
+    - networkx>=2.2
+    - nltk
+    - numba>=0.47
+    - numpy
+    - pandas
+    - sqlalchemy>=1.2
+    - tbb
+    - wfdb
+    # At the moment, YASA is not available
+    # on any Conda channel, so defaulting to pip
+    - pip
+    - pip:
+        - yasa>=0.1.7
