@@ -76,7 +76,7 @@ class JoinedPreprocessor(Preprocessor):
 
 class Pipeline():
 
-    options: Dict = {}
+    environment: Dict = {}
     pipeline: List[Preprocessor]
 
     def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
@@ -91,7 +91,7 @@ class Pipeline():
 
     def run(self, data: List[Raw]) -> Dict:
         labels = [raw.label for raw in data]
-        data = [(d, self.options) for d in data]
+        data = [(d, self.environment) for d in data]
         pool = Pool(len(sched_getaffinity(0)))
         data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
@@ -128,7 +128,7 @@ class VerticalPipeline(Pipeline):
         return data
 
     def _trigger_pipeline(self, preprocessor: Preprocessor, data: List[Raw]):
-        data = [(preprocessor.run, d, self.options) for d in data]
+        data = [(preprocessor.run, d, self.environment) for d in data]
         pool = Pool(len(sched_getaffinity(0)))
         data = pool.starmap(self._apply_args_and_kwargs, data)
         pool.close()
