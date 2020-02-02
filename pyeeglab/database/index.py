@@ -51,6 +51,7 @@ class Event(BaseTable):
     file_id = Column(Text, ForeignKey('file.id'), index=True)
     begin = Column(Float, nullable=False)
     end = Column(Float, nullable=False)
+    duration = Column(Float, nullable=False)
     label = Column(Text, nullable=False, index=True)
 
     def __init__(self, dictionary) -> None:
@@ -149,7 +150,7 @@ class Index(ABC):
         ]
         for file in files:
             logging.debug('Add file %s raw to index', file.id)
-        if include_extensions:
+        if self.include_extensions:
             raws = [file for file in files if file.extension in self.include_extensions]
         metadata = self._parallel_record_metadata(raws)
         events = self._parallel_record_events(raws)

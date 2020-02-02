@@ -50,8 +50,8 @@ class Raw():
     def get_events(self) -> List:
         events = self.open().annotations
         events = list(zip(events.onset, events.duration, events.description))
-        events = [(event[0], event[0] + event[1], event[2]) for event in events]
-        keys = ['begin', 'end', 'label']
+        events = [(event[0], event[0] + event[1], event[1], event[2]) for event in events]
+        keys = ['begin', 'end', 'duration', 'label']
         events = [dict(zip(keys, event)) for event in events]
         return events
 

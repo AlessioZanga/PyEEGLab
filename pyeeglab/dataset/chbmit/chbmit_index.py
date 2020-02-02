@@ -39,6 +39,7 @@ class CHBMITIndex(Index):
                     'file_id': file.id,
                     'begin': event[0],
                     'end': event[1],
+                    'duration': event[1] - event[0],
                     'label': 'seizure'
                 })
                 for event in events

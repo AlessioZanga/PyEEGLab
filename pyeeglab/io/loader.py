@@ -16,7 +16,8 @@ class DataLoader(ABC):
 
     index: Index
 
-    def __init__(self, path: str, exclude_channel_ref: List[str] = None, exclude_frequency: List[int] = None, exclude_files: List[str] = None) -> None:
+    def __init__(self, path: str, exclude_channel_ref: List[str] = None, exclude_frequency: List[int] = None,
+                 exclude_files: List[str] = None, minimum_event_duration: float = -1) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
@@ -24,6 +25,7 @@ class DataLoader(ABC):
         self.exclude_channel_ref = exclude_channel_ref
         self.exclude_frequency = exclude_frequency
         self.exclude_files = exclude_files
+        self.minimum_event_duration = minimum_event_duration
 
     def __getstate__(self):
         # Workaround for unpickable sqlalchemy.orm.session
@@ -41,6 +43,9 @@ class DataLoader(ABC):
             edf.open().save(path_fif)
         fif = Raw(f.id, path_fif, e.label)
         return fif
+    
+    def set_minimum_event_duration(self, minimum_event_duration: float) -> 'DataLoader':
+        self.minimum_event_duration = minimum_event_duration
 
     def get_dataset(self) -> List[Raw]:
         files = self.index.db.query(File, Metadata, Event)
@@ -48,12 +53,14 @@ class DataLoader(ABC):
         files = files.filter(File.id == Event.file_id)
         if self.index.include_extensions:
             files = files.filter(File.extension.in_(self.index.include_extensions))
-        if exclude_channel_ref:
+        if self.exclude_channel_ref:
             files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
-        if exclude_frequency:
+        if self.exclude_frequency:
             files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
-        if exclude_files:
+        if self.exclude_files:
             files = files.filter(~File.path.in_(self.exclude_files))
+        if self.minimum_event_duration > 0:
+            files = files.filter(Event.duration >= self.minimum_event_duration)
         files = files.all()
         files = [(file[0], file[2]) for file in files]
         pool = Pool(len(sched_getaffinity(0)))
@@ -73,12 +80,14 @@ class DataLoader(ABC):
     def get_channelset(self) -> List[str]:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if exclude_channel_ref:
+        if self.exclude_channel_ref:
             files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
-        if exclude_frequency:
+        if self.exclude_frequency:
             files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
-        if exclude_files:
+        if self.exclude_files:
             files = files.filter(~File.path.in_(self.exclude_files))
+        if self.minimum_event_duration > 0:
+            files = files.filter(Event.duration >= self.minimum_event_duration)
         files = files.group_by(Metadata.channels)
         files = files.all()
         files = [file[1] for file in files]
@@ -90,7 +99,8 @@ class DataLoader(ABC):
 
     def get_lowest_frequency(self) -> float:
         frequency = self.index.db.query(Metadata)
-        frequency = frequency.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        if self.exclude_frequency:
+            frequency = frequency.filter(~Metadata.frequency.in_(self.exclude_frequency))
         frequency = frequency.all()
         frequency = min([f.frequency for f in frequency], default=0)
         return frequency
@@ -99,7 +109,11 @@ class DataLoader(ABC):
         return hash(self) == hash(other)
 
     def __hash__(self):
-        value = [self.path] + self.exclude_channel_ref + self.exclude_frequency
+        value = [self.path] + [self.minimum_event_duration]
+        if self.exclude_channel_ref:
+            value += self.exclude_channel_ref
+        if self.exclude_frequency:
+            value += self.exclude_frequency
         value = dumps(value).encode()
         value = md5(value).hexdigest()
         value = int(value, 16)
