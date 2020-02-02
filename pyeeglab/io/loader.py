@@ -16,7 +16,7 @@ class DataLoader(ABC):
 
     index: Index
 
-    def __init__(self, path: str, exclude_channel_ref: List[str] = [], exclude_frequency: List[int] = [], exclude_files: List[str] = []) -> None:
+    def __init__(self, path: str, exclude_channel_ref: List[str] = None, exclude_frequency: List[int] = None, exclude_files: List[str] = None) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
@@ -46,10 +46,14 @@ class DataLoader(ABC):
         files = self.index.db.query(File, Metadata, Event)
         files = files.filter(File.id == Metadata.file_id)
         files = files.filter(File.id == Event.file_id)
-        files = files.filter(File.extension.in_(self.index.include_extensions))
-        files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
-        files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
-        files = files.filter(~File.path.in_(self.exclude_files))
+        if self.index.include_extensions:
+            files = files.filter(File.extension.in_(self.index.include_extensions))
+        if exclude_channel_ref:
+            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if exclude_frequency:
+            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        if exclude_files:
+            files = files.filter(~File.path.in_(self.exclude_files))
         files = files.all()
         files = [(file[0], file[2]) for file in files]
         pool = Pool(len(sched_getaffinity(0)))
@@ -69,9 +73,12 @@ class DataLoader(ABC):
     def get_channelset(self) -> List[str]:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
-        files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
-        files = files.filter(~File.path.in_(self.exclude_files))
+        if exclude_channel_ref:
+            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if exclude_frequency:
+            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        if exclude_files:
+            files = files.filter(~File.path.in_(self.exclude_files))
         files = files.group_by(Metadata.channels)
         files = files.all()
         files = [file[1] for file in files]
