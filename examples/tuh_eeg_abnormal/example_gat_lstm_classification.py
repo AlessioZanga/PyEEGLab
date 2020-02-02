@@ -1,20 +1,18 @@
 #!/usr/bin/env python
-
 import warnings
 warnings.simplefilter(action='ignore')
 
-from keras.backend.tensorflow_backend import set_session
 import tensorflow as tf
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-sess = tf.Session(config=config)
-set_session(sess)
+gpus = tf.config.experimental.list_physical_devices('GPU')
+try:
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+except RuntimeError as e:
+    print(e)
 
-from keras.layers import LSTM
-
-from keras import Model, Input
-from keras.layers import Dense, Concatenate, Reshape, Flatten, Dropout
-from keras.utils import to_categorical
+from tensorflow.keras import Model, Input
+from tensorflow.keras.layers import Dense, Concatenate, Reshape, Flatten, LSTM
+from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from spektral.layers import GraphAttention
