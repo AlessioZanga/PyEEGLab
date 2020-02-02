@@ -57,7 +57,7 @@ class StaticWindowOverlap(Preprocessor):
         step = floor(self.length * kwargs['lowest_frequency'])
         if (step * self.frames > len(data)):
             raise RuntimeError('Error while creating static frames: not enough data.')
-        return [data[t:t+step] for t in range(0, step * self.frames, floor(step * self.overlap))]
+        return [data[t:t+step] for t in range(0, floor(step * self.frames * self.overlap), floor(step * self.overlap))]
 
 
 class DynamicWindow(Preprocessor):
