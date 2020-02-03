@@ -5,6 +5,7 @@ from typing import List, Dict
 from os import sched_getaffinity
 from json import loads, dumps
 from numpy import array
+from pandas import DataFrame
 from hashlib import md5
 from networkx import Graph
 from multiprocessing import Pool
@@ -98,7 +99,7 @@ class Pipeline():
         pool.join()
         onehot_encoder = sorted(set(labels))
         labels = array([onehot_encoder.index(label) for label in labels])
-        if not isinstance(data[0][0], Graph):
+        if not isinstance(data[0][0], Graph) and not isinstance(data[0][0], DataFrame):
             data = array(data)
         return {'data': data, 'labels': labels, 'labels_encoder': onehot_encoder}
 
