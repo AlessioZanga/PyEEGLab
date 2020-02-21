@@ -9,4 +9,6 @@ tests/samples.zip
 **.egg-info
 .idea
 .vscode
+.ipynb_checkpoints
 demo.py
+demo.ipynb
