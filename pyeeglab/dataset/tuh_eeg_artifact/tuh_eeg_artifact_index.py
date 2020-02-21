@@ -38,7 +38,7 @@ class TUHEEGArtifactIndex(Index):
         events = re.findall(pattern, annotations)
         events = [
             (str(uuid4()), raw.id, float(e[0]), float(e[1]), float(e[1]) - float(e[0]), e[2])
-            for e in events if e[2] not in self.exclude_events
+            for e in events
         ]
         keys = ['id', 'file_id', 'begin', 'end', 'duration', 'label']
         events = [dict(zip(keys, event)) for event in events]
