@@ -51,6 +51,7 @@ class CHBMITIndex(Index):
                     'file_id': file.id,
                     'begin': 60,
                     'end': 120,
+                    'duration': 60,
                     'label': 'noseizure'
                 })
             ]
