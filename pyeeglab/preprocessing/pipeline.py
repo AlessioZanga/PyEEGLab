@@ -79,7 +79,7 @@ class Pipeline():
     environment: Dict = {}
     pipeline: List[Preprocessor]
 
-    def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
+    def __init__(self, preprocessors: List[Preprocessor] = [], labels_mapping: Dict = None) -> None:
         logging.debug('Create new preprocessing pipeline')
         self.pipeline = preprocessors
 
@@ -96,6 +96,8 @@ class Pipeline():
         data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
         pool.join()
+        if self.labels_mapping is not None:
+            lables = [self.labels_mapping[label] for label in labels]
         onehot_encoder = sorted(set(labels))
         labels = array([onehot_encoder.index(label) for label in labels])
         if not isinstance(data[0][0], Graph):
@@ -141,6 +143,8 @@ class VerticalPipeline(Pipeline):
         data = pool.map(self._pre_trigger_pipeline, data)
         pool.close()
         pool.join()
+        if self.labels_mapping is not None:
+            lables = [self.labels_mapping[label] for label in labels]
         for preprocessor in self.pipeline:
             data = self._trigger_pipeline(preprocessor, data)
         onehot_encoder = sorted(set(labels))
