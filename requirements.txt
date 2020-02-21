@@ -1,8 +1,0 @@
-numpy
-pandas
-nltk
-networkx>=2.2
-mne>=0.19
-wfdb
-yasa>=0.1.7
-sqlalchemy>=1.2
