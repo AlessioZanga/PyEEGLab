@@ -99,7 +99,7 @@ class Pipeline():
         pool.close()
         pool.join()
         if self.labels_mapping is not None:
-            lables = [self.labels_mapping[label] for label in labels]
+            labels = [self.labels_mapping[label] for label in labels]
         onehot_encoder = sorted(set(labels))
         labels = array([onehot_encoder.index(label) for label in labels])
         if not isinstance(data[0][0], Graph) and not isinstance(data[0][0], DataFrame):
