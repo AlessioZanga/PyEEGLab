@@ -83,6 +83,7 @@ class Pipeline():
     def __init__(self, preprocessors: List[Preprocessor] = [], labels_mapping: Dict = None) -> None:
         logging.debug('Create new preprocessing pipeline')
         self.pipeline = preprocessors
+        self.labels_mapping = labels_mapping
 
     def _trigger_pipeline(self, data: Raw, kwargs):
         data.open().load_data()
