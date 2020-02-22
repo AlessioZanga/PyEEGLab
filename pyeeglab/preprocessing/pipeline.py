@@ -146,7 +146,7 @@ class VerticalPipeline(Pipeline):
         pool.close()
         pool.join()
         if self.labels_mapping is not None:
-            lables = [self.labels_mapping[label] for label in labels]
+            labels = [self.labels_mapping[label] for label in labels]
         for preprocessor in self.pipeline:
             data = self._trigger_pipeline(preprocessor, data)
         onehot_encoder = sorted(set(labels))
