@@ -34,6 +34,7 @@ class TUHEEGAbnormalIndex(Index):
             'file_id': raw.id,
             'begin': 60,
             'end': 120,
+            'duration': 60,
             'label': raw.path.split(sep)[-6]
         })
         events = [events]

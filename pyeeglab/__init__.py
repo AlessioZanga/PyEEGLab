@@ -12,7 +12,8 @@ from .io import Raw
 from .cache import SinglePickleCache, ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
                             CommonChannelSet, LowestFrequency, BandPassFrequency, \
-                            ToDataframe, ToNumpy, DynamicWindow, SpearmanCorrelation, \
+                            ToDataframe, ToNumpy, StaticWindow, DynamicWindow, \
+                            StaticWindowOverlap, DynamicWindowOverlap, SpearmanCorrelation, \
                             BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
                             Bandpower, GraphGenerator, GraphWithFeatures
 from .text import TextMiner

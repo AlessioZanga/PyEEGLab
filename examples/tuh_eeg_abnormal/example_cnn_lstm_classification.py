@@ -1,16 +1,18 @@
 #!/usr/bin/env python
-
 import warnings
 warnings.simplefilter(action='ignore')
 
 import tensorflow as tf
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-tf.enable_eager_execution(config=config)
+gpus = tf.config.experimental.list_physical_devices('GPU')
+try:
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+except RuntimeError as e:
+    print(e)
 
-LSTM = tf.keras.layers.LSTM
-
-from keras.utils import to_categorical
+from tensorflow.keras import Model, Input
+from tensorflow.keras.layers import Dense, Concatenate, Reshape, Flatten, Conv2D, MaxPool2D, LSTM
+from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
@@ -60,19 +62,19 @@ for train_idx, test_idx in skf.split(data[0], labels):
 
     cnns = []
     for _ in range(adjs):
-        input_a = tf.keras.Input((*input_shape, 1))
-        x = tf.keras.layers.Conv2D(8, 3)(input_a)
-        x = tf.keras.layers.MaxPool2D(2)(x)
-        x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.Model(inputs=[input_a], outputs=x)
+        input_a = Input((*input_shape, 1))
+        x = Conv2D(8, 3)(input_a)
+        x = MaxPool2D(2)(x)
+        x = Flatten()(x)
+        x = Model(inputs=[input_a], outputs=x)
         cnns.append(x)
 
-    combine = tf.keras.layers.Concatenate()([x.output for x in cnns])
-    reshape = tf.keras.layers.Reshape((len(cnns), cnns[0].output_shape[1]))(combine)
+    combine = Concatenate()([x.output for x in cnns])
+    reshape = Reshape((len(cnns), cnns[0].output_shape[1]))(combine)
     lstm = LSTM(32)(reshape)
-    z = tf.keras.layers.Dense(classes, activation='softmax')(lstm)
+    z = Dense(classes, activation='softmax')(lstm)
 
-    model = tf.keras.Model(inputs=[x.input for x in cnns], outputs=z)
+    model = Model(inputs=[x.input for x in cnns], outputs=z)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.fit(x_train, y_train_cat, batch_size=32, epochs=50, shuffle=True, validation_split=0.1)
     y_pred = model.predict(x_test).argmax(axis=-1)

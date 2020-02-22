@@ -27,6 +27,10 @@ class Dataset(ABC):
             'channel_set': self.loader.get_channelset(),
             'lowest_frequency': self.loader.get_lowest_frequency()
         }
+    
+    def set_minimum_event_duration(self, minimum_event_duration: float) -> 'Dataset':
+        self.loader.set_minimum_event_duration(minimum_event_duration)
+        return self
 
     def set_cache_manager(self, cache: Cache) -> 'Dataset':
         self.cache = cache

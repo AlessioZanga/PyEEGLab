@@ -5,6 +5,7 @@ from typing import List, Dict
 from os import sched_getaffinity
 from json import loads, dumps
 from numpy import array
+from pandas import DataFrame
 from hashlib import md5
 from networkx import Graph
 from multiprocessing import Pool
@@ -79,9 +80,10 @@ class Pipeline():
     environment: Dict = {}
     pipeline: List[Preprocessor]
 
-    def __init__(self, preprocessors: List[Preprocessor] = []) -> None:
+    def __init__(self, preprocessors: List[Preprocessor] = [], labels_mapping: Dict = None) -> None:
         logging.debug('Create new preprocessing pipeline')
         self.pipeline = preprocessors
+        self.labels_mapping = labels_mapping
 
     def _trigger_pipeline(self, data: Raw, kwargs):
         data.open().load_data()
@@ -96,9 +98,11 @@ class Pipeline():
         data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
         pool.join()
+        if self.labels_mapping is not None:
+            labels = [self.labels_mapping[label] for label in labels]
         onehot_encoder = sorted(set(labels))
         labels = array([onehot_encoder.index(label) for label in labels])
-        if not isinstance(data[0][0], Graph):
+        if not isinstance(data[0][0], Graph) and not isinstance(data[0][0], DataFrame):
             data = array(data)
         return {'data': data, 'labels': labels, 'labels_encoder': onehot_encoder}
 
@@ -141,6 +145,8 @@ class VerticalPipeline(Pipeline):
         data = pool.map(self._pre_trigger_pipeline, data)
         pool.close()
         pool.join()
+        if self.labels_mapping is not None:
+            labels = [self.labels_mapping[label] for label in labels]
         for preprocessor in self.pipeline:
             data = self._trigger_pipeline(preprocessor, data)
         onehot_encoder = sorted(set(labels))

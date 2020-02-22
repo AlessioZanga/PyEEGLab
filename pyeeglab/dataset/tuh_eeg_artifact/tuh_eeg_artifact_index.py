@@ -12,9 +12,9 @@ from ...database import File, Event, Index
 
 class TUHEEGArtifactIndex(Index):
 
-    def __init__(self, path: str, exclude_events: List[str] = ['elpp', 'bckg', 'null']) -> None:
+    def __init__(self, path: str) -> None:
         logging.debug('Create TUH EEG Corpus Index')
-        super().__init__('sqlite:///' + join(path, 'index.db'), path, exclude_events = exclude_events)
+        super().__init__('sqlite:///' + join(path, 'index.db'), path)
         self.index()
 
     def _get_file(self, path: str) -> File:
@@ -37,10 +37,10 @@ class TUHEEGArtifactIndex(Index):
         pattern = re.compile(r'^(\d+.\d+) (\d+.\d+) (\w+) (\d.\d+)$', re.MULTILINE)
         events = re.findall(pattern, annotations)
         events = [
-            (str(uuid4()), raw.id, float(e[0]), float(e[1]), e[2])
-            for e in events if e[2] not in self.exclude_events
+            (str(uuid4()), raw.id, float(e[0]), float(e[1]), float(e[1]) - float(e[0]), e[2])
+            for e in events
         ]
-        keys = ['id', 'file_id', 'begin', 'end', 'label']
+        keys = ['id', 'file_id', 'begin', 'end', 'duration', 'label']
         events = [dict(zip(keys, event)) for event in events]
         events = [Event(event) for event in events]
         return events

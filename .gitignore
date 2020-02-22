@@ -3,11 +3,12 @@ build
 data
 dist
 export
-tests/**/*.db
-tests/**/*.log
-tests/**/*.fif.gz
+tests/samples/
+tests/samples.zip
 **/__pycache__
 **.egg-info
 .idea
 .vscode
+.ipynb_checkpoints
 demo.py
+demo.ipynb
