@@ -3,7 +3,7 @@ from typing import List
 
 from json import dumps
 from numpy import ndarray, ones, triu
-from pandas import DataFrame
+from pandas import DataFrame, concat
 
 from ..io import Raw
 from .pipeline import Preprocessor
@@ -39,6 +39,11 @@ class ToNumpy(Preprocessor):
     def run(self, data: List[DataFrame], **kwargs) -> List[ndarray]:
         data = [d.to_numpy(dtype=self.dtype) for d in data]
         return data
+
+
+class JoinDataFrames(Preprocessor):
+    def run(self, data: List[List[DataFrame]], **kwargs) -> List[DataFrame]:
+        return [concat([d[i] for d in data]) for i, _ in enumerate(data[0])]
 
 
 class CorrelationToAdjacency(Preprocessor):
