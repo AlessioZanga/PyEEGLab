@@ -15,11 +15,6 @@ class ToDataframe(Preprocessor):
         super().__init__()
         logging.debug('Create DataFrame converter preprocessor')
 
-    def to_json(self) -> str:
-        json = {self.__class__.__name__ : {}}
-        json = dumps(json)
-        return json
-
     def run(self, data: Raw, **kwargs) -> DataFrame:
         dataframe = data.open().to_data_frame()
         return dataframe
@@ -51,11 +46,6 @@ class CorrelationToAdjacency(Preprocessor):
     def __init__(self) -> None:
         super().__init__()
         logging.debug('Create adjacency converter preprocessor')
-
-    def to_json(self) -> str:
-        json = {self.__class__.__name__ : {}}
-        json = dumps(json)
-        return json
 
     def run(self, data: List[DataFrame], **kwargs) -> List[DataFrame]:
         mask = triu(ones(data[0].shape, dtype='bool'), k=1)

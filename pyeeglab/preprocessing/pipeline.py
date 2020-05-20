@@ -22,9 +22,10 @@ class Preprocessor(ABC):
     def run(self, data, **kwargs):
         pass
 
-    @abstractmethod
     def to_json(self) -> str:
-        pass
+        json = {self.__class__.__name__ : {}}
+        json = dumps(json)
+        return json
 
     def __eq__(self, other):
         return hash(self) == hash(other)

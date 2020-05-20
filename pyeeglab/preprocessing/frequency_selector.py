@@ -12,11 +12,6 @@ class LowestFrequency(Preprocessor):
         super().__init__()
         logging.debug('Create lowest_frequency preprocessor')
 
-    def to_json(self) -> str:
-        json = {self.__class__.__name__ : {}}
-        json = dumps(json)
-        return json
-
     def run(self, data: Raw, **kwargs) -> Raw:
         data.set_frequency(kwargs['lowest_frequency'])
         return data

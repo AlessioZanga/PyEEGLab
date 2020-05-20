@@ -15,11 +15,6 @@ class GraphGenerator(Preprocessor):
         super().__init__()
         logging.debug('Create new graph generator preprocessor')
 
-    def to_json(self) -> str:
-        json = {self.__class__.__name__ : {}}
-        json = dumps(json)
-        return json
-
     def run(self, data: List[DataFrame], **kwargs) -> List[Graph]:
         nodes = [set(d.From.to_list() + d.To.to_list()) for d in data]
         edges = [d.where(d.Weight != 0).dropna().reset_index(drop=True) for d in data]
