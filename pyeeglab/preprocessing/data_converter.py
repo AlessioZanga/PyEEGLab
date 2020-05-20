@@ -29,7 +29,7 @@ class ToNumpy(Preprocessor):
 
     def to_json(self) -> str:
         json = {
-            self.__class__.__name__ : {
+            self.__class__.__name__: {
                 'dtype': self.dtype
             }
         }
@@ -41,9 +41,29 @@ class ToNumpy(Preprocessor):
         return data
 
 
+class ToNumpy1D(Preprocessor):
+
+    def __init__(self, dtype: str = 'float32') -> None:
+        super().__init__()
+        logging.debug('Create Numpy 1D (%s) converter preprocessor', dtype)
+        self.dtype = dtype
+
+    def to_json(self) -> str:
+        json = {
+            self.__class__.__name__: {
+                'dtype': self.dtype
+            }
+        }
+        json = dumps(json)
+        return json
+
+    def run(self, data: List[DataFrame], **kwargs) -> List[ndarray]:
+        return [d.to_numpy(dtype=self.dtype).flatten() for d in data]
+
+
 class JoinDataFrames(Preprocessor):
     def run(self, data: List[List[DataFrame]], **kwargs) -> List[DataFrame]:
-        return [concat([d[i] for d in data]) for i, _ in enumerate(data[0])]
+        return [concat([d[i].T for d in data]).T for i, _ in enumerate(data[0])]
 
 
 class CorrelationToAdjacency(Preprocessor):
