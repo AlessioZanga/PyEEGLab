@@ -16,16 +16,8 @@ class SpearmanCorrelation(Preprocessor):
         super().__init__()
         logging.debug('Create spearman correlation preprocessor')
 
-    def to_json(self) -> str:
-        json = {self.__class__.__name__ : {}}
-        json = dumps(json)
-        return json
-
     def run(self, data: List[DataFrame], **kwargs) -> List[DataFrame]:
-        data = [d.corr(method='spearman') for d in data]
-        for d in data:
-            del d.index.name
-        return data
+        return [d.corr(method='spearman').rename_axis(None) for d in data]
 
 
 class BinarizedSpearmanCorrelation(SpearmanCorrelation):

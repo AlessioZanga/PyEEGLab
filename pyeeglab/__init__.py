@@ -11,7 +11,7 @@ from .dataset import    TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
 from .io import Raw
 from .cache import SinglePickleCache, ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
-                            CommonChannelSet, LowestFrequency, BandPassFrequency, \
+                            CommonChannelSet, LowestFrequency, BandPassFrequency, NotchFrequency, \
                             ToDataframe, ToNumpy, StaticWindow, DynamicWindow, \
                             StaticWindowOverlap, DynamicWindowOverlap, SpearmanCorrelation, \
                             BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
