@@ -19,7 +19,7 @@ setuptools.setup(
         'networkx>=2.2',
         'nltk',
         'numpy',
-        'scipy'
+        'scipy',
         'pandas',
         'sqlalchemy>=1.2',
         'wfdb',
