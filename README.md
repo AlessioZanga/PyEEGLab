@@ -48,3 +48,7 @@ If you use this code in your project use the citation below:
         year={2019},
         howpublished={\url{https://github.com/AlessioZanga/PyEEGLab}},
     }
+
+## Related publications
+
+- "An Attention-based Architecture for EEG Classification" - https://www.scitepress.org/Link.aspx?doi=10.5220/0008953502140219
