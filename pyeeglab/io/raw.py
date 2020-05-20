@@ -75,3 +75,9 @@ class Raw():
             logging.debug('Filter %s with low_req: %s Hz and high_freq: %s Hz', self.id, low_freq, high_freq)
             self.reader = self.open().filter(low_freq, high_freq, n_jobs=self.n_jobs)
         return self
+    
+    def notch_filter(self, freq: float) -> 'Raw':
+        if freq is not None:
+            logging.debug('Notch filter %s with freq: %s Hz ', self.id, freq)
+            self.reader = self.open().notch_filter(freq, n_jobs=self.n_jobs)
+        return self
