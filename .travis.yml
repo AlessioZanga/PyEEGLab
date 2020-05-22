@@ -17,7 +17,7 @@ jobs:
 install:
   - pip install -r requirements.txt
   - pip install .
-  - pytest-cov codecov
+  - pip install pytest-cov codecov
 script: travis_wait 30 pytest --cov=./ && codecov
 deploy:
   provider: pypi
