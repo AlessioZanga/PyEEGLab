@@ -43,7 +43,7 @@ you will trigger the dataset download.
 If you use this code in your project use the citation below:
 
     @misc{Zanga2019PyEEGLab,
-        title={PyEEGLab: a simple tool for EEG manipulation},
+        title={PyEEGLab: A simple tool for EEG manipulation},
         author={Alessio Zanga},
         year={2019},
         howpublished={\url{https://github.com/AlessioZanga/PyEEGLab}},
@@ -51,4 +51,4 @@ If you use this code in your project use the citation below:
 
 ## Related publications
 
-- "An Attention-based Architecture for EEG Classification" - https://www.scitepress.org/Link.aspx?doi=10.5220/0008953502140219
+- "An Attention-based Architecture for EEG Classification" - https://doi.org/10.5220/0008953502140219
