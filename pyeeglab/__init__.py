@@ -12,10 +12,12 @@ from .io import Raw
 from .cache import SinglePickleCache, ChunksPickleCache
 from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
                             CommonChannelSet, LowestFrequency, BandPassFrequency, NotchFrequency, \
-                            ToDataframe, ToNumpy, StaticWindow, DynamicWindow, \
+                            ToDataframe, ToNumpy, ToNumpy1D, StaticWindow, DynamicWindow, \
                             StaticWindowOverlap, DynamicWindowOverlap, SpearmanCorrelation, \
                             BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
-                            Bandpower, GraphGenerator, GraphWithFeatures
+                            Bandpower, GraphGenerator, GraphWithFeatures, \
+                            JoinDataFrames, Mean, Variance, Skewness, Kurtosis, ZeroCrossing, \
+                            AbsoluteArea, PeakToPeak, MinMaxNormalization
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
