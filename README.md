@@ -38,6 +38,8 @@ you will trigger the dataset download.
 
 > **WIP**: Documentation is currently Work-In-Progress, if you need additional info, please, contact me directly.
 
+You can find the documentation at https://pyeeglab.readthedocs.io
+
 ## Credits
 
 If you use this code in your project use the citation below:
