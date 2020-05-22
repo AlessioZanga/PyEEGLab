@@ -2,11 +2,11 @@ import logging
 from abc import ABC
 from typing import List, Dict
 
-from os import sched_getaffinity
 from json import loads, dumps
 from os.path import isfile, join, sep
 from hashlib import md5
 from multiprocessing import Pool
+from multiprocessing import cpu_count
 
 from .raw import Raw
 from ..database import File, Metadata, Event, Index
@@ -63,7 +63,7 @@ class DataLoader(ABC):
             files = files.filter(Event.duration >= self.minimum_event_duration)
         files = files.all()
         files = [(file[0], file[2]) for file in files]
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         fifs = pool.starmap(self._get_data_by_event, files)
         pool.close()
         pool.join()

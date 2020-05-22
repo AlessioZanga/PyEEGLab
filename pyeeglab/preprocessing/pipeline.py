@@ -2,13 +2,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List, Dict
 
-from os import sched_getaffinity
 from json import loads, dumps
 from numpy import array
 from pandas import DataFrame
 from hashlib import md5
 from networkx import Graph
 from multiprocessing import Pool
+from multiprocessing import cpu_count
 
 from ..io import Raw
 
@@ -96,7 +96,7 @@ class Pipeline():
     def run(self, data: List[Raw]) -> Dict:
         labels = [raw.label for raw in data]
         data = [(d, self.environment) for d in data]
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
         pool.join()
@@ -135,7 +135,7 @@ class VerticalPipeline(Pipeline):
 
     def _trigger_pipeline(self, preprocessor: Preprocessor, data: List[Raw]):
         data = [(preprocessor.run, d, self.environment) for d in data]
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         data = pool.starmap(self._apply_args_and_kwargs, data)
         pool.close()
         pool.join()
@@ -143,7 +143,7 @@ class VerticalPipeline(Pipeline):
 
     def run(self, data: List[Raw]) -> Dict:
         labels = [raw.label for raw in data]
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         data = pool.map(self._pre_trigger_pipeline, data)
         pool.close()
         pool.join()
