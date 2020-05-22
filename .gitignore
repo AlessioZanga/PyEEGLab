@@ -12,3 +12,4 @@ tests/samples.zip
 .ipynb_checkpoints
 demo.py
 demo.ipynb
+**/.DS_Store

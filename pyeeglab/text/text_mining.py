@@ -2,7 +2,7 @@ import os
 from multiprocessing import Pool
 from nltk import word_tokenize, LancasterStemmer
 from nltk.corpus import stopwords
-
+from multiprocessing import cpu_count
 
 class TextMiner():
     def __init__(self, dataset):
@@ -51,7 +51,7 @@ class TextMiner():
 
     def normalize(self):
         items = list(self._dataset.items())
-        pool = Pool(len(os.sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         items = pool.map(self._normalize, items)
         pool.close()
         pool.join()

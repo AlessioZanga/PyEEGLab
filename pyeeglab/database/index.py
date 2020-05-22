@@ -2,12 +2,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List
 
-from os import walk, sched_getaffinity
+from os import walk
 from uuid import uuid4
 from json import dumps
 from os.path import join, splitext
 from multiprocessing import Pool
 from mne import set_log_file
+from multiprocessing import cpu_count
 
 from sqlalchemy import Column, Integer, Float, Text, ForeignKey
 from sqlalchemy import create_engine
@@ -95,7 +96,7 @@ class Index(ABC):
         pass
 
     def _get_files(self, paths: List[str]) -> List[File]:
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         files = pool.map(self._get_file, paths)
         pool.close()
         pool.join()
@@ -115,7 +116,7 @@ class Index(ABC):
         return metadata
 
     def _parallel_record_metadata(self, files: List[File]) -> List[Metadata]:
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         metadata = pool.map(self._get_record_metadata, files)
         pool.close()
         pool.join()
@@ -132,7 +133,7 @@ class Index(ABC):
         return events
 
     def _parallel_record_events(self, files: List[File]) -> List[Event]:
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         events = pool.map(self._get_record_events, files)
         pool.close()
         pool.join()
