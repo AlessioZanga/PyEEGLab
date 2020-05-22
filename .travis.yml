@@ -15,16 +15,9 @@ jobs:
         - python -m pip install --upgrade pip
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
 install:
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - source "$HOME/miniconda/etc/profile.d/conda.sh"
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  - conda info -a
-  - conda env create -q -f environment.yml
-  - conda activate pyeeglab
+  - pip install -r requirements.txt
   - pip install .
-  - conda install -q -y pytest pytest-cov codecov
+  - pytest-cov codecov
 script: travis_wait 30 pytest --cov=./ && codecov
 deploy:
   provider: pypi

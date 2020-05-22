@@ -4,7 +4,7 @@ channels:
     - nodefaults
 dependencies:
     - python>=3.7,<3.8
-    - mne==0.19.0
+    - mne==0.20.0
     - networkx>=2.2
     - nltk
     - numpy
