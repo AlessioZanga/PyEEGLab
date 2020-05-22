@@ -1,0 +1,8 @@
+mne==0.19.0
+networkx>=2.2
+nltk
+numpy
+scipy
+pandas
+sqlalchemy>=1.2
+wfdb

@@ -22,6 +22,23 @@ BaseTable = declarative_base()
 
 
 class File(BaseTable):
+    """File represents a single file contained in the dataset.
+    
+    This is an ORM class derived from the BaseTable in a declarative base
+    used by SQLAlchemy.
+
+    Attributes
+    ----------
+    id : str
+        The primary key generated randomly using an UUID4 generator.
+    channel_ref : str
+        A not null indexed string describing the EEG channel reference system.
+    extension : str
+        A not null indexed string reporting the EEG recording format.
+    path : str
+        A not null string used to point to the relative path of the file respect
+        to the current sqlite database location.
+    """
     __tablename__ = 'file'
     id = Column(Text, primary_key=True)
     channel_ref = Column(Text, nullable=False, index=True)
@@ -34,6 +51,28 @@ class File(BaseTable):
 
 
 class Metadata(BaseTable):
+    """ Metadata represents a single metadata record associated with a single
+    file contained in the dataset.
+
+    This is an ORM class derived from the BaseTable in a declarative base
+    used by SQLAlchemy.
+
+    Attributes
+    ----------
+    file_id : str
+        The foreign key related to file_id, used also as a primary key for metadata
+        table since this is a one-to-one relationship.
+    file_duration : int
+        This is the EEG sample duration reported in seconds. This is not inteded as
+        a precise duration estimate, but only a reference for statistical analysis.
+        For more precise duration measurement, please, use the Raw record class methods.
+    channels_count : int
+        This field report the number of channels reported in the EEG header.
+    ferquency : int
+        The sample fequency expressend in Hz extrated from the EEG header.
+    channels: str
+        The list of channels saved as a JSON string extracted from the EEG header.
+    """
     __tablename__ = 'metadata'
     file_id = Column(Text, ForeignKey('file.id'), primary_key=True)
     file_duration = Column(Integer, nullable=False)
@@ -61,8 +100,23 @@ class Event(BaseTable):
 
 
 class Index(ABC):
-
+    """ An abstract class representing the Index mechanism that is used to
+    discover the dataset structure.
+    
+    It is the first component that must be implemented in order to provide
+    full support to a specific dataset. If the dataset structure is regular,
+    the only method that must be implemented id "_get_file(path)".    
+    """
     def __init__(self, db: str, path: str, include_extensions: List[str] = ['edf'], exclude_events: List[str] = None) -> None:
+        """
+        Parameters
+        ----------
+        db : str
+            The database connection handle expressed as string. This is usually
+            configured by the Loader class as a sqlite handle, but in theory it
+            could be used with any type of database connection.
+        
+        """
         logging.debug('Create index at %s', db)
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
