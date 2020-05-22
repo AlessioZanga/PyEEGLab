@@ -44,7 +44,7 @@ preprocessing = Pipeline([
         ],
         output=GraphWithFeatures()
     )
-])
+], to_numpy=False)
 
 dataset = dataset.set_pipeline(preprocessing).load()
 data, labels = dataset['data'], dataset['labels']
