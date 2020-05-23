@@ -16,4 +16,4 @@ dependencies:
     # on any Conda channel, so defaulting to pip
     - pip
     - pip:
-        - yasa>=0.1.7
+        - yasa>=0.1.6
