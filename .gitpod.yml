@@ -1,4 +1,3 @@
 tasks:
   - init: make
-image:
-  file: .gitpod.Dockerfile
+image: gitpod/workspace-full
