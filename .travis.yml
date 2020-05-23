@@ -23,7 +23,7 @@ jobs:
           update: true
           packages: python3
       before_install:
-        - python3 -m pip install --upgrade virtualenv
+        - python3 -m pip install --upgrade pytest virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
         - source "$HOME/venv/bin/activate"
     - name: "Python 3.8.0 on Windows"
@@ -36,7 +36,7 @@ jobs:
 install:
   - pip3 install -r requirements.txt
   - pip3 install .
-  - pip3 install pytest pytest-cov codecov
+  - pip3 install pytest-cov codecov
 script: travis_wait 30 pytest --cov=./ && codecov
 deploy:
   provider: pypi
