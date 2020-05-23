@@ -23,7 +23,7 @@ jobs:
           update: true
           packages: python3
       before_install:
-        - python3 -m pip install --upgrade pytest virtualenv
+        - python3 -m pip install --upgrade pytest pytest-cov codecov virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
         - source "$HOME/venv/bin/activate"
     - name: "Python 3.8.0 on Windows"
