@@ -20,6 +20,7 @@ jobs:
       language: shell       # 'language: python' is an error on Travis CI macOS
       addons:
         homebrew:
+          update: true
           packages: python3
       before_install:
         - python3 -m pip install --upgrade virtualenv
