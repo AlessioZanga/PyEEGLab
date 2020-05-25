@@ -86,6 +86,26 @@ class Metadata(BaseTable):
 
 
 class Event(BaseTable):
+    """Event represents a single event associated to a single file.
+    Multiple events can be associated to multiple files, according to
+    the record annotations.
+    
+    Attributes
+    ----------
+    id : str
+        This is the primary key that is associated to each event. It is
+        created from a UUID4.
+    file_id : str
+        This the foreign key that link the event to the related file.
+    begin : float
+        The timestep expressed in seconds from which the event begins.
+    end : float
+        The timestep expressed in seconds at which the event ends.
+    duration : float
+        The entire duration of the event.
+    label : str
+        The label of this event as written inthe annotations.
+    """
     __tablename__ = 'event'
     id = Column(Text, primary_key=True)
     file_id = Column(Text, ForeignKey('file.id'), index=True)

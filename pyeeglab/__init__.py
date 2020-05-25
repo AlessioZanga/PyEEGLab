@@ -17,7 +17,7 @@ from .preprocessing import VerticalPipeline, Pipeline, JoinedPreprocessor, \
                             BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
                             Bandpower, GraphGenerator, GraphWithFeatures, \
                             JoinDataFrames, Mean, Variance, Skewness, Kurtosis, ZeroCrossing, \
-                            AbsoluteArea, PeakToPeak, MinMaxNormalization
+                            AbsoluteArea, PeakToPeak, MinMaxNormalization, MinMaxCentralizedNormalization
 from .text import TextMiner
 
 logging.getLogger().setLevel(logging.DEBUG)
