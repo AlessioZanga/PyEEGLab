@@ -7,4 +7,4 @@ from .frame_generator import StaticWindow, DynamicWindow, StaticWindowOverlap, D
 from .brain_connectivity import SpearmanCorrelation, BinarizedSpearmanCorrelation, Bandpower
 from .graph_generator import GraphGenerator, GraphWithFeatures
 from .stat_features import Mean, Variance, Skewness, Kurtosis, ZeroCrossing, AbsoluteArea, PeakToPeak
-from .normalization import MinMaxNormalization
+from .normalization import MinMaxNormalization, MinMaxCentralizedNormalization
