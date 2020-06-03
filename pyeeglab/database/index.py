@@ -72,6 +72,10 @@ class Metadata(BaseTable):
         The sample fequency expressend in Hz extrated from the EEG header.
     channels: str
         The list of channels saved as a JSON string extracted from the EEG header.
+    max_value: float
+        The max value sampled in this record across all channels.
+    min_value: float
+        The min value sampled in this record across all channels.
     """
     __tablename__ = 'metadata'
     file_id = Column(Text, ForeignKey('file.id'), primary_key=True)
@@ -79,6 +83,8 @@ class Metadata(BaseTable):
     channels_count = Column(Integer, nullable=False)
     frequency = Column(Integer, nullable=False, index=True)
     channels = Column(Text, nullable=False, index=True)
+    max_value = Column(Float)
+    min_value = Column(Float)
 
     def __init__(self, dictionary) -> None:
         for k, v in dictionary.items():
@@ -185,6 +191,8 @@ class Index(ABC):
             'channels_count': raw.open().info['nchan'],
             'frequency': raw.open().info['sfreq'],
             'channels': dumps(raw.open().info['ch_names']),
+            'max_value': raw.open().get_data().max(),
+            'min_value': raw.open().get_data().min(),
         }
         metadata = Metadata(metadata)
         return metadata

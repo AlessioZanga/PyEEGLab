@@ -10,11 +10,7 @@ class TUHEEGAbnormalDataset(Dataset):
         super().__init__(TUHEEGAbnormalLoader(path))
 
     def _get_dataset_env(self) -> Dict:
+        env = super()._get_dataset_env()
         blacklist = ['IBI', 'BURSTS', 'STI 014', 'SUPPR']
-        channel_set = self.loader.get_channelset()
-        channel_set = set(channel_set) - set(blacklist)
-        channel_set = list(channel_set)
-        return {
-            'channel_set': channel_set,
-            'lowest_frequency': self.loader.get_lowest_frequency()
-        }
+        env['channel_set'] = list(set(env['channel_set']) - set(blacklist))
+        return env
