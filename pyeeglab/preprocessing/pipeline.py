@@ -94,6 +94,7 @@ class Pipeline():
         return data
 
     def run(self, data: List[Raw]) -> Dict:
+        logging.debug('Environment variables: {}'.format(str(self.environment)))
         labels = [raw.label for raw in data]
         data = [(d, self.environment) for d in data]
         pool = Pool(cpu_count())
@@ -134,6 +135,7 @@ class VerticalPipeline(Pipeline):
         return data
 
     def _trigger_pipeline(self, preprocessor: Preprocessor, data: List[Raw]):
+        logging.debug('Env variables: {}'.format(str(self.environment)))
         data = [(preprocessor.run, d, self.environment) for d in data]
         pool = Pool(cpu_count())
         data = pool.starmap(self._apply_args_and_kwargs, data)

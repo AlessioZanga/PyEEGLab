@@ -13,20 +13,18 @@ from .pipeline import Preprocessor
 class MinMaxNormalization(Preprocessor):
     def run(self, data: pd.DataFrame, **kwargs) -> DataFrame:
 
-        def min_max_norm(array: np.ndarray) -> np.ndarray:
-            _max = np.max(array)
-            _min = np.min(array)
+        def min_max_norm(array: np.ndarray, _min: float, _max: float) -> np.ndarray:
             return (array - _min)/(_max - _min)
 
-        return data.apply(min_max_norm, raw=True)
+        args = (kwargs['min_value'], kwargs['max_value'])
+        return data.apply(min_max_norm, args=args, raw=True)
 
 
 class MinMaxCentralizedNormalization(Preprocessor):
     def run(self, data: pd.DataFrame, **kwargs) -> DataFrame:
 
-        def min_max_norm(array: np.ndarray) -> np.ndarray:
-            _max = np.max(array)
-            _min = np.min(array)
+        def min_max_norm(array: np.ndarray, _min: float, _max: float) -> np.ndarray:
             return (array - ((_max + _min)/2))/((_max - _min)/2)
 
-        return data.apply(min_max_norm, raw=True)
+        args = (kwargs['min_value'], kwargs['max_value'])
+        return data.apply(min_max_norm, args=args, raw=True)

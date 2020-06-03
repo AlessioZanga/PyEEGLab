@@ -104,6 +104,38 @@ class DataLoader(ABC):
         frequency = frequency.all()
         frequency = min([f.frequency for f in frequency], default=0)
         return frequency
+    
+    def get_max_value(self) -> float:
+        files = self.index.db.query(File, Metadata)
+        files = files.filter(File.id == Metadata.file_id)
+        if self.exclude_channel_ref:
+            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if self.exclude_frequency:
+            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        if self.exclude_files:
+            files = files.filter(~File.path.in_(self.exclude_files))
+        if self.minimum_event_duration > 0:
+            files = files.filter(Event.duration >= self.minimum_event_duration)
+        files = files.group_by(Metadata.channels)
+        files = files.all()
+        max_value = max([f.max_value for _, f in files], default=0)
+        return max_value
+
+    def get_min_value(self) -> float:
+        files = self.index.db.query(File, Metadata)
+        files = files.filter(File.id == Metadata.file_id)
+        if self.exclude_channel_ref:
+            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if self.exclude_frequency:
+            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+        if self.exclude_files:
+            files = files.filter(~File.path.in_(self.exclude_files))
+        if self.minimum_event_duration > 0:
+            files = files.filter(Event.duration >= self.minimum_event_duration)
+        files = files.group_by(Metadata.channels)
+        files = files.all()
+        min_value = min([f.min_value for _, f in files], default=0)
+        return min_value
 
     def __eq__(self, other):
         return hash(self) == hash(other)

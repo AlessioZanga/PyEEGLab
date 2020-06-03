@@ -25,7 +25,9 @@ class Dataset(ABC):
     def _get_dataset_env(self) -> Dict:
         return {
             'channel_set': self.loader.get_channelset(),
-            'lowest_frequency': self.loader.get_lowest_frequency()
+            'lowest_frequency': self.loader.get_lowest_frequency(),
+            'max_value': self.loader.get_max_value(),
+            'min_value': self.loader.get_min_value(),
         }
     
     def set_minimum_event_duration(self, minimum_event_duration: float) -> 'Dataset':
