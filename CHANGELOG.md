@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Fixed
 
+## [0.9.2] - 2020-06-dd
+### Added
+* DOI reference link using Zenodo
+
+### Changed
+### Removed
+### Fixed
+
 ## [0.9.1] - 2020-06-03
 ### Added
 * Add min_value and max_value for each file Metadata
