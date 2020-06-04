@@ -1,10 +1,10 @@
 import logging
-from typing import List
-
-from json import dumps
+import json
 
 from ...io import Raw
 from ...pipeline import Preprocessor
+
+from typing import List
 
 
 class CommonChannelSet(Preprocessor):
@@ -15,13 +15,13 @@ class CommonChannelSet(Preprocessor):
         self.blacklist = blacklist
 
     def to_json(self) -> str:
-        json = {
+        out = {
             self.__class__.__name__ : {
                 'blacklist': self.blacklist
             }
         }
-        json = dumps(json)
-        return json
+        out = json.dumps(out)
+        return out
 
     def run(self, data: Raw, **kwargs) -> Raw:
         channels = set(kwargs['channels_set']) - set(self.blacklist)

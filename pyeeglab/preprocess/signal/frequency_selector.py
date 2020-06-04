@@ -1,7 +1,5 @@
 import logging
 
-from json import dumps
-
 from ...io import Raw
 from ...pipeline import Preprocessor
 

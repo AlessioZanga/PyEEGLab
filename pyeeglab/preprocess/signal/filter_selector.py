@@ -1,6 +1,5 @@
 import logging
-
-from json import dumps
+import json
 
 from ...io import Raw
 from ...pipeline import Preprocessor
@@ -15,14 +14,14 @@ class BandPassFrequency(Preprocessor):
         logging.debug('Create band pass filter (%f Hz, %f Hz) preprocessor', low_freq, high_freq)
 
     def to_json(self) -> str:
-        json = {
+        out = {
             self.__class__.__name__ : {
                 'low_freq': self.low_freq,
                 'high_freq': self.high_freq
             }
         }
-        json = dumps(json)
-        return json
+        out = json.dumps(out)
+        return out
 
     def run(self, data: Raw, **kwargs) -> Raw:
         data.set_filter(self.low_freq, self.high_freq)
@@ -37,13 +36,13 @@ class NotchFrequency(Preprocessor):
         logging.debug('Create notch filter %f Hz preprocessor', freq)
 
     def to_json(self) -> str:
-        json = {
+        out = {
             self.__class__.__name__ : {
                 'freq': self.freq
             }
         }
-        json = dumps(json)
-        return json
+        out = json.dumps(out)
+        return out
 
     def run(self, data: Raw, **kwargs) -> Raw:
         data.notch_filter(self.freq)

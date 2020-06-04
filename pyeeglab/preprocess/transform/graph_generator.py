@@ -1,12 +1,13 @@
 import logging
-from typing import List
+import json
 
-from json import dumps
-from pandas import DataFrame
-from networkx import Graph, set_node_attributes
+import pandas as pd
+import networkx as nx
 from networkx.convert_matrix import from_pandas_edgelist
 
 from ...pipeline import Preprocessor
+
+from typing import List
 
 
 class GraphGenerator(Preprocessor):
@@ -15,7 +16,7 @@ class GraphGenerator(Preprocessor):
         super().__init__()
         logging.debug('Create new graph generator preprocessor')
 
-    def run(self, data: List[DataFrame], **kwargs) -> List[Graph]:
+    def run(self, data: List[pd.DataFrame], **kwargs) -> List[nx.Graph]:
         nodes = [set(d.From.to_list() + d.To.to_list()) for d in data]
         edges = [d.where(d.Weight != 0).dropna().reset_index(drop=True) for d in data]
         graphs = []
@@ -32,15 +33,15 @@ class GraphWithFeatures(GraphGenerator):
         super().__init__()
         logging.debug('Create new graph with features preprocessor')
 
-    def _run(self, adjacency: List[DataFrame], features: List[DataFrame], **kwargs) -> List[Graph]:
+    def _run(self, adjacency: List[pd.DataFrame], features: List[pd.DataFrame], **kwargs) -> List[nx.Graph]:
         graphs = super().run(adjacency, **kwargs)
         for i, graph in enumerate(graphs):
             feature = {
                 node: {'features': features[i].loc[node, :].to_numpy()}
                 for node in graph.nodes
             }
-            set_node_attributes(graph, feature)
+            nx.set_node_attributes(graph, feature)
         return graphs
 
-    def run(self, data, **kwargs) -> List[Graph]:
+    def run(self, data, **kwargs) -> List[nx.Graph]:
         return self._run(*data, **kwargs)
