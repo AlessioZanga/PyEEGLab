@@ -33,7 +33,7 @@ class Kurtosis(Preprocessor):
 class ZeroCrossing(Preprocessor):
     def run(self, data: List[pd.DataFrame], **kwargs) -> List[pd.DataFrame]:
 
-        def zero_crossing(array: ndarray) -> ndarray:
+        def zero_crossing(array: np.ndarray) -> np.ndarray:
             return np.where(np.diff(np.sign(array)))[0].shape[0]
 
         return [d.apply(zero_crossing, raw=True).to_frame(name='Zero Crossing') for d in data]
