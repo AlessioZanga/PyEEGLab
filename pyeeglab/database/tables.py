@@ -53,19 +53,22 @@ class Metadata(BASE_TABLE):
         For more precise duration measurement, please, use the Raw record class methods.
     channels_count : int
         This field report the number of channels reported in the EEG header.
-    channels_set: str
+    channels_reference : str
+        An indexed string describing the EEG channel reference system.
+    channels_set : str
         The list of channels saved as a JSON string extracted from the EEG header.
     sampling_frequency : int
         The sampling fequency expressend in Hz extrated from the EEG header.
-    max_value: float
+    max_value : float
         The max value sampled in this record across all channels.
-    min_value: float
+    min_value : float
         The min value sampled in this record across all channels.
     """
     __tablename__ = 'metadata'
     file_id: str = Column(Text, ForeignKey('file.id'), primary_key=True)
     file_duration: int = Column(Integer, nullable=False)
     channels_count: int = Column(Integer, nullable=False)
+    channels_reference: str = Column(Text, nullable=True, index=True)
     channels_set: str = Column(Text, nullable=False, index=True)
     sampling_frequency: int = Column(Integer, nullable=False, index=True)
     max_value: float = Column(Float, nullable=False)

@@ -1,5 +1,6 @@
-import re
 import logging
+import re
+import json
 
 from typing import List
 
@@ -7,7 +8,7 @@ from uuid import uuid4, uuid5, NAMESPACE_X500
 from os.path import join, sep
 
 from ...io import Index, Raw
-from ...database import File, Event
+from ...database import File, Metadata, Event
 
 
 class TUHEEGArtifactIndex(Index):
@@ -26,13 +27,29 @@ class TUHEEGArtifactIndex(Index):
             path=path[length:]
         )
 
+    def _get_record_metadata(self, file: File) -> Metadata:
+        logging.debug('Add file %s raw metadata to index', file.id)
+        meta = file.path.split(sep)
+        raw = Raw(file.id, join(self.path, file.path))
+        return Metadata(
+            file_id=raw.id,
+            file_duration=raw.open().n_times/raw.open().info['sfreq'],
+            channels_count=raw.open().info['nchan'],
+            channels_reference=meta[0],
+            channels_set=json.dumps(raw.open().info['ch_names']),
+            sampling_frequency=raw.open().info['sfreq'],
+            max_value=raw.open().get_data().max(),
+            min_value=raw.open().get_data().min(),
+        )
+
     def _get_record_events(self, file: File) -> List[Event]:
         logging.debug('Add file %s raw events to index', file.id)
         raw = Raw(file.id, join(self.path, file.path))
         path = raw.path[:-4] + '.tse'
         with open(path, 'r') as file:
             annotations = file.read()
-        pattern = re.compile(r'^(\d+.\d+) (\d+.\d+) (\w+) (\d.\d+)$', re.MULTILINE)
+        pattern = re.compile(
+            r'^(\d+.\d+) (\d+.\d+) (\w+) (\d.\d+)$', re.MULTILINE)
         events = re.findall(pattern, annotations)
         events = [
             Event(

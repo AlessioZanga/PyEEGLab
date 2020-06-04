@@ -1,4 +1,5 @@
 import logging
+import json
 
 from typing import List
 
@@ -6,7 +7,7 @@ from uuid import uuid4, uuid5, NAMESPACE_X500
 from os.path import join, sep
 
 from ...io import Index, Raw
-from ...database import File, Event
+from ...database import File, Metadata, Event
 
 
 class TUHEEGAbnormalIndex(Index):
@@ -22,6 +23,21 @@ class TUHEEGAbnormalIndex(Index):
             id=str(uuid5(NAMESPACE_X500, path[length:])),
             extension=meta[-1].split('.')[-1],
             path=path[length:]
+        )
+
+    def _get_record_metadata(self, file: File) -> Metadata:
+        logging.debug('Add file %s raw metadata to index', file.id)
+        meta = file.path.split(sep)
+        raw = Raw(file.id, join(self.path, file.path))
+        return Metadata(
+            file_id=raw.id,
+            file_duration=raw.open().n_times/raw.open().info['sfreq'],
+            channels_count=raw.open().info['nchan'],
+            channels_reference=meta[2],
+            channels_set=json.dumps(raw.open().info['ch_names']),
+            sampling_frequency=raw.open().info['sfreq'],
+            max_value=raw.open().get_data().max(),
+            min_value=raw.open().get_data().min(),
         )
 
     def _get_record_events(self, file: File) -> List[Event]:
