@@ -33,7 +33,7 @@ class Cache(ABC):
         pass
 
 
-class SinglePickleCache(Cache):
+class PickleCache(Cache):
 
     def __init__(self, path: str):
         super().__init__()
