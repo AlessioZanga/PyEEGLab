@@ -1,6 +1,5 @@
 mne==0.20.0
 networkx>=2.2
-nltk
 numpy
 scipy
 pandas

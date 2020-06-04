@@ -15,9 +15,8 @@ setuptools.setup(
     url='https://github.com/AlessioZanga/PyEEGLab',
     packages=setuptools.find_packages(),
     install_requires=[
-        'mne==0.20',
+        'mne==0.20.0',
         'networkx>=2.2',
-        'nltk',
         'numpy',
         'scipy',
         'pandas',
