@@ -1,1 +1,1 @@
-from .cache import Cache, SinglePickleCache, ChunksPickleCache
+from .cache import Cache, SinglePickleCache
