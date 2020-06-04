@@ -5,8 +5,8 @@ from typing import List
 from uuid import uuid4, uuid5, NAMESPACE_X500
 from os.path import join, sep
 
-from ...io import Raw
-from ...database import File, Index, Event
+from ...io import Index, Raw
+from ...database import File, Event
 
 
 class TUHEEGAbnormalIndex(Index):

@@ -3,7 +3,8 @@ import logging
 from uuid import uuid5, NAMESPACE_X500
 from os.path import join, sep
 
-from ...database import File, Index
+from ...io import Index
+from ...database import File
 
 
 class EEGMMIDBIndex(Index):

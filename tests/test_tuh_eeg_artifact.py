@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from pyeeglab import TUHEEGArtifactLoader, TUHEEGArtifactDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
+                     DynamicWindow, ForkedPreprocessor, BinarizedSpearmanCorrelation, \
                      CorrelationToAdjacency, Bandpower, GraphWithFeatures
 
 class TestTUHEEGArtifact(unittest.TestCase):
@@ -30,7 +30,7 @@ class TestTUHEEGArtifact(unittest.TestCase):
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            JoinedPreprocessor(
+            ForkedPreprocessor(
                 inputs=[
                     [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
                     Bandpower()

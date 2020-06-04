@@ -1,12 +1,13 @@
 import logging
 
-from typing import List
-
 from uuid import uuid4, uuid5, NAMESPACE_X500
 from os.path import isfile, join, sep
 from wfdb import rdann
 
-from ...database import File, Event, Index
+from ...io import Index
+from ...database import File, Event
+
+from typing import List
 
 
 class CHBMITIndex(Index):

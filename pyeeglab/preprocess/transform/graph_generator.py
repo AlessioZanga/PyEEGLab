@@ -6,7 +6,7 @@ from pandas import DataFrame
 from networkx import Graph, set_node_attributes
 from networkx.convert_matrix import from_pandas_edgelist
 
-from .pipeline import Preprocessor
+from ...pipeline import Preprocessor
 
 
 class GraphGenerator(Preprocessor):

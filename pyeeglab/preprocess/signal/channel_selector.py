@@ -3,8 +3,8 @@ from typing import List
 
 from json import dumps
 
-from ..io import Raw
-from .pipeline import Preprocessor
+from ...io import Raw
+from ...pipeline import Preprocessor
 
 
 class CommonChannelSet(Preprocessor):

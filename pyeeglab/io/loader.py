@@ -1,15 +1,16 @@
 import logging
-from abc import ABC
-from typing import List, Dict
+import json
 
-from json import loads, dumps
+from abc import ABC
 from os.path import isfile, join, sep
 from hashlib import md5
-from multiprocessing import Pool
-from multiprocessing import cpu_count
+from multiprocessing import Pool, cpu_count
 
+from ..database import File, Metadata, Event
 from .raw import Raw
-from ..database import File, Metadata, Event, Index
+from .index import Index
+
+from typing import List, Dict
 
 
 class DataLoader(ABC):
@@ -91,7 +92,7 @@ class DataLoader(ABC):
         files = files.group_by(Metadata.channels)
         files = files.all()
         files = [file[1] for file in files]
-        files = [set(loads(file.channels)) for file in files]
+        files = [set(json.loads(file.channels)) for file in files]
         channels = files[0]
         for file in files[1:]:
             channels = channels.intersection(file)
@@ -146,7 +147,7 @@ class DataLoader(ABC):
             value += self.exclude_channel_ref
         if self.exclude_frequency:
             value += self.exclude_frequency
-        value = dumps(value).encode()
+        value = json.dumps(value).encode()
         value = md5(value).hexdigest()
         value = int(value, 16)
         return value

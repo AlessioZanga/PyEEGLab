@@ -1,1 +1,1 @@
-from .index import File, Metadata, Event, Index
+from .tables import *

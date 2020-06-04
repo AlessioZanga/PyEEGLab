@@ -10,8 +10,8 @@ from .dataset import TUHEEGAbnormalDataset, TUHEEGAbnormalLoader, \
     CHBMITLoader, CHBMITDataset
 from .io import Raw
 from .cache import SinglePickleCache
-from .preprocessing import Pipeline, JoinedPreprocessor, \
-    CommonChannelSet, LowestFrequency, BandPassFrequency, NotchFrequency, \
+from .pipeline import Pipeline, ForkedPreprocessor
+from .preprocess import CommonChannelSet, LowestFrequency, BandPassFrequency, NotchFrequency, \
     ToDataframe, ToNumpy, ToNumpy1D, StaticWindow, DynamicWindow, \
     StaticWindowOverlap, DynamicWindowOverlap, SpearmanCorrelation, \
     BinarizedSpearmanCorrelation, CorrelationToAdjacency, \

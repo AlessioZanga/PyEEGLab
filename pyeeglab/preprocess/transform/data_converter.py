@@ -5,8 +5,8 @@ from json import dumps
 from numpy import ndarray, ones, triu
 from pandas import DataFrame, concat
 
-from ..io import Raw
-from .pipeline import Preprocessor
+from ...io import Raw
+from ...pipeline import Preprocessor
 
 
 class ToDataframe(Preprocessor):

@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from pyeeglab import CHBMITLoader, CHBMITDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
+                     DynamicWindow, ForkedPreprocessor, BinarizedSpearmanCorrelation, \
                      CorrelationToAdjacency, Bandpower, GraphWithFeatures
 
 class TestCHBMIT(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestCHBMIT(unittest.TestCase):
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            JoinedPreprocessor(
+            ForkedPreprocessor(
                 inputs=[
                     [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
                     Bandpower()

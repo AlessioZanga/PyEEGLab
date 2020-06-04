@@ -4,7 +4,7 @@ from typing import Dict
 
 from ..io import DataLoader
 from ..cache import Cache, SinglePickleCache
-from ..preprocessing import Pipeline
+from ..pipeline import Pipeline
 
 class Dataset(ABC):
 

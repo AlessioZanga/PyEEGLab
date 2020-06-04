@@ -7,7 +7,7 @@ from json import dumps
 from pandas import DataFrame
 from typing import List
 
-from .pipeline import Preprocessor
+from ...pipeline import Preprocessor
 
 
 class MinMaxNormalization(Preprocessor):

@@ -9,7 +9,7 @@ from hashlib import md5
 from pickle import load, dump
 
 from ..io import DataLoader
-from ..preprocessing import Pipeline
+from ..pipeline import Pipeline
 
 class Cache(ABC):
 

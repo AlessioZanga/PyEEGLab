@@ -5,7 +5,7 @@ from math import floor
 from json import dumps
 from pandas import DataFrame
 
-from .pipeline import Preprocessor
+from ...pipeline import Preprocessor
 
 
 class StaticWindow(Preprocessor):
