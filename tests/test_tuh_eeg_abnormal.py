@@ -3,7 +3,7 @@ import sys
 import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pyeeglab import TextMiner, TUHEEGAbnormalLoader, TUHEEGAbnormalDataset, \
+from pyeeglab import TUHEEGAbnormalLoader, TUHEEGAbnormalDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
                      DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
                      CorrelationToAdjacency, Bandpower, GraphWithFeatures
@@ -38,9 +38,3 @@ class TestTUHEEGAbnormal(unittest.TestCase):
             )
         ])
         dataset = dataset.set_pipeline(preprocessing).load()
-
-    def test_text_miner(self):
-        loader = TUHEEGAbnormalLoader(self.PATH)
-        text = loader.get_dataset_text()
-        miner = TextMiner(text)
-        miner.get_dataset()

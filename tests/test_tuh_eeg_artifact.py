@@ -3,7 +3,7 @@ import sys
 import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pyeeglab import TextMiner, TUHEEGArtifactLoader, TUHEEGArtifactDataset, \
+from pyeeglab import TUHEEGArtifactLoader, TUHEEGArtifactDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
                      DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
                      CorrelationToAdjacency, Bandpower, GraphWithFeatures
@@ -40,9 +40,3 @@ class TestTUHEEGArtifact(unittest.TestCase):
         ])
         dataset = dataset.set_pipeline(preprocessing).load()
         """
-
-    def test_text_miner(self):
-        loader = TUHEEGArtifactLoader(self.PATH)
-        text = loader.get_dataset_text()
-        miner = TextMiner(text)
-        miner.get_dataset()
