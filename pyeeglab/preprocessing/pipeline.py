@@ -123,38 +123,3 @@ class Pipeline():
         value = md5(value).hexdigest()
         value = int(value, 16)
         return value
-
-
-class VerticalPipeline(Pipeline):
-
-    def _apply_args_and_kwargs(self, fn, data, kwargs):
-        return fn(data, **kwargs)
-
-    def _pre_trigger_pipeline(self, data: Raw) -> Raw:
-        data.open().load_data()
-        return data
-
-    def _trigger_pipeline(self, preprocessor: Preprocessor, data: List[Raw]):
-        logging.debug('Env variables: {}'.format(str(self.environment)))
-        data = [(preprocessor.run, d, self.environment) for d in data]
-        pool = Pool(cpu_count())
-        data = pool.starmap(self._apply_args_and_kwargs, data)
-        pool.close()
-        pool.join()
-        return data
-
-    def run(self, data: List[Raw]) -> Dict:
-        labels = [raw.label for raw in data]
-        pool = Pool(cpu_count())
-        data = pool.map(self._pre_trigger_pipeline, data)
-        pool.close()
-        pool.join()
-        if self.labels_mapping is not None:
-            labels = [self.labels_mapping[label] for label in labels]
-        for preprocessor in self.pipeline:
-            data = self._trigger_pipeline(preprocessor, data)
-        onehot_encoder = sorted(set(labels))
-        labels = array([onehot_encoder.index(label) for label in labels])
-        if not isinstance(data[0][0], Graph):
-            data = array(data)
-        return {'data': data, 'labels': labels, 'labels_encoder': onehot_encoder}
