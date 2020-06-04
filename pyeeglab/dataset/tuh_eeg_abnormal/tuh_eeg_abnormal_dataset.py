@@ -12,5 +12,5 @@ class TUHEEGAbnormalDataset(Dataset):
     def _get_dataset_env(self) -> Dict:
         env = super()._get_dataset_env()
         blacklist = ['IBI', 'BURSTS', 'STI 014', 'SUPPR']
-        env['channel_set'] = list(set(env['channel_set']) - set(blacklist))
+        env['channels_set'] = list(set(env['channels_set']) - set(blacklist))
         return env

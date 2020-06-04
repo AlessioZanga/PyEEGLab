@@ -3,8 +3,8 @@ from abc import ABC
 from typing import Dict
 
 from ..io import DataLoader
-from ..cache import Cache, SinglePickleCache
-from ..preprocessing import Pipeline
+from ..cache import Cache, PickleCache
+from ..pipeline import Pipeline
 
 class Dataset(ABC):
 
@@ -15,7 +15,7 @@ class Dataset(ABC):
     def __init__(self, loader: DataLoader) -> None:
         logging.debug('Create dataset')
         self.loader = loader
-        self.set_cache_manager(SinglePickleCache('export'))
+        self.set_cache_manager(PickleCache('export'))
         self.set_pipeline(Pipeline())
 
     def load(self) -> Dict:
@@ -24,7 +24,7 @@ class Dataset(ABC):
 
     def _get_dataset_env(self) -> Dict:
         return {
-            'channel_set': self.loader.get_channelset(),
+            'channels_set': self.loader.get_channels_set(),
             'lowest_frequency': self.loader.get_lowest_frequency(),
             'max_value': self.loader.get_max_value(),
             'min_value': self.loader.get_min_value(),

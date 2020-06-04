@@ -1,6 +1,6 @@
 # PyEEGLab
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) [![Build Status](https://travis-ci.org/AlessioZanga/PyEEGLab.svg?branch=master)](https://travis-ci.org/AlessioZanga/PyEEGLab) [![Documentation Status](https://readthedocs.org/projects/pyeeglab/badge/?version=latest)](https://pyeeglab.readthedocs.io/en/latest/?badge=latest) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/AlessioZanga/PyEEGLab) [![codecov](https://codecov.io/gh/AlessioZanga/PyEEGLab/branch/master/graph/badge.svg)](https://codecov.io/gh/AlessioZanga/PyEEGLab) [![Maintainability](https://api.codeclimate.com/v1/badges/c55f67ee28e9e8bd8038/maintainability)](https://codeclimate.com/github/AlessioZanga/PyEEGLab/maintainability)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3874461.svg)](https://doi.org/10.5281/zenodo.3874461) [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) [![Build Status](https://travis-ci.org/AlessioZanga/PyEEGLab.svg?branch=master)](https://travis-ci.org/AlessioZanga/PyEEGLab) [![Documentation Status](https://readthedocs.org/projects/pyeeglab/badge/?version=latest)](https://pyeeglab.readthedocs.io/en/latest/?badge=latest) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/AlessioZanga/PyEEGLab) [![codecov](https://codecov.io/gh/AlessioZanga/PyEEGLab/branch/master/graph/badge.svg)](https://codecov.io/gh/AlessioZanga/PyEEGLab) [![Maintainability](https://api.codeclimate.com/v1/badges/c55f67ee28e9e8bd8038/maintainability)](https://codeclimate.com/github/AlessioZanga/PyEEGLab/maintainability)
 
 Analyze and manipulate EEG data using PyEEGLab.
 
@@ -17,6 +17,10 @@ It is possible to extract others data representations using different configurat
 PyEEGLab is distributed using the pip repository:
 
     pip install PyEEGLab
+
+If you use Python 3.6, the dataclasses package must be installed as backport of Python 3.7 dataclasses:
+
+    pip install dataclasses
 
 If you need a bleeding edge version, you can install it directly from GitHub:
 
@@ -48,6 +52,8 @@ If you use this code in your project use the citation below:
         title={PyEEGLab: A simple tool for EEG manipulation},
         author={Alessio Zanga},
         year={2019},
+        doi={10.5281/zenodo.3874461},
+        url={https://dx.doi.org/10.5281/zenodo.3874461},
         howpublished={\url{https://github.com/AlessioZanga/PyEEGLab}},
     }
 

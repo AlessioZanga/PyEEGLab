@@ -2,8 +2,8 @@ import logging
 
 from json import dumps
 
-from ..io import Raw
-from .pipeline import Preprocessor
+from ...io import Raw
+from ...pipeline import Preprocessor
 
 
 class BandPassFrequency(Preprocessor):

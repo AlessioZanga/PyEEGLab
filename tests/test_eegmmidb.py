@@ -3,9 +3,9 @@ import sys
 import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pyeeglab import TextMiner, EEGMMIDBLoader, EEGMMIDBDataset, \
+from pyeeglab import EEGMMIDBLoader, EEGMMIDBDataset, \
                      Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, JoinedPreprocessor, BinarizedSpearmanCorrelation, \
+                     DynamicWindow, ForkedPreprocessor, BinarizedSpearmanCorrelation, \
                      CorrelationToAdjacency, Bandpower, GraphWithFeatures
 
 class TestEEGMMIDB(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestEEGMMIDB(unittest.TestCase):
         loader = EEGMMIDBLoader(self.PATH)
         loader.get_dataset()
         loader.get_dataset_text()
-        loader.get_channelset()
+        loader.get_channels_set()
         loader.get_lowest_frequency()
 
     def test_dataset(self):
@@ -29,7 +29,7 @@ class TestEEGMMIDB(unittest.TestCase):
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            JoinedPreprocessor(
+            ForkedPreprocessor(
                 inputs=[
                     [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
                     Bandpower()
@@ -38,9 +38,3 @@ class TestEEGMMIDB(unittest.TestCase):
             )
         ])
         dataset = dataset.set_pipeline(preprocessing).load()
-
-    def test_text_miner(self):
-        loader = EEGMMIDBLoader(self.PATH)
-        text = loader.get_dataset_text()
-        miner = TextMiner(text)
-        miner.get_dataset()

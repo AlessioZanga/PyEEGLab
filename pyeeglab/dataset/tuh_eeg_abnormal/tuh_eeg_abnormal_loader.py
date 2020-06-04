@@ -3,6 +3,8 @@ import logging
 from ...io import DataLoader
 from .tuh_eeg_abnormal_index import TUHEEGAbnormalIndex
 
+from typing import List
+
 
 class TUHEEGAbnormalLoader(DataLoader):
 

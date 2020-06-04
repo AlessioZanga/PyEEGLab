@@ -1,28 +1,29 @@
 import logging
-from abc import ABC
-from typing import List, Dict
+import json
 
-from json import loads, dumps
+from abc import ABC
 from os.path import isfile, join, sep
 from hashlib import md5
-from multiprocessing import Pool
-from multiprocessing import cpu_count
+from multiprocessing import Pool, cpu_count
 
+from ..database import File, Metadata, Event
 from .raw import Raw
-from ..database import File, Metadata, Event, Index
+from .index import Index
+
+from typing import List, Dict
 
 
 class DataLoader(ABC):
 
     index: Index
 
-    def __init__(self, path: str, exclude_channel_ref: List[str] = None, exclude_frequency: List[int] = None,
+    def __init__(self, path: str, exclude_channels_reference: List[str] = None, exclude_frequency: List[int] = None,
                  exclude_files: List[str] = None, minimum_event_duration: float = -1) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
-        self.exclude_channel_ref = exclude_channel_ref
+        self.exclude_channels_reference = exclude_channels_reference
         self.exclude_frequency = exclude_frequency
         self.exclude_files = exclude_files
         self.minimum_event_duration = minimum_event_duration
@@ -53,10 +54,10 @@ class DataLoader(ABC):
         files = files.filter(File.id == Event.file_id)
         if self.index.include_extensions:
             files = files.filter(File.extension.in_(self.index.include_extensions))
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if self.exclude_channels_reference:
+            files = files.filter(~Metadata.channels_reference.in_(self.exclude_channels_reference))
         if self.exclude_frequency:
-            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+            files = files.filter(~Metadata.sampling_frequency.in_(self.exclude_frequency))
         if self.exclude_files:
             files = files.filter(~File.path.in_(self.exclude_files))
         if self.minimum_event_duration > 0:
@@ -77,46 +78,46 @@ class DataLoader(ABC):
         txts = {f.id: (join(self.index.path, f.path), e.label) for f, e in txts}
         return txts
 
-    def get_channelset(self) -> List[str]:
+    def get_channels_set(self) -> List[str]:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if self.exclude_channels_reference:
+            files = files.filter(~Metadata.channels_reference.in_(self.exclude_channels_reference))
         if self.exclude_frequency:
-            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+            files = files.filter(~Metadata.sampling_frequency.in_(self.exclude_frequency))
         if self.exclude_files:
             files = files.filter(~File.path.in_(self.exclude_files))
         if self.minimum_event_duration > 0:
             files = files.filter(Event.duration >= self.minimum_event_duration)
-        files = files.group_by(Metadata.channels)
+        files = files.group_by(Metadata.channels_set)
         files = files.all()
         files = [file[1] for file in files]
-        files = [set(loads(file.channels)) for file in files]
-        channels = files[0]
+        files = [set(json.loads(file.channels_set)) for file in files]
+        channels_set = files[0]
         for file in files[1:]:
-            channels = channels.intersection(file)
-        return sorted(channels)
+            channels_set = channels_set.intersection(file)
+        return sorted(channels_set)
 
     def get_lowest_frequency(self) -> float:
         frequency = self.index.db.query(Metadata)
         if self.exclude_frequency:
-            frequency = frequency.filter(~Metadata.frequency.in_(self.exclude_frequency))
+            frequency = frequency.filter(~Metadata.sampling_frequency.in_(self.exclude_frequency))
         frequency = frequency.all()
-        frequency = min([f.frequency for f in frequency], default=0)
+        frequency = min([f.sampling_frequency for f in frequency], default=0)
         return frequency
     
     def get_max_value(self) -> float:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if self.exclude_channels_reference:
+            files = files.filter(~Metadata.channels_reference.in_(self.exclude_channels_reference))
         if self.exclude_frequency:
-            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+            files = files.filter(~Metadata.sampling_frequency.in_(self.exclude_frequency))
         if self.exclude_files:
             files = files.filter(~File.path.in_(self.exclude_files))
         if self.minimum_event_duration > 0:
             files = files.filter(Event.duration >= self.minimum_event_duration)
-        files = files.group_by(Metadata.channels)
+        files = files.group_by(Metadata.channels_set)
         files = files.all()
         max_value = max([f.max_value for _, f in files], default=0)
         return max_value
@@ -124,15 +125,15 @@ class DataLoader(ABC):
     def get_min_value(self) -> float:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
+        if self.exclude_channels_reference:
+            files = files.filter(~Metadata.channels_reference.in_(self.exclude_channels_reference))
         if self.exclude_frequency:
-            files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
+            files = files.filter(~Metadata.sampling_frequency.in_(self.exclude_frequency))
         if self.exclude_files:
             files = files.filter(~File.path.in_(self.exclude_files))
         if self.minimum_event_duration > 0:
             files = files.filter(Event.duration >= self.minimum_event_duration)
-        files = files.group_by(Metadata.channels)
+        files = files.group_by(Metadata.channels_set)
         files = files.all()
         min_value = min([f.min_value for _, f in files], default=0)
         return min_value
@@ -142,11 +143,11 @@ class DataLoader(ABC):
 
     def __hash__(self):
         value = [self.path] + [self.minimum_event_duration]
-        if self.exclude_channel_ref:
-            value += self.exclude_channel_ref
+        if self.exclude_channels_reference:
+            value += self.exclude_channels_reference
         if self.exclude_frequency:
             value += self.exclude_frequency
-        value = dumps(value).encode()
+        value = json.dumps(value).encode()
         value = md5(value).hexdigest()
         value = int(value, 16)
         return value

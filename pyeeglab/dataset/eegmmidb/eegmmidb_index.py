@@ -3,7 +3,8 @@ import logging
 from uuid import uuid5, NAMESPACE_X500
 from os.path import join, sep
 
-from ...database import File, Index
+from ...io import Index
+from ...database import File
 
 
 class EEGMMIDBIndex(Index):
@@ -15,10 +16,8 @@ class EEGMMIDBIndex(Index):
     def _get_file(self, path: str) -> File:
         length = len(self.path)
         meta = path[length:].split(sep)
-        file = {
-            'id': str(uuid5(NAMESPACE_X500, path[length:])),
-            'channel_ref': 'NA',
-            'extension': meta[-1].split('.')[-1],
-            'path': path[length:],
-        }
-        return File(file)
+        return File(
+            id=str(uuid5(NAMESPACE_X500, path[length:])),
+            extension=meta[-1].split('.')[-1],
+            path=path[length:]
+        )

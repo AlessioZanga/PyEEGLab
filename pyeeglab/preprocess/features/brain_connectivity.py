@@ -7,7 +7,7 @@ from numpy import array, ndarray, percentile
 from pandas import DataFrame
 from itertools import product
 
-from .pipeline import Preprocessor
+from ...pipeline import Preprocessor
 
 
 class SpearmanCorrelation(Preprocessor):
