@@ -21,11 +21,10 @@ class CHBMITIndex(Index):
         meta = path[length:].split(sep)
         file = {
             'id': str(uuid5(NAMESPACE_X500, path[length:])),
-            'channel_ref': 'NA',
             'extension': meta[-1].split('.')[-1],
             'path': path[length:],
         }
-        return File(file)
+        return File(**file)
 
     def _get_record_events(self, file: File) -> List[Event]:
         logging.debug('Add file %s raw events to index', file.id)

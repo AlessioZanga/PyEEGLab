@@ -1,14 +1,16 @@
 import logging
 
+from dataclasses import dataclass
+
 from sqlalchemy import Column, Integer, Float, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 from ..io.raw import Raw
 
-
 BaseTable = declarative_base()
 
 
+@dataclass
 class File(BaseTable):
     """File represents a single file contained in the dataset.
 
@@ -19,8 +21,6 @@ class File(BaseTable):
     ----------
     id : str
         The primary key generated randomly using an UUID4 generator.
-    channel_ref : str
-        A not null indexed string describing the EEG channel reference system.
     extension : str
         A not null indexed string reporting the EEG recording format.
     path : str
@@ -28,14 +28,9 @@ class File(BaseTable):
         to the current sqlite database location.
     """
     __tablename__ = 'file'
-    id = Column(Text, primary_key=True)
-    channel_ref = Column(Text, nullable=False, index=True)
-    extension = Column(Text, nullable=False, index=True)
-    path = Column(Text, nullable=False)
-
-    def __init__(self, dictionary) -> None:
-        for k, v in dictionary.items():
-            setattr(self, k, v)
+    id: str = Column(Text, primary_key=True)
+    extension: str = Column(Text, nullable=False, index=True)
+    path: str = Column(Text, nullable=False)
 
 
 class Metadata(BaseTable):

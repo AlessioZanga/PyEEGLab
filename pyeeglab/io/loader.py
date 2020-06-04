@@ -17,13 +17,12 @@ class DataLoader(ABC):
 
     index: Index
 
-    def __init__(self, path: str, exclude_channel_ref: List[str] = None, exclude_frequency: List[int] = None,
+    def __init__(self, path: str, exclude_frequency: List[int] = None,
                  exclude_files: List[str] = None, minimum_event_duration: float = -1) -> None:
         logging.debug('Create data loader')
         if path[-1] != sep:
             path = path + sep
         self.path = path
-        self.exclude_channel_ref = exclude_channel_ref
         self.exclude_frequency = exclude_frequency
         self.exclude_files = exclude_files
         self.minimum_event_duration = minimum_event_duration
@@ -54,8 +53,6 @@ class DataLoader(ABC):
         files = files.filter(File.id == Event.file_id)
         if self.index.include_extensions:
             files = files.filter(File.extension.in_(self.index.include_extensions))
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         if self.exclude_frequency:
             files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         if self.exclude_files:
@@ -81,8 +78,6 @@ class DataLoader(ABC):
     def get_channelset(self) -> List[str]:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         if self.exclude_frequency:
             files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         if self.exclude_files:
@@ -109,8 +104,6 @@ class DataLoader(ABC):
     def get_max_value(self) -> float:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         if self.exclude_frequency:
             files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         if self.exclude_files:
@@ -125,8 +118,6 @@ class DataLoader(ABC):
     def get_min_value(self) -> float:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
-        if self.exclude_channel_ref:
-            files = files.filter(~File.channel_ref.in_(self.exclude_channel_ref))
         if self.exclude_frequency:
             files = files.filter(~Metadata.frequency.in_(self.exclude_frequency))
         if self.exclude_files:
@@ -143,8 +134,6 @@ class DataLoader(ABC):
 
     def __hash__(self):
         value = [self.path] + [self.minimum_event_duration]
-        if self.exclude_channel_ref:
-            value += self.exclude_channel_ref
         if self.exclude_frequency:
             value += self.exclude_frequency
         value = json.dumps(value).encode()
