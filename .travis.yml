@@ -4,10 +4,6 @@ jobs:
   allow_failures:
     - os: osx
   include:
-    - name: "Python 3.6.0 on Xenial Linux"
-      os: linux
-      dist: xenial
-      python: 3.6
     - name: "Python 3.7.0 on Bionic Linux"
       dist: bionic
       python: 3.7
