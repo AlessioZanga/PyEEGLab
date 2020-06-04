@@ -80,7 +80,7 @@ class Index(ABC):
         raw = Raw(file.id, join(self.path, file.path))
         return Metadata(
             file_id=raw.id,
-            file_duration=raw.open().n_times/raw.open().info['sfreq'],
+            duration=raw.open().n_times/raw.open().info['sfreq'],
             channels_count=raw.open().info['nchan'],
             channels_set=json.dumps(raw.open().info['ch_names']),
             sampling_frequency=raw.open().info['sfreq'],

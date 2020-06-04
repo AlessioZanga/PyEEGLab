@@ -47,7 +47,7 @@ class Metadata(BASE_TABLE):
     file_id : str
         The foreign key related to file_id, used also as a primary key for metadata
         table since this is a one-to-one relationship.
-    file_duration : int
+    duration : int
         This is the EEG sample duration reported in seconds. This is not inteded as
         a precise duration estimate, but only a reference for statistical analysis.
         For more precise duration measurement, please, use the Raw record class methods.
@@ -66,7 +66,7 @@ class Metadata(BASE_TABLE):
     """
     __tablename__ = 'metadata'
     file_id: str = Column(Text, ForeignKey('file.id'), primary_key=True)
-    file_duration: int = Column(Integer, nullable=False)
+    duration: int = Column(Integer, nullable=False)
     channels_count: int = Column(Integer, nullable=False)
     channels_reference: str = Column(Text, nullable=True, index=True)
     channels_set: str = Column(Text, nullable=False, index=True)

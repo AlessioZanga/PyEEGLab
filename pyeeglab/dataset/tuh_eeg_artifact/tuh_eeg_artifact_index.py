@@ -33,7 +33,7 @@ class TUHEEGArtifactIndex(Index):
         raw = Raw(file.id, join(self.path, file.path))
         return Metadata(
             file_id=raw.id,
-            file_duration=raw.open().n_times/raw.open().info['sfreq'],
+            duration=raw.open().n_times/raw.open().info['sfreq'],
             channels_count=raw.open().info['nchan'],
             channels_reference=meta[0],
             channels_set=json.dumps(raw.open().info['ch_names']),
