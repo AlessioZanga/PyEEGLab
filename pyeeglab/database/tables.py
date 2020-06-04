@@ -7,14 +7,15 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from ..io.raw import Raw
 
-BaseTable = declarative_base()
+
+BASE_TABLE = declarative_base()
 
 
 @dataclass
-class File(BaseTable):
+class File(BASE_TABLE):
     """File represents a single file contained in the dataset.
 
-    This is an ORM class derived from the BaseTable in a declarative base
+    This is an ORM class derived from the BASE_TABLE in a declarative base
     used by SQLAlchemy.
 
     Attributes
@@ -33,11 +34,12 @@ class File(BaseTable):
     path: str = Column(Text, nullable=False)
 
 
-class Metadata(BaseTable):
+@dataclass
+class Metadata(BASE_TABLE):
     """ Metadata represents a single metadata record associated with a single
     file contained in the dataset.
 
-    This is an ORM class derived from the BaseTable in a declarative base
+    This is an ORM class derived from the BASE_TABLE in a declarative base
     used by SQLAlchemy.
 
     Attributes
@@ -51,30 +53,27 @@ class Metadata(BaseTable):
         For more precise duration measurement, please, use the Raw record class methods.
     channels_count : int
         This field report the number of channels reported in the EEG header.
-    ferquency : int
-        The sample fequency expressend in Hz extrated from the EEG header.
-    channels: str
+    channels_set: str
         The list of channels saved as a JSON string extracted from the EEG header.
+    sampling_frequency : int
+        The sampling fequency expressend in Hz extrated from the EEG header.
     max_value: float
         The max value sampled in this record across all channels.
     min_value: float
         The min value sampled in this record across all channels.
     """
     __tablename__ = 'metadata'
-    file_id = Column(Text, ForeignKey('file.id'), primary_key=True)
-    file_duration = Column(Integer, nullable=False)
-    channels_count = Column(Integer, nullable=False)
-    frequency = Column(Integer, nullable=False, index=True)
-    channels = Column(Text, nullable=False, index=True)
-    max_value = Column(Float)
-    min_value = Column(Float)
-
-    def __init__(self, dictionary) -> None:
-        for k, v in dictionary.items():
-            setattr(self, k, v)
+    file_id: str = Column(Text, ForeignKey('file.id'), primary_key=True)
+    file_duration: int = Column(Integer, nullable=False)
+    channels_count: int = Column(Integer, nullable=False)
+    channels_set: str = Column(Text, nullable=False, index=True)
+    sampling_frequency: int = Column(Integer, nullable=False, index=True)
+    max_value: float = Column(Float, nullable=False)
+    min_value: float = Column(Float, nullable=False)
 
 
-class Event(BaseTable):
+@dataclass
+class Event(BASE_TABLE):
     """Event represents a single event associated to a single file.
     Multiple events can be associated to multiple files, according to
     the record annotations.
@@ -96,13 +95,9 @@ class Event(BaseTable):
         The label of this event as written inthe annotations.
     """
     __tablename__ = 'event'
-    id = Column(Text, primary_key=True)
-    file_id = Column(Text, ForeignKey('file.id'), index=True)
-    begin = Column(Float, nullable=False)
-    end = Column(Float, nullable=False)
-    duration = Column(Float, nullable=False)
-    label = Column(Text, nullable=False, index=True)
-
-    def __init__(self, dictionary) -> None:
-        for k, v in dictionary.items():
-            setattr(self, k, v)
+    id: str = Column(Text, primary_key=True)
+    file_id: str = Column(Text, ForeignKey('file.id'), index=True)
+    begin: float = Column(Float, nullable=False)
+    end: float = Column(Float, nullable=False)
+    duration: float = Column(Float, nullable=False)
+    label: str = Column(Text, nullable=False, index=True)

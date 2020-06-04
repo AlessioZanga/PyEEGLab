@@ -42,5 +42,5 @@ class TUHEEGArtifactIndex(Index):
         ]
         keys = ['id', 'file_id', 'begin', 'end', 'duration', 'label']
         events = [dict(zip(keys, event)) for event in events]
-        events = [Event(event) for event in events]
+        events = [Event(**event) for event in events]
         return events

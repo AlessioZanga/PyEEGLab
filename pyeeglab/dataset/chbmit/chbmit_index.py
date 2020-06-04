@@ -34,25 +34,26 @@ class CHBMITIndex(Index):
             events = list(events.sample / events.fs)
             events = [events[i:i+2] for i in range(0, len(events), 2)]
             events = [
-                Event({
+                {
                     'id': str(uuid4()),
                     'file_id': file.id,
                     'begin': event[0],
                     'end': event[1],
                     'duration': event[1] - event[0],
                     'label': 'seizure'
-                })
+                }
                 for event in events
             ]
         else:
             events = [
-                Event({
+                {
                     'id': str(uuid4()),
                     'file_id': file.id,
                     'begin': 60,
                     'end': 120,
                     'duration': 60,
                     'label': 'noseizure'
-                })
+                }
             ]
+        events = [Event(**event) for event in events]
         return events

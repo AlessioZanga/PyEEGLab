@@ -18,7 +18,7 @@ class TestCHBMIT(unittest.TestCase):
         loader = CHBMITLoader(self.PATH)
         loader.get_dataset()
         loader.get_dataset_text()
-        loader.get_channelset()
+        loader.get_channel_set()
         loader.get_lowest_frequency()
 
     def test_dataset(self):

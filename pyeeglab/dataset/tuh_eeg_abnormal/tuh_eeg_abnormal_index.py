@@ -29,13 +29,13 @@ class TUHEEGAbnormalIndex(Index):
     def _get_record_events(self, file: File) -> List[Event]:
         logging.debug('Add file %s raw events to index', file.id)
         raw = Raw(file.id, join(self.path, file.path))
-        events = Event({
+        events = {
             'id': str(uuid4()),
             'file_id': raw.id,
             'begin': 60,
             'end': 120,
             'duration': 60,
             'label': raw.path.split(sep)[-6]
-        })
-        events = [events]
+        }
+        events = [Event(**events)]
         return events

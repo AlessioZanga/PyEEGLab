@@ -11,7 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from mne import set_log_file
 
-from ..database import BaseTable, File, Metadata, Event
+from ..database import BASE_TABLE, File, Metadata, Event
 from .raw import Raw
 
 from typing import List
@@ -39,7 +39,7 @@ class Index(ABC):
         logging.debug('Create index at %s', db)
         logging.debug('Load index at %s', db)
         engine = create_engine(db)
-        BaseTable.metadata.create_all(engine)
+        BASE_TABLE.metadata.create_all(engine)
         self.db = sessionmaker(bind=engine)()
         self.path = path
         self.include_extensions = include_extensions
@@ -82,12 +82,12 @@ class Index(ABC):
             'file_id': raw.id,
             'file_duration': raw.open().n_times/raw.open().info['sfreq'],
             'channels_count': raw.open().info['nchan'],
-            'frequency': raw.open().info['sfreq'],
-            'channels': json.dumps(raw.open().info['ch_names']),
+            'channels_set': json.dumps(raw.open().info['ch_names']),
+            'sampling_frequency': raw.open().info['sfreq'],
             'max_value': raw.open().get_data().max(),
             'min_value': raw.open().get_data().min(),
         }
-        metadata = Metadata(metadata)
+        metadata = Metadata(**metadata)
         return metadata
 
     def _parallel_record_metadata(self, files: List[File]) -> List[Metadata]:
@@ -104,7 +104,7 @@ class Index(ABC):
         for event in events:
             event['id'] = str(uuid4())
             event['file_id'] = raw.id
-        events = [Event(event) for event in events]
+        events = [Event(**event) for event in events]
         return events
 
     def _parallel_record_events(self, files: List[File]) -> List[Event]:
