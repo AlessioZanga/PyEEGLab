@@ -24,7 +24,7 @@ class Dataset(ABC):
 
     def _get_dataset_env(self) -> Dict:
         return {
-            'channels_set': self.loader.get_channel_set(),
+            'channels_set': self.loader.get_channels_set(),
             'lowest_frequency': self.loader.get_lowest_frequency(),
             'max_value': self.loader.get_max_value(),
             'min_value': self.loader.get_min_value(),

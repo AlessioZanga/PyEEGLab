@@ -18,7 +18,7 @@ class TestTUHEEGAbnormal(unittest.TestCase):
         loader = TUHEEGAbnormalLoader(self.PATH)
         loader.get_dataset()
         loader.get_dataset_text()
-        loader.get_channel_set()
+        loader.get_channels_set()
         loader.get_lowest_frequency()
 
     def test_dataset(self):

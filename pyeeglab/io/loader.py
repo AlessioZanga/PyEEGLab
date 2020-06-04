@@ -78,7 +78,7 @@ class DataLoader(ABC):
         txts = {f.id: (join(self.index.path, f.path), e.label) for f, e in txts}
         return txts
 
-    def get_channel_set(self) -> List[str]:
+    def get_channels_set(self) -> List[str]:
         files = self.index.db.query(File, Metadata)
         files = files.filter(File.id == Metadata.file_id)
         if self.exclude_channels_reference:
