@@ -18,6 +18,10 @@ PyEEGLab is distributed using the pip repository:
 
     pip install PyEEGLab
 
+If you use Python 3.6, the dataclasses package must be installed as backport of Python 3.7 dataclasses:
+
+    pip install dataclasses
+
 If you need a bleeding edge version, you can install it directly from GitHub:
 
     pip install git+https://github.com/AlessioZanga/PyEEGLab@develop
