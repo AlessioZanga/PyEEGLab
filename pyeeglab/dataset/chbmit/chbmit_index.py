@@ -19,12 +19,11 @@ class CHBMITIndex(Index):
     def _get_file(self, path: str) -> File:
         length = len(self.path)
         meta = path[length:].split(sep)
-        file = {
-            'id': str(uuid5(NAMESPACE_X500, path[length:])),
-            'extension': meta[-1].split('.')[-1],
-            'path': path[length:],
-        }
-        return File(**file)
+        return File(
+            id=str(uuid5(NAMESPACE_X500, path[length:])),
+            extension=meta[-1].split('.')[-1],
+            path=path[length:],
+        )
 
     def _get_record_events(self, file: File) -> List[Event]:
         logging.debug('Add file %s raw events to index', file.id)
@@ -34,26 +33,25 @@ class CHBMITIndex(Index):
             events = list(events.sample / events.fs)
             events = [events[i:i+2] for i in range(0, len(events), 2)]
             events = [
-                {
-                    'id': str(uuid4()),
-                    'file_id': file.id,
-                    'begin': event[0],
-                    'end': event[1],
-                    'duration': event[1] - event[0],
-                    'label': 'seizure'
-                }
+                Event(
+                    id=str(uuid4()),
+                    file_id=file.id,
+                    begin=event[0],
+                    end=event[1],
+                    duration=(event[1] - event[0]),
+                    label='seizure'
+                )
                 for event in events
             ]
         else:
             events = [
-                {
-                    'id': str(uuid4()),
-                    'file_id': file.id,
-                    'begin': 60,
-                    'end': 120,
-                    'duration': 60,
-                    'label': 'noseizure'
-                }
+                Event(
+                    id=str(uuid4()),
+                    file_id=file.id,
+                    begin=60,
+                    end=120,
+                    duration=60,
+                    label='noseizure'
+                )
             ]
-        events = [Event(**event) for event in events]
         return events
