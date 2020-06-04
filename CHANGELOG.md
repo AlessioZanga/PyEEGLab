@@ -15,9 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.2] - 2020-06-dd
 ### Added
 * DOI reference link using Zenodo
+* @dataclass decorator to datadabase tables ORM
+* Install instruction for Python 3.6 dataclasses
 
 ### Changed
+* Renamed JoinedPreprocessor to ForkedPreprocessor
+* Renamed JoinDataFrames to ToMergedDataframes
+* Renamed SinglePickleCache to PickleCache
+
 ### Removed
+* Python 3.6 full support due to @dataclass
+    (workaround: python3.6 -m pip install dataclasses)
+* Conda environment.yml configuration file
+* ChunksPickleCache cache manager
+* VerticalPipeline pipeline executor
+* TextMiner textual analysis
+
 ### Fixed
 
 ## [0.9.1] - 2020-06-03
