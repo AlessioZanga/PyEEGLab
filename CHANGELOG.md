@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Fixed
 
-## [0.9.2] - 2020-06-dd
+## [0.9.2] - 2020-06-04
 ### Added
 * DOI reference link using Zenodo
 * @dataclass decorator to datadabase tables ORM
@@ -30,8 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * ChunksPickleCache cache manager
 * VerticalPipeline pipeline executor
 * TextMiner textual analysis
-
-### Fixed
 
 ## [0.9.1] - 2020-06-03
 ### Added
