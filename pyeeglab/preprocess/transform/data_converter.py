@@ -61,7 +61,7 @@ class ToNumpy1D(Preprocessor):
         return [d.to_numpy(dtype=self.dtype).flatten() for d in data]
 
 
-class JoinDataFrames(Preprocessor):
+class ToMergedDataframes(Preprocessor):
     def run(self, data: List[List[DataFrame]], **kwargs) -> List[DataFrame]:
         return [concat([d[i].T for d in data]).T for i, _ in enumerate(data[0])]
 

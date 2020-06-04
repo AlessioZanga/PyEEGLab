@@ -16,7 +16,7 @@ from .preprocess import CommonChannelSet, LowestFrequency, BandPassFrequency, No
     StaticWindowOverlap, DynamicWindowOverlap, SpearmanCorrelation, \
     BinarizedSpearmanCorrelation, CorrelationToAdjacency, \
     Bandpower, GraphGenerator, GraphWithFeatures, \
-    JoinDataFrames, Mean, Variance, Skewness, Kurtosis, ZeroCrossing, \
+    ToMergedDataframes, Mean, Variance, Skewness, Kurtosis, ZeroCrossing, \
     AbsoluteArea, PeakToPeak, MinMaxNormalization, MinMaxCentralizedNormalization
 
 logging.getLogger().setLevel(logging.DEBUG)
