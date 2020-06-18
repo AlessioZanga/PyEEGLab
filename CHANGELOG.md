@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Fixed
 
+
+## [0.9.3] - 2020-mm-dd
+### Added
+### Changed
+### Removed
+### Fixed
+* HOTFIX Remove incosistent extra channel in TUH EEG Abnormal
+
+
 ## [0.9.2] - 2020-06-04
 ### Added
 * DOI reference link using Zenodo
@@ -30,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * ChunksPickleCache cache manager
 * VerticalPipeline pipeline executor
 * TextMiner textual analysis
+
 
 ## [0.9.1] - 2020-06-03
 ### Added

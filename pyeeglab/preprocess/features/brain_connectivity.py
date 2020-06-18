@@ -86,7 +86,7 @@ class Bandpower(Preprocessor):
     def run(self, data: List[pd.DataFrame], **kwargs) -> List[pd.DataFrame]:
         data = [d.swapaxes('index', 'columns') for d in data]
         data = [
-            bandpower(d.to_numpy(), kwargs['lowest_frequency'], d.index)
+            bandpower(d.to_numpy(), kwargs['lowest_frequency'], d.index).drop('time')
             for d in data
         ]
         data = [d.loc[:, self.bands] for d in data]
