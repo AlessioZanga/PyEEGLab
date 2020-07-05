@@ -19,7 +19,7 @@ class SpearmanCorrelation(Preprocessor):
         logging.debug('Create spearman correlation preprocessor')
 
     def run(self, data: List[pd.DataFrame], **kwargs) -> List[pd.DataFrame]:
-        return [d.corr(method='spearman').rename_axis(None) for d in data]
+        return [d.corr(method='spearman').rename_axis(None).drop('time') for d in data]
 
 
 class BinarizedSpearmanCorrelation(SpearmanCorrelation):
