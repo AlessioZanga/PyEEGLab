@@ -3,15 +3,13 @@ import logging
 import numpy as np
 import pandas as pd
 
-from json import dumps
-from pandas import DataFrame
-from typing import List
-
 from ...pipeline import Preprocessor
+
+from typing import List
 
 
 class MinMaxNormalization(Preprocessor):
-    def run(self, data: pd.DataFrame, **kwargs) -> DataFrame:
+    def run(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
 
         def min_max_norm(array: np.ndarray, _min: float, _max: float) -> np.ndarray:
             return (array - _min)/(_max - _min)
@@ -21,7 +19,7 @@ class MinMaxNormalization(Preprocessor):
 
 
 class MinMaxCentralizedNormalization(Preprocessor):
-    def run(self, data: pd.DataFrame, **kwargs) -> DataFrame:
+    def run(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
 
         def min_max_norm(array: np.ndarray, _min: float, _max: float) -> np.ndarray:
             return (array - ((_max + _min)/2))/((_max - _min)/2)
