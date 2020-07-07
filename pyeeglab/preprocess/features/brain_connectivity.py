@@ -19,7 +19,7 @@ class SpearmanCorrelation(Preprocessor):
         logging.debug('Create spearman correlation preprocessor')
 
     def run(self, data: List[pd.DataFrame], **kwargs) -> List[pd.DataFrame]:
-        return [d.corr(method='spearman').rename_axis(None).drop('time') for d in data]
+        return [d.corr(method='spearman').rename_axis(None) for d in data]
 
 
 class BinarizedSpearmanCorrelation(SpearmanCorrelation):
@@ -86,7 +86,7 @@ class Bandpower(Preprocessor):
     def run(self, data: List[pd.DataFrame], **kwargs) -> List[pd.DataFrame]:
         data = [d.swapaxes('index', 'columns') for d in data]
         data = [
-            bandpower(d.to_numpy(), kwargs['lowest_frequency'], d.index).drop('time')
+            bandpower(d.to_numpy(), kwargs['lowest_frequency'], d.index)
             for d in data
         ]
         data = [d.loc[:, self.bands] for d in data]

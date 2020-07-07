@@ -17,7 +17,7 @@ class ToDataframe(Preprocessor):
         logging.debug('Create DataFrame converter preprocessor')
 
     def run(self, data: Raw, **kwargs) -> pd.DataFrame:
-        dataframe = data.open().to_data_frame()
+        dataframe = data.open().to_data_frame().drop('time', axis=1)
         return dataframe
 
 
