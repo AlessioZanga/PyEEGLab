@@ -154,7 +154,7 @@ def hparams_comb():
     return hparams_combinations
 
 def tune_model(data):
-    LOGS_DIR = './tensorboard'
+    LOGS_DIR = './logs'
     os.makedirs(LOGS_DIR, exist_ok=True)
     # Prepare the data
     x_train, y_train, x_val, y_val, x_test, y_test = adapt_data(data)
