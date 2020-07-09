@@ -129,6 +129,10 @@ class Index(ABC):
                 file for file in files if file.extension in self.include_extensions]
         metadata = self._parallel_record_metadata(raws)
         events = self._parallel_record_events(raws)
+        events = [
+            e for e in events
+            if e.label not in self.exclude_events
+        ]
         self.db.add_all(files + metadata + events)
         self.db.commit()
         logging.debug('Index files completed')

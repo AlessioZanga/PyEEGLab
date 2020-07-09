@@ -49,6 +49,7 @@ The following datasets will work upon downloading:
 
 * [Temple University Abnormal EEG Dataset](https://www.isip.piconepress.com/projects/tuh_eeg/html/downloads.shtml)
 * [Temple University Artifact EEG Dataset](https://www.isip.piconepress.com/projects/tuh_eeg/html/downloads.shtml)
+* [Temple University Seizure EEG Dataset](https://www.isip.piconepress.com/projects/tuh_eeg/html/downloads.shtml)
 * [EEG Motor Movement/Imagery Dataset](https://physionet.org/content/eegmmidb/1.0.0/)
 
 ## How to Get a Dataset
