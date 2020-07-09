@@ -119,7 +119,7 @@ def build_model(shape, classes, hparams):
         optimizer=tf.keras.optimizers.Adam(learning_rate=hparams['learning_rate']),
         loss='categorical_crossentropy',
         metrics=[
-            CategoricalAccuracy(name='accuracy'),
+            'accuracy',
             Recall(class_id=0, name='recall'),
             Precision(class_id=0, name='precision'),
         ]
@@ -207,14 +207,19 @@ if __name__ == '__main__':
     dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
     dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
 
-    # dataset['tuh_eeg_seizure'] = TUHEEGArtifactDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
-    # dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
+    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
+    dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
 
     # dataset['eegmmidb'] = EEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/1.0.0')
     # dataset['eegmmidb'].set_minimum_event_duration(4)
 
     dataset['chbmit'] = CHBMITDataset('../../data/physionet.org/files/chbmit/1.0.0')
     dataset['chbmit'].set_minimum_event_duration(4)
+
+    """
+        Note: You can just use paths as values in the dictionary
+        and comment-out the first line of the following for cycle ;)
+    """
 
     for key, value in dataset.items():
         value = build_data(value)
