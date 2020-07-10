@@ -26,7 +26,8 @@ import pickle
 import numpy as np
 from random import shuffle
 from itertools import product
-from networkx import to_numpy_matrix
+from scipy.sparse import csc_matrix
+from spektral.layers.ops import sp_matrix_to_sp_tensor
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
@@ -108,7 +109,7 @@ def build_model(shape, classes, hparams):
             arguments={'frame': frame, 'N': N, 'F': F}
         )(input_0)
         
-        x = sp.layers.GraphAttention(hparams['output_shape'])([feature_matrix, correlation_matrix])
+        x = sp.layers.GraphConv(hparams['output_shape'])([feature_matrix, correlation_matrix])
         x = tf.keras.layers.Flatten()(x)
         gans.append(x)
 
@@ -162,7 +163,7 @@ def hparams_combinations(hparams):
     return hparams
 
 def tune_model(dataset_name, data):
-    LOGS_DIR = join('./logs/generic', dataset_name)
+    LOGS_DIR = join('./logs/gnn', dataset_name)
     os.makedirs(LOGS_DIR, exist_ok=True)
     # Prepare the data
     x_train, y_train, x_val, y_val, x_test, y_test = adapt_data(data)

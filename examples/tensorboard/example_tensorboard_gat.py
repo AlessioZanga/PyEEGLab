@@ -162,7 +162,7 @@ def hparams_combinations(hparams):
     return hparams
 
 def tune_model(dataset_name, data):
-    LOGS_DIR = join('./logs/generic', dataset_name)
+    LOGS_DIR = join('./logs/gan', dataset_name)
     os.makedirs(LOGS_DIR, exist_ok=True)
     # Prepare the data
     x_train, y_train, x_val, y_val, x_test, y_test = adapt_data(data)
