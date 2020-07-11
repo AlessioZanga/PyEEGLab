@@ -18,6 +18,7 @@ class ToDataframe(Preprocessor):
 
     def run(self, data: Raw, **kwargs) -> pd.DataFrame:
         dataframe = data.open().to_data_frame().drop('time', axis=1)
+        data.close()
         return dataframe
 
 
@@ -38,28 +39,8 @@ class ToNumpy(Preprocessor):
         return out
 
     def run(self, data: List[pd.DataFrame], **kwargs) -> List[np.ndarray]:
-        data = [d.to_numpy(dtype=self.dtype) for d in data]
+        data = np.array([d.to_numpy(dtype=self.dtype) for d in data])
         return data
-
-
-class ToNumpy1D(Preprocessor):
-
-    def __init__(self, dtype: str = 'float32') -> None:
-        super().__init__()
-        logging.debug('Create Numpy 1D (%s) converter preprocessor', dtype)
-        self.dtype = dtype
-
-    def to_json(self) -> str:
-        out = {
-            self.__class__.__name__: {
-                'dtype': self.dtype
-            }
-        }
-        out = json.dumps(out)
-        return out
-
-    def run(self, data: List[pd.DataFrame], **kwargs) -> List[np.ndarray]:
-        return [d.to_numpy(dtype=self.dtype).flatten() for d in data]
 
 
 class ToMergedDataframes(Preprocessor):

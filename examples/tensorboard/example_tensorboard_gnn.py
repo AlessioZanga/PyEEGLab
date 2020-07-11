@@ -207,10 +207,10 @@ def tune_model(dataset_name, data):
 if __name__ == '__main__':
     dataset = {}
     
-    dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+    # dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
 
-    dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
-    dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
+    # dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
+    # dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
 
     dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
     dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)

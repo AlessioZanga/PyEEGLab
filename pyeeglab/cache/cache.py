@@ -45,8 +45,7 @@ class PickleCache(Cache):
         logging.debug('Computing cache key')
         key = self._get_cache_key(dataset, loader, pipeline)
         logging.debug('Computed cache key: %s', key)
-        key = key + '.pkl'
-        key = join(self.path, key)
+        key = join(self.path, key + '.pkl')
         if isfile(key):
             logging.debug('Cache file found')
             with open(key, 'rb') as file:

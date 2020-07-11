@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from hashlib import md5
+from os.path import join
 from multiprocessing import Pool, cpu_count
 
 from ..io import Raw
@@ -18,12 +19,10 @@ class Pipeline():
     environment: Dict = {}
     pipeline: List[Preprocessor]
 
-    def __init__(self, preprocessors: List[Preprocessor] = [], labels_mapping: Dict = None, to_numpy: bool = True, limit: float = 1) -> None:
+    def __init__(self, preprocessors: List[Preprocessor] = [], labels_mapping: Dict = None) -> None:
         logging.debug('Create new preprocessing pipeline')
         self.pipeline = preprocessors
         self.labels_mapping = labels_mapping
-        self.to_numpy = to_numpy
-        self.limit = limit
     
     def _check_nans(self, data):
         nans = False
@@ -51,10 +50,10 @@ class Pipeline():
 
     def run(self, data: List[Raw]) -> Dict:
         logging.debug('Environment variables: {}'.format(
-            str(self.environment)))
-        limit = int(self.limit * len(data))
-        labels = [raw.label for raw in data[:limit]]
-        data = [(d, self.environment) for d in data[:limit]]
+            str(self.environment)
+        ))
+        labels = [raw.label for raw in data]
+        data = [(d, self.environment) for d in data]
         pool = Pool(cpu_count())
         data = pool.starmap(self._trigger_pipeline, data)
         pool.close()
@@ -62,8 +61,12 @@ class Pipeline():
         if self.labels_mapping is not None:
             labels = [self.labels_mapping[label] for label in labels]
         onehot_encoder = sorted(set(labels))
+        class_id = self.environment.get('class_id', None)
+        if class_id:
+            onehot_encoder.remove(class_id)
+            onehot_encoder = [class_id] + onehot_encoder
         labels = np.array([onehot_encoder.index(label) for label in labels])
-        if self.to_numpy:
+        if any([p.__class__.__name__ == 'ToNumpy' for p in self.pipeline]):
             data = np.array(data)
         return {'data': data, 'labels': labels, 'labels_encoder': onehot_encoder}
 
