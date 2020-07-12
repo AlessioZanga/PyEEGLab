@@ -111,6 +111,11 @@ class Index(ABC):
         pool.close()
         pool.join()
         events = [e for event in events for e in event]
+        if self.exclude_events:
+            events = [
+                e for e in events
+                if e.label not in self.exclude_events
+            ]
         return events
 
     def index(self) -> None:

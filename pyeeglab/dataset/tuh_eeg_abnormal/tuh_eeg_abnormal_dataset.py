@@ -13,4 +13,5 @@ class TUHEEGAbnormalDataset(Dataset):
         env = super()._get_dataset_env()
         blacklist = ['IBI', 'BURSTS', 'STI 014', 'SUPPR']
         env['channels_set'] = list(set(env['channels_set']) - set(blacklist))
+        env['class_id'] = 'normal'
         return env
