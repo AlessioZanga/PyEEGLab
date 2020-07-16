@@ -40,5 +40,6 @@ setuptools.setup(
         'sqlalchemy>=1.2',
         'wfdb',
         'yasa>=0.1.6',
+        'tensorflow',
     ],
 )

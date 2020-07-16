@@ -9,6 +9,7 @@ from .io import Raw
 from .cache import PickleCache
 from .pipeline import Pipeline, ForkedPreprocessor
 from .preprocess import *
+from .classification import *
 
 logging.getLogger().setLevel(logging.DEBUG)
 
