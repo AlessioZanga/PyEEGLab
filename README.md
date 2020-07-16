@@ -57,6 +57,8 @@ The following datasets will work upon downloading:
 
 ## How to Class Meaning - From the TUH Seizure docs
 
+<div style="font-size: 85%;">
+
 | **Class&nbsp;Code** | **Event&nbsp;Name**                               | **Description**                                                                                                    |
 | -------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | _NULL_         | No Event                                     | An unclassified event                                                                                              |
@@ -90,6 +92,8 @@ The following datasets will work upon downloading:
 | _HPHS_         | Hypnagogic Hypersynchrony                    | A brief period of high amplitude slow waves.                                                                       |
 | _TRIP_         | Triphasic Wave                               | Large, three-phase waves frequently caused by an underlying metabolic condition.                                   |
 | _ELEC_         | Electrode Artifact                           | Electrode pop, Electrostatic artifacts, Lead artifacts.                                                            |
+
+</div>
 
 ## How to Get a Dataset
 

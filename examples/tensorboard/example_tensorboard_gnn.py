@@ -97,7 +97,7 @@ def build_model(shape, classes, hparams):
 
     input_0 = tf.keras.Input((frames, N, F + N))
 
-    gans = []
+    layers = []
     for frame in range(frames):
         feature_matrix = tf.keras.layers.Lambda(
             get_feature_matrix,
@@ -111,9 +111,9 @@ def build_model(shape, classes, hparams):
         
         x = sp.layers.GraphConv(hparams['output_shape'])([feature_matrix, correlation_matrix])
         x = tf.keras.layers.Flatten()(x)
-        gans.append(x)
+        layers.append(x)
 
-    combine = tf.keras.layers.Concatenate()(gans)
+    combine = tf.keras.layers.Concatenate()(layers)
     reshape = tf.keras.layers.Reshape((frames, N * hparams['output_shape']))(combine)
     lstm = tf.keras.layers.LSTM(hparams['hidden_units'])(reshape)
     dropout = tf.keras.layers.Dropout(hparams['dropout'])(lstm)
@@ -130,6 +130,7 @@ def build_model(shape, classes, hparams):
         ]
     )
     model.summary()
+    model.save('logs/plot_gnn.h5')
     return model
 
 def run_trial(path, step, model, hparams, x_train, y_train, x_val, y_val, x_test, y_test, epochs):
