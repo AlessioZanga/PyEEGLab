@@ -62,7 +62,7 @@ class Pipeline():
             labels = [self.labels_mapping[label] for label in labels]
         onehot_encoder = sorted(set(labels))
         class_id = self.environment.get('class_id', None)
-        if class_id:
+        if class_id in onehot_encoder:
             onehot_encoder.remove(class_id)
             onehot_encoder = [class_id] + onehot_encoder
         labels = np.array([onehot_encoder.index(label) for label in labels])
