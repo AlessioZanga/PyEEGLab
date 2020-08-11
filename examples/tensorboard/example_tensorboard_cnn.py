@@ -100,6 +100,7 @@ def build_model(shape, classes, hparams):
         )(input_0)
         
         x = tf.keras.layers.Conv1D(hparams['filters'], hparams['kernel'], data_format='channels_first')(frame_matrix)
+        x = tf.keras.layers.MaxPooling1D(hparams['pool'])(x)
         x = tf.keras.layers.Flatten()(x)
         layers.append(x)
 
@@ -162,10 +163,11 @@ def tune_model(dataset_name, data):
     counter = 0
     # Parameters to be tuned
     hparams = {
-        'learning_rate': [1e-4, 5e-4, 1e-3],
+        'learning_rate': [1e-4],
         'hidden_units': [8, 16, 32, 64],
-        'filters': [8, 16, 32, 64],
+        'filters': [8, 16, 32],
         'kernel': [3, 5, 7],
+        'pool': [2, 3],
         'dropout': [0.00, 0.05, 0.10, 0.15, 0.20],
     }
     hparams = {

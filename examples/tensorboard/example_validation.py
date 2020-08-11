@@ -93,13 +93,8 @@ def build_model(shape, classes, hparams, metrics):
     F = shape[3] - N
     frames = shape[1]
 
-    def get_feature_matrix(x, frame, N, F):
-        x = tf.slice(x, [0, frame, 0, N], [-1, 1, N, F])
-        x = tf.squeeze(x, axis=[1])
-        return x
-    
-    def get_correlation_matrix(x, frame, N, F):
-        x = tf.slice(x, [0, frame, 0, 0], [-1, 1, N, N])
+    def get_frame(x, frame, N, F):
+        x = tf.slice(x, [0, frame, 0, 0], [-1, 1, N, F])
         x = tf.squeeze(x, axis=[1])
         return x
 
@@ -107,22 +102,18 @@ def build_model(shape, classes, hparams, metrics):
 
     layers = []
     for frame in range(frames):
-        feature_matrix = tf.keras.layers.Lambda(
-            get_feature_matrix,
-            arguments={'frame': frame, 'N': N, 'F': F}
-        )(input_0)
-
-        correlation_matrix = tf.keras.layers.Lambda(
-            get_correlation_matrix,
+        frame_matrix = tf.keras.layers.Lambda(
+            get_frame,
             arguments={'frame': frame, 'N': N, 'F': F}
         )(input_0)
         
-        x = sp.layers.GraphAttention(hparams['output_shape'])([feature_matrix, correlation_matrix])
+        x = tf.keras.layers.Conv1D(hparams['filters'], hparams['kernel'], data_format='channels_first')(frame_matrix)
+        x = tf.keras.layers.MaxPooling1D(hparams['pool'])(x)
         x = tf.keras.layers.Flatten()(x)
         layers.append(x)
 
     combine = tf.keras.layers.Concatenate()(layers)
-    reshape = tf.keras.layers.Reshape((frames, N * hparams['output_shape']))(combine)
+    reshape = tf.keras.layers.Reshape((-1, frames))(combine)
     lstm = tf.keras.layers.LSTM(hparams['hidden_units'])(reshape)
     dropout = tf.keras.layers.Dropout(hparams['dropout'])(lstm)
     out = tf.keras.layers.Dense(classes, activation='softmax')(dropout)
@@ -140,7 +131,7 @@ def build_model(shape, classes, hparams, metrics):
         ]
     )
     model.summary()
-    model.save('logs/plot_gat.h5')
+    model.save('logs/plot_cnn.h5')
     return model
 
 def run_trial(path, step, model, hparams, metrics, x_train, y_train, x_test, y_test, epochs):
@@ -175,7 +166,7 @@ def hparams_combinations(hparams, metrics):
     return hparams
 
 def tune_model(dataset_name, data, metrics, folds, val_size=0.1):
-    LOGS_DIR = join('./logs/gat', dataset_name)
+    LOGS_DIR = join('./logs/cnn', dataset_name)
     os.makedirs(LOGS_DIR, exist_ok=True)
     # Prepare the data
     data, labels, splitter = stratified_k_cross_validation_split(data, folds)
@@ -184,10 +175,12 @@ def tune_model(dataset_name, data, metrics, folds, val_size=0.1):
     results = []
     # Parameters to be tuned
     hparam = {
-        'learning_rate': 1e-3,
+        'learning_rate': 1e-4,
+        'kernel': 5,
+        'filters': 32,
+        'pool': 5,
         'hidden_units': 64,
-        'output_shape': 64,
-        'dropout': 0.05,
+        'dropout': 0.10,
     }
     for train_idx, test_idx in splitter:
         # Generate folds
@@ -228,13 +221,13 @@ def tune_model(dataset_name, data, metrics, folds, val_size=0.1):
 if __name__ == '__main__':
     dataset = {}
     
-    dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+    # dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
 
-    dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
-    dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
+    # dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
+    # dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
 
-    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
-    dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
+    # dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
+    # dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
 
     # dataset['eegmmidb'] = EEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/1.0.0')
     # dataset['eegmmidb'].set_minimum_event_duration(4)
