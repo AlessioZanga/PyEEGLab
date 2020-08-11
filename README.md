@@ -14,7 +14,7 @@ Here is a simple quickstart:
 
     from pyeeglab import *
     dataset = TUHEEGAbnormalDataset()
-    pipeline = Pipeline([
+    preprocessing = Pipeline([
         CommonChannelSet(),
         LowestFrequency(),
         ToDataframe(),
