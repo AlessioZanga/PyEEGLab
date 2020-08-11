@@ -3,10 +3,7 @@ import sys
 import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pyeeglab import EEGMMIDBLoader, EEGMMIDBDataset, \
-                     Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, ForkedPreprocessor, BinarizedSpearmanCorrelation, \
-                     CorrelationToAdjacency, Bandpower, GraphWithFeatures
+from pyeeglab import *
 
 class TestEEGMMIDB(unittest.TestCase):
     PATH = './tests/samples/physionet.org/files/eegmmidb/1.0.0'
@@ -29,12 +26,7 @@ class TestEEGMMIDB(unittest.TestCase):
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            ForkedPreprocessor(
-                inputs=[
-                    [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
-                    Bandpower()
-                ],
-                output=GraphWithFeatures()
-            )
+            Skewness(),
+            ToNumpy()
         ])
         dataset = dataset.set_pipeline(preprocessing).load()
