@@ -1,7 +1,7 @@
-mne==0.20.0
 numpy
 scipy
 pandas
-sqlalchemy>=1.2
 wfdb
+sqlalchemy
+mne==0.20.0
 yasa>=0.1.6

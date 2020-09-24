@@ -32,12 +32,12 @@ setuptools.setup(
     url='https://github.com/AlessioZanga/PyEEGLab',
     packages=setuptools.find_packages(),
     install_requires=[
-        'mne==0.20.0',
         'numpy',
         'scipy',
         'pandas',
-        'sqlalchemy>=1.2',
         'wfdb',
+        'sqlalchemy',
+        'mne==0.20.0',
         'yasa>=0.1.6',
     ],
 )
