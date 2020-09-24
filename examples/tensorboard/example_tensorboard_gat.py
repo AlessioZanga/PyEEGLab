@@ -26,7 +26,6 @@ import pickle
 import numpy as np
 from random import shuffle
 from itertools import product
-from networkx import to_numpy_matrix
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.utils.np_utils import to_categorical
 

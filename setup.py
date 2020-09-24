@@ -33,13 +33,11 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'mne==0.20.0',
-        'networkx>=2.2',
         'numpy',
         'scipy',
         'pandas',
         'sqlalchemy>=1.2',
         'wfdb',
         'yasa>=0.1.6',
-        'tensorflow',
     ],
 )

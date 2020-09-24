@@ -27,7 +27,6 @@ import numpy as np
 import pandas as pd
 from random import shuffle
 from itertools import product
-from networkx import to_numpy_matrix
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
