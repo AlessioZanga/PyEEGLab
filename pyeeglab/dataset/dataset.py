@@ -169,8 +169,6 @@ class Dataset(ABC):
                 duration=reader.n_times/info["sfreq"],
                 channels_set=json.dumps(info["ch_names"]),
                 sampling_frequency=info["sfreq"],
-                max_value=reader.get_data().max(),
-                min_value=reader.get_data().min(),
             )
         return metadata
 
@@ -191,12 +189,9 @@ class Dataset(ABC):
     
     @property
     def environment(self) -> Dict:
-        min_max = self.signal_min_max_range
         return {
             "channels_set": self.maximal_channels_subset,
             "lowest_frequency": self.lowest_frequency,
-            "min_value": min_max[0],
-            "max_value": min_max[1],
         }
     
     @property
@@ -219,17 +214,7 @@ class Dataset(ABC):
         channels = channels - frozenset(self.exclude_channels_set)
         channels = sorted(channels)
         return channels
-    
-    @property
-    def signal_min_max_range(self) -> Tuple[float]:
-        min_max = self.query.all()
-        min_max = [m[1] for m in min_max]
-        min_max = tuple([
-            min([m.min_value for m in min_max], default=0),
-            max([m.max_value for m in min_max], default=0),
-        ])
-        return min_max
-    
+
     def set_pipeline(self, pipeline: Pipeline) -> "Dataset":
         self.pipeline = pipeline
         self.pipeline.environment.update(self.environment)
