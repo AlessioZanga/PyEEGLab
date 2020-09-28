@@ -1,7 +1,8 @@
-import logging
 import json
+import logging
 
-from ...io import Raw
+from mne.io import Raw
+
 from ...pipeline import Preprocessor
 
 
@@ -24,8 +25,7 @@ class BandPassFrequency(Preprocessor):
         return out
 
     def run(self, data: Raw, **kwargs) -> Raw:
-        data.set_filter(self.low_freq, self.high_freq)
-        return data
+        return data.filter(self.low_freq, self.high_freq)
 
 
 class NotchFrequency(Preprocessor):
@@ -45,5 +45,4 @@ class NotchFrequency(Preprocessor):
         return out
 
     def run(self, data: Raw, **kwargs) -> Raw:
-        data.notch_filter(self.freq)
-        return data
+        return data.notch_filter(self.freq)

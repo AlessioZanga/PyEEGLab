@@ -1,13 +1,14 @@
-import logging
 import json
+import logging
+
+from typing import List
 
 import numpy as np
 import pandas as pd
 
-from ...io import Raw
-from ...pipeline import Preprocessor
+from mne.io import Raw
 
-from typing import List
+from ...pipeline import Preprocessor
 
 
 class ToDataframe(Preprocessor):
@@ -17,8 +18,7 @@ class ToDataframe(Preprocessor):
         logging.debug('Create DataFrame converter preprocessor')
 
     def run(self, data: Raw, **kwargs) -> pd.DataFrame:
-        dataframe = data.open().to_data_frame().drop('time', axis=1)
-        data.close()
+        dataframe = data.to_data_frame().drop('time', axis=1)
         return dataframe
 
 

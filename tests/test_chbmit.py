@@ -3,38 +3,29 @@ import sys
 import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pyeeglab import CHBMITLoader, CHBMITDataset, \
-                     Pipeline, CommonChannelSet, LowestFrequency, BandPassFrequency, ToDataframe, \
-                     DynamicWindow, ForkedPreprocessor, BinarizedSpearmanCorrelation, \
-                     CorrelationToAdjacency, Bandpower, GraphWithFeatures
+from pyeeglab import *
 
 class TestCHBMIT(unittest.TestCase):
-    PATH = './tests/samples/physionet.org/files/chbmit/1.0.0'
+    PATH = './tests/samples/physionet.org/files/chbmit/'
 
     def test_index(self):
-        CHBMITLoader(self.PATH)
+        PhysioNetCHBMITDataset(self.PATH)
 
     def test_loader(self):
-        loader = CHBMITLoader(self.PATH)
-        loader.get_dataset()
-        loader.get_dataset_text()
-        loader.get_channels_set()
-        loader.get_lowest_frequency()
+        loader = PhysioNetCHBMITDataset(self.PATH)
+        loader.maximal_channels_subset
+        loader.lowest_frequency
+        loader.signal_min_max_range
 
     def test_dataset(self):
-        dataset = CHBMITDataset(self.PATH)
+        dataset = PhysioNetCHBMITDataset(self.PATH)
         preprocessing = Pipeline([
             CommonChannelSet(),
             LowestFrequency(),
             BandPassFrequency(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
-            ForkedPreprocessor(
-                inputs=[
-                    [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
-                    Bandpower()
-                ],
-                output=GraphWithFeatures()
-            )
+            Skewness(),
+            ToNumpy()
         ])
         dataset = dataset.set_pipeline(preprocessing).load()

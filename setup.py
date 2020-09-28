@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='PyEEGLab',
-    version='0.9.4',
+    version='0.10.0',
     author='Alessio Zanga',
     author_email='alessio.zanga@outlook.it',
     license='GNU GENERAL PUBLIC LICENSE - Version 3, 29 June 2007',
@@ -32,13 +32,13 @@ setuptools.setup(
     url='https://github.com/AlessioZanga/PyEEGLab',
     packages=setuptools.find_packages(),
     install_requires=[
-        'mne==0.20.0',
-        'networkx>=2.2',
         'numpy',
         'scipy',
         'pandas',
-        'sqlalchemy>=1.2',
         'wfdb',
+        'sqlalchemy',
+        'dataclasses',
+        'mne>=0.21.0',
         'yasa>=0.1.6',
     ],
 )

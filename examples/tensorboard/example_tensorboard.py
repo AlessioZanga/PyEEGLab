@@ -26,7 +26,6 @@ import pickle
 import numpy as np
 from random import shuffle
 from itertools import product
-from networkx import to_numpy_matrix
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
@@ -38,8 +37,6 @@ sys.path.insert(0, abspath(join(dirname(__file__), '../..')))
 from pyeeglab import *
 
 def build_data(dataset):
-    dataset.set_cache_manager(PickleCache('../../export'))
-
     preprocessing = Pipeline([
         CommonChannelSet(),
         LowestFrequency(),
@@ -96,7 +93,7 @@ def build_model(shape, classes, hparams):
 
     input_0 = tf.keras.Input((frames, N, F + N))
 
-    gans = []
+    layers = []
     for frame in range(frames):
         feature_matrix = tf.keras.layers.Lambda(
             get_feature_matrix,
@@ -110,9 +107,9 @@ def build_model(shape, classes, hparams):
         
         x = sp.layers.GraphAttention(hparams['output_shape'])([feature_matrix, correlation_matrix])
         x = tf.keras.layers.Flatten()(x)
-        gans.append(x)
+        layers.append(x)
 
-    combine = tf.keras.layers.Concatenate()(gans)
+    combine = tf.keras.layers.Concatenate()(layers)
     reshape = tf.keras.layers.Reshape((frames, N * hparams['output_shape']))(combine)
     lstm = tf.keras.layers.LSTM(hparams['hidden_units'])(reshape)
     dropout = tf.keras.layers.Dropout(hparams['dropout'])(lstm)
@@ -125,20 +122,25 @@ def build_model(shape, classes, hparams):
         metrics=[
             'accuracy',
             Recall(class_id=0, name='recall'),
+            Specificity(class_id=0, name='specificity'),
             Precision(class_id=0, name='precision'),
+            F1Score(class_id=0, name='f1score'),
         ]
     )
     model.summary()
+    model.save('logs/plot_gat.h5')
     return model
 
 def run_trial(path, step, model, hparams, x_train, y_train, x_val, y_val, x_test, y_test, epochs):
     with tf.summary.create_file_writer(path).as_default():
         hp.hparams(hparams)
         model.fit(x_train, y_train, epochs=epochs, batch_size=32, shuffle=True, validation_data=(x_val, y_val))
-        loss, accuracy, recall, precision = model.evaluate(x_test, y_test)
+        loss, accuracy, recall, specificity, precision, f1score = model.evaluate(x_test, y_test)
         tf.summary.scalar('accuracy', accuracy, step=step)
         tf.summary.scalar('recall', recall, step=step)
+        tf.summary.scalar('specificity', specificity, step=step)
         tf.summary.scalar('precision', precision, step=step)
+        tf.summary.scalar('f1score', f1score, step=step)
 
 def hparams_combinations(hparams):
     hp.hparams_config(
@@ -146,7 +148,9 @@ def hparams_combinations(hparams):
         metrics=[
             hp.Metric('accuracy', display_name='Accuracy'),
             hp.Metric('recall', display_name='Recall'),
+            hp.Metric('specificity', display_name='Specificity'),
             hp.Metric('precision', display_name='Precision'),
+            hp.Metric('f1score', display_name='F1Score'),
         ]
     )
     hparams_keys = list(hparams.keys())
@@ -162,7 +166,7 @@ def hparams_combinations(hparams):
     return hparams
 
 def tune_model(dataset_name, data):
-    LOGS_DIR = join('./logs/generic', dataset_name)
+    LOGS_DIR = join('./logs/gat', dataset_name)
     os.makedirs(LOGS_DIR, exist_ok=True)
     # Prepare the data
     x_train, y_train, x_val, y_val, x_test, y_test = adapt_data(data)
@@ -206,18 +210,18 @@ def tune_model(dataset_name, data):
 if __name__ == '__main__':
     dataset = {}
     
-    dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+    dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/')
 
-    dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
+    dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/')
     dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
 
-    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
+    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/')
     dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
 
-    # dataset['eegmmidb'] = EEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/1.0.0')
+    # dataset['eegmmidb'] = PhysioNetEEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/')
     # dataset['eegmmidb'].set_minimum_event_duration(4)
 
-    dataset['chbmit'] = CHBMITDataset('../../data/physionet.org/files/chbmit/1.0.0')
+    dataset['chbmit'] = PhysioNetCHBMITDataset('../../data/physionet.org/files/chbmit/')
     dataset['chbmit'].set_minimum_event_duration(4)
 
     """

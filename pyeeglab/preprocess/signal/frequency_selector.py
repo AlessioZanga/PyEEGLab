@@ -1,6 +1,7 @@
 import logging
 
-from ...io import Raw
+from mne.io import Raw
+
 from ...pipeline import Preprocessor
 
 
@@ -11,5 +12,7 @@ class LowestFrequency(Preprocessor):
         logging.debug('Create lowest_frequency preprocessor')
 
     def run(self, data: Raw, **kwargs) -> Raw:
-        data.set_frequency(kwargs['lowest_frequency'])
+        lowest_frequency = kwargs['lowest_frequency']
+        if data.info['sfreq'] > lowest_frequency:
+            data = data.resample(lowest_frequency)
         return data

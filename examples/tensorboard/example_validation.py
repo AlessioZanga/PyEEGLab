@@ -15,7 +15,7 @@ except RuntimeError as e:
 
 # Import TensorBoard params and metrics
 from tensorboard.plugins.hparams import api as hp
-from tensorflow.keras.metrics import CategoricalAccuracy, Precision, Recall
+from tensorflow.keras.metrics import Accuracy, Precision, Recall
 
 # Import Spektral for GraphAttention
 import spektral as sp
@@ -24,11 +24,10 @@ import spektral as sp
 import os
 import pickle
 import numpy as np
+import pandas as pd
 from random import shuffle
 from itertools import product
-from scipy.sparse import csc_matrix
-from spektral.layers.ops import sp_matrix_to_sp_tensor
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from tensorflow.python.keras.utils.np_utils import to_categorical
 
 # Relative import PyEEGLab
@@ -64,32 +63,35 @@ def build_data(dataset):
 
     return dataset.set_pipeline(preprocessing).load()
 
-def adapt_data(data, test_size=0.1, shuffle=True):
+def adapt_data(data, test_size=0.1):
     if isinstance(data, str):
         with open(data, 'rb') as f:
             data = pickle.load(f)
     samples, labels = data['data'], data['labels']
-    x_train, x_test, y_train, y_test = train_test_split(samples, labels, test_size=test_size, shuffle=shuffle, stratify=labels)
-    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=test_size, shuffle=shuffle, stratify=y_train)
+    x_train, x_test, y_train, y_test = train_test_split(samples, labels, test_size=test_size, shuffle=True, stratify=labels)
+    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=test_size, shuffle=True, stratify=y_train)
     classes = np.sort(np.unique(labels))
     y_train = to_categorical(y_train, num_classes=len(classes))
     y_test = to_categorical(y_test, num_classes=len(classes))
     y_val = to_categorical(y_val, num_classes=len(classes))
     return x_train, y_train, x_val, y_val, x_test, y_test
 
-def build_model(shape, classes, hparams):
+def stratified_k_cross_validation_split(data, folds):
+    if isinstance(data, str):
+        with open(data, 'rb') as f:
+            data = pickle.load(f)
+    samples, labels = data['data'], data['labels']
+    skf = StratifiedKFold(n_splits=folds, shuffle=True)
+    return samples, labels, skf.split(samples, labels)
+
+def build_model(shape, classes, hparams, metrics):
     print(hparams)
     N = shape[2]
     F = shape[3] - N
     frames = shape[1]
 
-    def get_feature_matrix(x, frame, N, F):
-        x = tf.slice(x, [0, frame, 0, N], [-1, 1, N, F])
-        x = tf.squeeze(x, axis=[1])
-        return x
-    
-    def get_correlation_matrix(x, frame, N, F):
-        x = tf.slice(x, [0, frame, 0, 0], [-1, 1, N, N])
+    def get_frame(x, frame, N, F):
+        x = tf.slice(x, [0, frame, 0, 0], [-1, 1, N, F])
         x = tf.squeeze(x, axis=[1])
         return x
 
@@ -97,22 +99,18 @@ def build_model(shape, classes, hparams):
 
     layers = []
     for frame in range(frames):
-        feature_matrix = tf.keras.layers.Lambda(
-            get_feature_matrix,
-            arguments={'frame': frame, 'N': N, 'F': F}
-        )(input_0)
-
-        correlation_matrix = tf.keras.layers.Lambda(
-            get_correlation_matrix,
+        frame_matrix = tf.keras.layers.Lambda(
+            get_frame,
             arguments={'frame': frame, 'N': N, 'F': F}
         )(input_0)
         
-        x = sp.layers.GraphConv(hparams['output_shape'])([feature_matrix, correlation_matrix])
+        x = tf.keras.layers.Conv1D(hparams['filters'], hparams['kernel'], data_format='channels_first')(frame_matrix)
+        x = tf.keras.layers.MaxPooling1D(hparams['pool'])(x)
         x = tf.keras.layers.Flatten()(x)
         layers.append(x)
 
     combine = tf.keras.layers.Concatenate()(layers)
-    reshape = tf.keras.layers.Reshape((frames, N * hparams['output_shape']))(combine)
+    reshape = tf.keras.layers.Reshape((-1, frames))(combine)
     lstm = tf.keras.layers.LSTM(hparams['hidden_units'])(reshape)
     dropout = tf.keras.layers.Dropout(hparams['dropout'])(lstm)
     out = tf.keras.layers.Dense(classes, activation='softmax')(dropout)
@@ -124,29 +122,32 @@ def build_model(shape, classes, hparams):
         metrics=[
             'accuracy',
             Recall(class_id=0, name='recall'),
+            Specificity(class_id=0, name='specificity'),
             Precision(class_id=0, name='precision'),
+            F1Score(class_id=0, name='f1score'),
         ]
     )
     model.summary()
-    model.save('logs/plot_gnn.h5')
+    model.save('logs/plot_cnn.h5')
     return model
 
-def run_trial(path, step, model, hparams, x_train, y_train, x_val, y_val, x_test, y_test, epochs):
+def run_trial(path, step, model, hparams, metrics, x_train, y_train, x_test, y_test, epochs):
     with tf.summary.create_file_writer(path).as_default():
         hp.hparams(hparams)
-        model.fit(x_train, y_train, epochs=epochs, batch_size=32, shuffle=True, validation_data=(x_val, y_val))
-        loss, accuracy, recall, precision = model.evaluate(x_test, y_test)
-        tf.summary.scalar('accuracy', accuracy, step=step)
-        tf.summary.scalar('recall', recall, step=step)
-        tf.summary.scalar('precision', precision, step=step)
+        model.fit(x_train, y_train, epochs=epochs, batch_size=32, shuffle=True)
+        metrics_output = model.evaluate(x_test, y_test)
+        metrics_output = dict(zip(model.metrics_names, metrics_output))
+        for metric_name, metric_value in metrics_output.items():
+            if metric_name in metrics:
+                tf.summary.scalar(metric_name, metric_value, step=step)
+        return metrics_output
 
-def hparams_combinations(hparams):
+def hparams_combinations(hparams, metrics):
     hp.hparams_config(
         hparams=list(hparams.values()),
         metrics=[
-            hp.Metric('accuracy', display_name='Accuracy'),
-            hp.Metric('recall', display_name='Recall'),
-            hp.Metric('precision', display_name='Precision'),
+            hp.Metric(metric, display_name=metric.capitalize())
+            for metric in metrics
         ]
     )
     hparams_keys = list(hparams.keys())
@@ -161,46 +162,57 @@ def hparams_combinations(hparams):
     shuffle(hparams)
     return hparams
 
-def tune_model(dataset_name, data):
-    LOGS_DIR = join('./logs/gnn', dataset_name)
+def tune_model(dataset_name, data, metrics, folds, val_size=0.1):
+    LOGS_DIR = join('./logs/cnn', dataset_name)
     os.makedirs(LOGS_DIR, exist_ok=True)
     # Prepare the data
-    x_train, y_train, x_val, y_val, x_test, y_test = adapt_data(data)
-    # Set tuning session
+    data, labels, splitter = stratified_k_cross_validation_split(data, folds)
+    # Set tuning session and results
     counter = 0
+    results = []
     # Parameters to be tuned
-    hparams = {
-        'learning_rate': [1e-4, 5e-4, 1e-3],
-        'hidden_units': [8, 16, 32, 64],
-        'output_shape': [8, 16, 32, 64],
-        'dropout': [0.00, 0.05, 0.10, 0.15, 0.20],
+    hparam = {
+        'learning_rate': 1e-4,
+        'kernel': 5,
+        'filters': 32,
+        'pool': 5,
+        'hidden_units': 64,
+        'dropout': 0.10,
     }
-    hparams = {
-        key: hp.HParam(key, hp.Discrete(value))
-        for key, value in hparams.items()
-    }
-    hparams = hparams_combinations(hparams)
-    for hparam in hparams:
+    for train_idx, test_idx in splitter:
+        # Generate folds
+        x_train, y_train = data[train_idx], labels[train_idx]
+        x_test, y_test = data[test_idx], labels[test_idx]
+        classes = np.sort(np.unique(labels))
+        y_train = to_categorical(y_train, num_classes=len(classes))
+        y_test = to_categorical(y_test, num_classes=len(classes))
         # Build the model
-        model = build_model(data['data'].shape, len(data['labels_encoder']), hparam)
+        model = build_model(data.shape, len(classes), hparam, metrics)
         # Run session
         run_name = f'run-{counter}'
         print(f'--- Starting trial: {run_name}')
         print(hparam)
-        run_trial(
+        result = run_trial(
             join(LOGS_DIR, run_name),
             counter,
             model,
             hparam,
+            metrics,
             x_train,
             y_train,
-            x_val,
-            y_val,
             x_test,
             y_test,
             epochs=50
         )
         counter += 1
+        results.append(result)
+    results = pd.DataFrame(results)
+    hparam = '-'.join([
+        str(key) + '_' + str(value)
+        for key, value in hparam.items()
+    ])
+    results.to_csv(join(LOGS_DIR, "validation-{}-{}-results.csv".format(dataset_name, hparam)))
+    print(results)
 
 
 if __name__ == '__main__':
@@ -211,8 +223,8 @@ if __name__ == '__main__':
     # dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/')
     # dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
 
-    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/')
-    dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
+    # dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/')
+    # dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
 
     # dataset['eegmmidb'] = PhysioNetEEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/')
     # dataset['eegmmidb'].set_minimum_event_duration(4)
@@ -226,5 +238,12 @@ if __name__ == '__main__':
     """
 
     for key, value in dataset.items():
+        metrics = [
+            'accuracy', 
+            'recall',
+            'specificity',
+            'precision',
+            'f1score',
+        ]
         value = build_data(value)
-        tune_model(key, value)
+        tune_model(key, value, metrics, folds=10)

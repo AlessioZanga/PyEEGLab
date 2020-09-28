@@ -1,15 +1,14 @@
-import logging
 import json
+import logging
+
+from itertools import product
+from typing import List
 
 import numpy as np
 import pandas as pd
-
 from yasa import bandpower
-from itertools import product
 
 from ...pipeline import Preprocessor
-
-from typing import List
 
 
 class SpearmanCorrelation(Preprocessor):

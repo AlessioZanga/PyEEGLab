@@ -13,6 +13,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 
+## [0.10.0] - 2020-09-28
+### Added
+* Added new dataset versioning system,
+  you can work with multiple versions
+  of the same dataset during creation
+* Added new in-Python download system,
+  you can download a specific version
+  of the dataset during initialization
+
+### Changed
+* Refactored dataset indexing system, 
+  a dedicated directory will be created
+  for the index database during initialization
+* Refactored preprocessing cache system,
+  a dedicated directory will be created
+  and a faster version for cache coherence
+  check has been implemented
+* Refactored logging system
+* Update package requirements
+* Update README
+
+### Removed
+* Deprecated Makefile
+
+
 ## [0.9.3] - 2020-07-05
 
 ### Change

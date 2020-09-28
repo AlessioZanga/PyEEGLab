@@ -1,17 +1,16 @@
-import logging
 import json
-
-import numpy as np
-import pandas as pd
+import logging
 
 from hashlib import md5
 from os.path import join
 from multiprocessing import Pool, cpu_count
 
-from ..io import Raw
-from .preprocessor import Preprocessor
-
 from typing import Dict, List
+
+import numpy as np
+import pandas as pd
+
+from .preprocessor import Preprocessor
 
 
 class Pipeline():
@@ -32,11 +31,13 @@ class Pipeline():
             nans = data.isnull().values.any()
         return nans
 
-    def _trigger_pipeline(self, data: Raw, kwargs):
-        file_id = data.id
-        data.open().load_data()
-        for preprocessor in self.pipeline:
-            data = preprocessor.run(data, **kwargs)
+    def _trigger_pipeline(self, annotation, kwargs):
+        data = None
+
+        with annotation as reader:
+            data = reader.load_data()
+            for preprocessor in self.pipeline:
+                data = preprocessor.run(data, **kwargs)
         
         nans = False
         if isinstance(data, list):
@@ -44,11 +45,11 @@ class Pipeline():
         else:
             nans = self._check_nans(data)
         if nans:
-            raise ValueError('Nans found in file with id {}'.format(file_id))
+            raise ValueError('Nans found in file with id {}'.format(annotation.file_uuid))
 
         return data
 
-    def run(self, data: List[Raw]) -> Dict:
+    def run(self, data) -> Dict:
         logging.debug('Environment variables: {}'.format(
             str(self.environment)
         ))
@@ -62,7 +63,7 @@ class Pipeline():
             labels = [self.labels_mapping[label] for label in labels]
         onehot_encoder = sorted(set(labels))
         class_id = self.environment.get('class_id', None)
-        if class_id:
+        if class_id in onehot_encoder:
             onehot_encoder.remove(class_id)
             onehot_encoder = [class_id] + onehot_encoder
         labels = np.array([onehot_encoder.index(label) for label in labels])
