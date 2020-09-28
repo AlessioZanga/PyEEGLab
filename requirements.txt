@@ -3,5 +3,6 @@ scipy
 pandas
 wfdb
 sqlalchemy
-mne==0.20.0
+dataclasses
+mne>=0.21.0
 yasa>=0.1.6

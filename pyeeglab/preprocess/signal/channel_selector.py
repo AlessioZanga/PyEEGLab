@@ -1,18 +1,18 @@
-import logging
 import json
-
-from ...io import Raw
-from ...pipeline import Preprocessor
+import logging
 
 from typing import List
 
+from mne.io import Raw
+
+from ...pipeline import Preprocessor
 
 class CommonChannelSet(Preprocessor):
 
-    def __init__(self, blacklist: List[str] = []) -> None:
+    def __init__(self, blacklist: List[str] = None) -> None:
         super().__init__()
         logging.debug('Create common channels_set preprocessor')
-        self.blacklist = blacklist
+        self.blacklist = blacklist if blacklist else []
 
     def to_json(self) -> str:
         out = {
@@ -24,7 +24,9 @@ class CommonChannelSet(Preprocessor):
         return out
 
     def run(self, data: Raw, **kwargs) -> Raw:
-        channels = set(kwargs['channels_set']) - set(self.blacklist)
-        channels = list(channels)
-        data.set_channels(channels)
+        channels = set(data.ch_names)
+        channels = channels.difference(set(kwargs['channels_set']))
+        data = data.drop_channels(channels)
+        data = data.drop_channels(self.blacklist)
+        data = data.reorder_channels(kwargs['channels_set'])
         return data

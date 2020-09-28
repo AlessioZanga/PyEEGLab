@@ -6,20 +6,19 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from pyeeglab import *
 
 class TestEEGMMIDB(unittest.TestCase):
-    PATH = './tests/samples/physionet.org/files/eegmmidb/1.0.0'
+    PATH = './tests/samples/physionet.org/files/eegmmidb/'
 
     def test_index(self):
-        EEGMMIDBLoader(self.PATH)
+        PhysioNetEEGMMIDBDataset(self.PATH)
 
     def test_loader(self):
-        loader = EEGMMIDBLoader(self.PATH)
-        loader.get_dataset()
-        loader.get_dataset_text()
-        loader.get_channels_set()
-        loader.get_lowest_frequency()
+        loader = PhysioNetEEGMMIDBDataset(self.PATH)
+        loader.maximal_channels_subset
+        loader.lowest_frequency
+        loader.signal_min_max_range
 
     def test_dataset(self):
-        dataset = EEGMMIDBDataset(self.PATH)
+        dataset = PhysioNetEEGMMIDBDataset(self.PATH)
         preprocessing = Pipeline([
             CommonChannelSet(),
             LowestFrequency(),

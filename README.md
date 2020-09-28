@@ -35,10 +35,6 @@ PyEEGLab is distributed using the pip repository:
 
     pip install PyEEGLab
 
-If you use Python 3.6, the dataclasses package must be installed as backport of Python 3.7 dataclasses:
-
-    pip install dataclasses
-
 If you need a bleeding edge version, you can install it directly from GitHub:
 
     pip install git+https://github.com/AlessioZanga/PyEEGLab@develop
@@ -99,11 +95,18 @@ The following datasets will work upon downloading:
 
 > **WARNING**: Retriving the TUH EEG datasets require valid credentials, you can get your own at: https://www.isip.piconepress.com/projects/tuh_eeg/html/request_access.php.
 
-In the root directory of this project there is a Makefile, by typing:
+Given the dataset instance, trigger the download using the "download" method:
 
-    make tuh_eeg_abnormal
+    from pyeeglab import *
+    dataset = TUHEEGAbnormalDataset()
+    dataset.download(user='USER', password='PASSWORD')
+    dataset.index()
 
-you will trigger the dataset download.
+then index the new downloaded files.
+
+It should be noted that the download mechanism work on Unix-like systems given the following packages:
+
+    sudo apt install sshpass rsync wget
 
 ## Documentation
 

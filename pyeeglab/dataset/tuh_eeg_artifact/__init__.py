@@ -1,2 +1,0 @@
-from .tuh_eeg_artifact_loader import TUHEEGArtifactLoader
-from .tuh_eeg_artifact_dataset import TUHEEGArtifactDataset

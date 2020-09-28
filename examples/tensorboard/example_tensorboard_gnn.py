@@ -39,8 +39,6 @@ sys.path.insert(0, abspath(join(dirname(__file__), '../..')))
 from pyeeglab import *
 
 def build_data(dataset):
-    dataset.set_cache_manager(PickleCache('../../export'))
-
     preprocessing = Pipeline([
         CommonChannelSet(),
         LowestFrequency(),
@@ -208,18 +206,18 @@ def tune_model(dataset_name, data):
 if __name__ == '__main__':
     dataset = {}
     
-    # dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/v2.0.0/edf')
+    # dataset['tuh_eeg_abnormal'] = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/')
 
-    # dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/v1.0.0/edf')
+    # dataset['tuh_eeg_artifact'] = TUHEEGArtifactDataset('../../data/tuh_eeg_artifact/')
     # dataset['tuh_eeg_artifact'].set_minimum_event_duration(4)
 
-    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/v1.5.2/edf')
+    dataset['tuh_eeg_seizure'] = TUHEEGSeizureDataset('../../data/tuh_eeg_seizure/')
     dataset['tuh_eeg_seizure'].set_minimum_event_duration(4)
 
-    # dataset['eegmmidb'] = EEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/1.0.0')
+    # dataset['eegmmidb'] = PhysioNetEEGMMIDBDataset('../../data/physionet.org/files/eegmmidb/')
     # dataset['eegmmidb'].set_minimum_event_duration(4)
 
-    dataset['chbmit'] = CHBMITDataset('../../data/physionet.org/files/chbmit/1.0.0')
+    dataset['chbmit'] = PhysioNetCHBMITDataset('../../data/physionet.org/files/chbmit/')
     dataset['chbmit'].set_minimum_event_duration(4)
 
     """

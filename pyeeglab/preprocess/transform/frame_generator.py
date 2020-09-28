@@ -1,13 +1,12 @@
-import logging
 import json
+import logging
+
+from math import floor
+from typing import List
 
 import pandas as pd
 
-from math import floor
-
 from ...pipeline import Preprocessor
-
-from typing import List
 
 
 class StaticWindow(Preprocessor):

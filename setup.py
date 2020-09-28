@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='PyEEGLab',
-    version='0.9.4',
+    version='0.10.0',
     author='Alessio Zanga',
     author_email='alessio.zanga@outlook.it',
     license='GNU GENERAL PUBLIC LICENSE - Version 3, 29 June 2007',
@@ -37,7 +37,8 @@ setuptools.setup(
         'pandas',
         'wfdb',
         'sqlalchemy',
-        'mne==0.20.0',
+        'dataclasses',
+        'mne>=0.21.0',
         'yasa>=0.1.6',
     ],
 )

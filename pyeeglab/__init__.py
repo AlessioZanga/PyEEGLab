@@ -1,15 +1,11 @@
 import logging
 import warnings
 
-from importlib.util import find_spec
-from mne.utils import set_config
+logging.basicConfig(format="%(asctime)s %(levelname)7s: %(message)s", datefmt="%Y/%m/%d %H:%M:%S")
 
 from .dataset import *
-from .io import Raw
-from .cache import PickleCache
-from .pipeline import Pipeline, ForkedPreprocessor
+from .pipeline import *
 from .preprocess import *
 
 logging.getLogger().setLevel(logging.DEBUG)
-
 warnings.filterwarnings("ignore", category=RuntimeWarning)
