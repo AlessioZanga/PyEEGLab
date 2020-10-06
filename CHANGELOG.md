@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 
+## [0.10.2] - 2020-10-06
+### Added
+* Added NVIDIA GPU support for MNE through Cupy
+
+### Changed
+* Migrated CI/CD pipeline from Travis.org to Travis.com as scheduled
+
+
 ## [0.10.1] - 2020-10-06
 ### Added
 * Added @dataclass decorator to preprocessors
