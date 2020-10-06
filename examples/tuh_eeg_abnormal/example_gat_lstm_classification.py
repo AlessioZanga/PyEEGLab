@@ -25,7 +25,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from pyeeglab import    TUHEEGAbnormalDataset, Pipeline, CommonChannelSet, \
                         LowestFrequency, ToDataframe, DynamicWindow, BinarizedSpearmanCorrelation, \
-                        CorrelationToAdjacency, Bandpower, GraphWithFeatures, ForkedPreprocessor
+                        CorrelationToAdjacency, BandPower, GraphWithFeatures, ForkedPreprocessor
 
 dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/')
 
@@ -37,7 +37,7 @@ preprocessing = Pipeline([
     ForkedPreprocessor(
         inputs=[
             [BinarizedSpearmanCorrelation(), CorrelationToAdjacency()],
-            Bandpower()
+            BandPower()
         ],
         output=GraphWithFeatures()
     )

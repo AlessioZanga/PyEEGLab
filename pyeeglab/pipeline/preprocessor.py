@@ -1,70 +1,38 @@
-import logging
 import json
+import logging
+
+import hashlib
 
 from abc import ABC, abstractmethod
-from hashlib import md5
+from dataclasses import dataclass
 
-from typing import List
+from typing import Any
 
 
 class Preprocessor(ABC):
 
     def __init__(self) -> None:
-        logging.debug('Create new preprocessor')
+        logging.debug("Init %s", self)
 
     @abstractmethod
-    def run(self, data, **kwargs):
+    def __call__(self, data: Any, **kwargs):
         pass
 
-    def to_json(self) -> str:
-        out = {self.__class__.__name__: {}}
-        out = json.dumps(out)
-        return out
 
-    def __eq__(self, other):
-        return hash(self) == hash(other)
-
-    def __hash__(self):
-        out = md5(self.to_json()).hexdigest()
-        out = int(out, 16)
-        return out
-
-
+@dataclass
 class ForkedPreprocessor(Preprocessor):
 
-    def __init__(self, inputs: List, output: Preprocessor) -> None:
-        super().__init__()
-        logging.debug('Create new forked preprocessor')
-        self.inputs = inputs
-        self.output = output
+    inputs: Any
+    output: Any
 
-    def run(self, data, **kwargs):
-        results = []
+    def __call__(self, data: Any, **kwargs):
+        out = []
         for item in self.inputs:
             if isinstance(item, list):
-                result = data
+                i = data
                 for preprocessor in item:
-                    result = preprocessor.run(result, **kwargs)
+                    i = preprocessor(i, **kwargs)
             if isinstance(item, Preprocessor):
-                result = item.run(data, **kwargs)
-            results.append(result)
-        data = self.output.run(results, **kwargs)
-        return data
-
-    def to_json(self) -> str:
-        inputs_json = []
-        for i in self.inputs:
-            if isinstance(i, list):
-                j = [json.loads(p.to_json()) for p in i]
-            if isinstance(i, Preprocessor):
-                j = json.loads(i.to_json())
-            inputs_json.append(j)
-        output_json = json.loads(self.output.to_json())
-        output_json = {
-            self.__class__.__name__: {
-                'inputs': inputs_json,
-                'output': output_json
-            }
-        }
-        output_json = json.dumps(output_json)
-        return output_json
+                i = item(data, **kwargs)
+            out.append(i)
+        return self.output(out, **kwargs)

@@ -16,6 +16,8 @@ class Annotation(Base):
 
     file = relationship("File", lazy="subquery")
 
+    reader: Raw = None
+
     @property
     def duration(self) -> float:
         return self.end - self.begin

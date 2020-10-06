@@ -15,14 +15,13 @@ class TestTUHEEGArtifact(unittest.TestCase):
         loader = TUHEEGArtifactDataset(self.PATH)
         loader.maximal_channels_subset
         loader.lowest_frequency
-        loader.signal_min_max_range
 
     def test_dataset(self):
         dataset = TUHEEGArtifactDataset(self.PATH)
         preprocessing = Pipeline([
             CommonChannelSet(),
             LowestFrequency(),
-            BandPassFrequency(0.1, 47),
+            BandPassFilter(0.1, 47),
             ToDataframe(),
             DynamicWindow(4),
             Skewness(),

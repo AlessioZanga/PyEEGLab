@@ -15,6 +15,8 @@ class File(Base):
     meta = relationship("Metadata", cascade="all,delete", backref="File")
     annotations = relationship("Annotation", cascade="all,delete", backref="File")
 
+    reader: Raw = None
+
     def __enter__(self) -> Raw:
         self.reader = read_raw(self.path)
         return self.reader

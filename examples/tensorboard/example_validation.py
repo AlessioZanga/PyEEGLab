@@ -42,7 +42,7 @@ def build_data(dataset):
         CommonChannelSet(),
         LowestFrequency(),
         ToDataframe(),
-        MinMaxCentralizedNormalization(),
+        MinMaxCenteredNormalizer(),
         DynamicWindow(8),
         ForkedPreprocessor(
             inputs=[
@@ -54,7 +54,7 @@ def build_data(dataset):
                 ZeroCrossing(),
                 AbsoluteArea(),
                 PeakToPeak(),
-                Bandpower(['Delta', 'Theta', 'Alpha', 'Beta'])
+                BandPower(['Delta', 'Theta', 'Alpha', 'Beta'])
             ],
             output=ToMergedDataframes()
         ),
@@ -122,9 +122,7 @@ def build_model(shape, classes, hparams, metrics):
         metrics=[
             'accuracy',
             Recall(class_id=0, name='recall'),
-            Specificity(class_id=0, name='specificity'),
             Precision(class_id=0, name='precision'),
-            F1Score(class_id=0, name='f1score'),
         ]
     )
     model.summary()

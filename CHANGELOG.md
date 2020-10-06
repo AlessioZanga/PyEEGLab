@@ -13,6 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 
+## [0.10.1] - 2020-10-06
+### Added
+* Added @dataclass decorator to preprocessors
+* Added progress bar during pipeline execution
+* Added TQDM as package requirement
+* Added AmplitudeNormalizer as x_i/max(|x|)
+
+### Changed
+* Changed default preprocessor function from "run" method to "\__call__" method
+* Renamed BandPassFrequency preprocessor to BandPassFilter
+* Renamed NotchFrequency preprocessor to NotchFilter
+* Renamed MinMaxNormalization to MinMaxNormalizer
+* Renamed MinMaxCentralizedNormalization preprocesion to MinMaxCenteredNormalizer
+* Renamed Bandpower preprocessor to BandPower
+
+### Removed
+* Removed min_value and max_value indexing
+
+
 ## [0.10.0] - 2020-09-28
 ### Added
 * Added new dataset versioning system,

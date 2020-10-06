@@ -1,4 +1,3 @@
-import os
 import logging
 
 from uuid import uuid4
@@ -22,7 +21,7 @@ class PhysioNetEEGMMIDBDataset(Dataset):
                 "S021/S021R08.edf",     # Corrupted data
                 "S104/S104R04.edf",     # Corrupted data
             ],
-            exclude_sampling_frequency: List[int] = [ 128 ],
+            exclude_sampling_frequency: List[int] = [128],
         ) -> None:
         super().__init__(
             path=path,

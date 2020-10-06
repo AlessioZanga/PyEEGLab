@@ -11,5 +11,3 @@ class Metadata(Base):
     channels_set: str = Column(Text, nullable=False, index=True)
     channels_reference: str = Column(Text, nullable=True, index=True)
     sampling_frequency: int = Column(Integer, nullable=False, index=True)
-    max_value: float = Column(Float, nullable=False)
-    min_value: float = Column(Float, nullable=False)

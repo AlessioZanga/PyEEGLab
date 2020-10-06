@@ -1,6 +1,7 @@
 numpy
 scipy
 pandas
+tqdm
 wfdb
 sqlalchemy
 dataclasses

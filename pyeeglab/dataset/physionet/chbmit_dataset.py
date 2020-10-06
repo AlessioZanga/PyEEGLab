@@ -5,13 +5,13 @@ from uuid import uuid4
 
 from typing import List
 
+import wfdb
+
 from .utils import wget
 
 from ..dataset import Dataset
 from ..file import File
 from ..annotation import Annotation
-
-import wfdb
 
 
 class PhysioNetCHBMITDataset(Dataset):

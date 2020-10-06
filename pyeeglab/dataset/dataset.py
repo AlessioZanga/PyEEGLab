@@ -44,17 +44,17 @@ class Dataset(ABC):
     pipeline: Pipeline = None
 
     def __init__(
-            self,
-            path: str,
-            name: str,
-            version: str = None,
-            extensions: List[str] = [".edf"],
-            exclude_file: List[str] = None,
-            exclude_channels_set: List[str] = None,
-            exclude_channels_reference: List[str] = None,
-            exclude_sampling_frequency: List[str] = None,
-            minimum_annotation_duration: float = None
-        ) -> None:
+        self,
+        path: str,
+        name: str,
+        version: str = None,
+        extensions: List[str] = [".edf"],
+        exclude_file: List[str] = None,
+        exclude_channels_set: List[str] = None,
+        exclude_channels_reference: List[str] = None,
+        exclude_sampling_frequency: List[str] = None,
+        minimum_annotation_duration: float = None
+    ) -> None:
         # Set basic attributes
         self.path = os.path.abspath(os.path.join(path, version))
         self.name = name
@@ -152,7 +152,7 @@ class Dataset(ABC):
         for file in self.exclude_file:
             self.query = self.query.filter(~File.path.like("%{}%".format(file)))
         logging.debug("SQL query representation: '%s'", str(self.query).replace("\n", ""))
-    
+
     def _get_file(self, path: str) -> File:
         return File(
             uuid=str(uuid5(NAMESPACE_X500, path)),
@@ -186,14 +186,14 @@ class Dataset(ABC):
                 for annotation in reader.annotations
             ]
         return annotations
-    
+
     @property
     def environment(self) -> Dict:
         return {
             "channels_set": self.maximal_channels_subset,
             "lowest_frequency": self.lowest_frequency,
         }
-    
+
     @property
     def lowest_frequency(self) -> float:
         frequency = self.query.all()
@@ -219,12 +219,12 @@ class Dataset(ABC):
         self.pipeline = pipeline
         self.pipeline.environment.update(self.environment)
         return self
-    
+
     def set_minimum_event_duration(self, duration: float) -> "Dataset":
-        logging.warning("This function will be deprecated in the near future")
+        logging.warning("'set_minimum_event_duration' will be deprecated in the near future")
         self.minimum_annotation_duration = duration
         return self
-    
+
     def load(self) -> Dict:
         # Compute cache path
         cache = os.path.join(self.path, ".pyeeglab", "cache")
@@ -258,7 +258,7 @@ class Dataset(ABC):
             logging.info("Dumping cache file")
             pickle.dump(data, file)
         return data
-    
+
     def __hash__(self) -> int:
         key = [self.path, self.version, self.minimum_annotation_duration]
         key += self.exclude_file

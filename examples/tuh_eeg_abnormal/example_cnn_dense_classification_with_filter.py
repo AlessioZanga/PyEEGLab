@@ -22,7 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from pyeeglab import    TUHEEGAbnormalDataset, Pipeline, CommonChannelSet, \
-                        LowestFrequency, BandPassFrequency, ToDataframe, DynamicWindow, \
+                        LowestFrequency, BandPassFilter, ToDataframe, DynamicWindow, \
                         BinarizedSpearmanCorrelation, ToNumpy
 
 dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/')
@@ -30,7 +30,7 @@ dataset = TUHEEGAbnormalDataset('../../data/tuh_eeg_abnormal/')
 preprocessing = Pipeline([
     CommonChannelSet(),
     LowestFrequency(),
-    BandPassFrequency(0.1, 47),
+    BandPassFilter(0.1, 47),
     ToDataframe(),
     DynamicWindow(8),
     BinarizedSpearmanCorrelation(),

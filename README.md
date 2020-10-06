@@ -18,7 +18,7 @@ Here is a simple quickstart:
         CommonChannelSet(),
         LowestFrequency(),
         ToDataframe(),
-        MinMaxCentralizedNormalization(),
+        AmplitudeNormalizer(),
         DynamicWindow(8),
         ToNumpy()
     ])
